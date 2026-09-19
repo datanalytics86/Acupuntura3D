@@ -1,0 +1,284 @@
+[
+  {
+    "id": "LU",
+    "code": "LU",
+    "names": { "zh": "手太阴肺经", "pinyin": "Shǒu Tàiyīn Fèi Jīng", "es": "Pulmón", "en": "Lung" },
+    "element": "metal",
+    "polaridad": "yin",
+    "clockHour": 3,
+    "pointCount": 11,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.07, "y": 0.4, "z": 0.08 },
+      { "x": 0.16, "y": 0.54, "z": 0.03 },
+      { "x": 0.32, "y": 0.36, "z": 0.03 },
+      { "x": 0.44, "y": 0.22, "z": 0.04 },
+      { "x": 0.5, "y": 0.14, "z": 0.06 }
+    ],
+    "flow": "chest-to-hand",
+    "laterality": "bilateral",
+    "color": "#C0C8D0"
+  },
+  {
+    "id": "LI",
+    "code": "LI",
+    "names": { "zh": "手阳明大肠经", "pinyin": "Shǒu Yángmíng Dàcháng Jīng", "es": "Intestino Grueso", "en": "Large Intestine" },
+    "element": "metal",
+    "polaridad": "yang",
+    "clockHour": 5,
+    "pointCount": 20,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.5, "y": 0.12, "z": 0.05 },
+      { "x": 0.47, "y": 0.16, "z": 0.05 },
+      { "x": 0.34, "y": 0.38, "z": 0.04 },
+      { "x": 0.18, "y": 0.56, "z": 0.02 },
+      { "x": 0.08, "y": 0.68, "z": 0.06 },
+      { "x": 0.02, "y": 0.76, "z": 0.1 }
+    ],
+    "flow": "hand-to-head",
+    "laterality": "bilateral",
+    "color": "#C0C8D0"
+  },
+  {
+    "id": "ST",
+    "code": "ST",
+    "names": { "zh": "足阳明胃经", "pinyin": "Zú Yángmíng Wèi Jīng", "es": "Estómago", "en": "Stomach" },
+    "element": "earth",
+    "polaridad": "yang",
+    "clockHour": 7,
+    "pointCount": 45,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.04, "y": 0.74, "z": 0.09 },
+      { "x": 0.05, "y": 0.66, "z": 0.08 },
+      { "x": 0.08, "y": 0.52, "z": 0.08 },
+      { "x": 0.1, "y": 0.32, "z": 0.1 },
+      { "x": 0.08, "y": 0.08, "z": 0.1 },
+      { "x": 0.1, "y": -0.2, "z": 0.08 },
+      { "x": 0.13, "y": -0.52, "z": 0.07 },
+      { "x": 0.1, "y": -0.78, "z": 0.07 },
+      { "x": 0.08, "y": -0.9, "z": 0.11 }
+    ],
+    "flow": "head-to-foot",
+    "laterality": "bilateral",
+    "color": "#C4A35A"
+  },
+  {
+    "id": "SP",
+    "code": "SP",
+    "names": { "zh": "足太阴脾经", "pinyin": "Zú Tàiyīn Pí Jīng", "es": "Bazo", "en": "Spleen" },
+    "element": "earth",
+    "polaridad": "yin",
+    "clockHour": 9,
+    "pointCount": 21,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.04, "y": -0.9, "z": 0.08 },
+      { "x": 0.08, "y": -0.7, "z": 0.0 },
+      { "x": 0.08, "y": -0.42, "z": 0.02 },
+      { "x": 0.09, "y": -0.12, "z": 0.04 },
+      { "x": 0.08, "y": 0.04, "z": 0.07 },
+      { "x": 0.16, "y": 0.28, "z": 0.0 }
+    ],
+    "flow": "foot-to-chest",
+    "laterality": "bilateral",
+    "color": "#C4A35A"
+  },
+  {
+    "id": "HT",
+    "code": "HT",
+    "names": { "zh": "手少阴心经", "pinyin": "Shǒu Shǎoyīn Xīn Jīng", "es": "Corazón", "en": "Heart" },
+    "element": "fire",
+    "polaridad": "yin",
+    "clockHour": 11,
+    "pointCount": 9,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.12, "y": 0.42, "z": 0.02 },
+      { "x": 0.28, "y": 0.38, "z": -0.01 },
+      { "x": 0.43, "y": 0.19, "z": -0.01 }
+    ],
+    "flow": "chest-to-hand",
+    "laterality": "bilateral",
+    "color": "#E23B3B"
+  },
+  {
+    "id": "SI",
+    "code": "SI",
+    "names": { "zh": "手太阳小肠经", "pinyin": "Shǒu Tàiyáng Xiǎocháng Jīng", "es": "Intestino Delgado", "en": "Small Intestine" },
+    "element": "fire",
+    "polaridad": "yang",
+    "clockHour": 13,
+    "pointCount": 19,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.47, "y": 0.14, "z": -0.03 },
+      { "x": 0.44, "y": 0.2, "z": -0.04 },
+      { "x": 0.32, "y": 0.38, "z": -0.04 },
+      { "x": 0.12, "y": 0.52, "z": -0.08 },
+      { "x": 0.08, "y": 0.72, "z": 0.08 }
+    ],
+    "flow": "hand-to-head",
+    "laterality": "bilateral",
+    "color": "#E23B3B"
+  },
+  {
+    "id": "BL",
+    "code": "BL",
+    "names": { "zh": "足太阳膀胱经", "pinyin": "Zú Tàiyáng Pángguāng Jīng", "es": "Vejiga", "en": "Bladder" },
+    "element": "water",
+    "polaridad": "yang",
+    "clockHour": 15,
+    "pointCount": 67,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.03, "y": 0.76, "z": 0.09 },
+      { "x": 0.02, "y": 0.9, "z": 0.0 },
+      { "x": 0.04, "y": 0.68, "z": -0.08 },
+      { "x": 0.045, "y": 0.1, "z": -0.08 },
+      { "x": 0.11, "y": -0.4, "z": -0.05 },
+      { "x": 0.1, "y": -0.78, "z": -0.03 },
+      { "x": 0.08, "y": -0.9, "z": -0.02 }
+    ],
+    "flow": "head-to-foot",
+    "laterality": "bilateral",
+    "color": "#2B6CB0"
+  },
+  {
+    "id": "KI",
+    "code": "KI",
+    "names": { "zh": "足少阴肾经", "pinyin": "Zú Shǎoyīn Shèn Jīng", "es": "Riñón", "en": "Kidney" },
+    "element": "water",
+    "polaridad": "yin",
+    "clockHour": 17,
+    "pointCount": 27,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.04, "y": -0.92, "z": 0.02 },
+      { "x": 0.08, "y": -0.78, "z": -0.03 },
+      { "x": 0.08, "y": -0.42, "z": 0.0 },
+      { "x": 0.04, "y": 0.08, "z": 0.08 },
+      { "x": 0.04, "y": 0.48, "z": 0.08 }
+    ],
+    "flow": "foot-to-chest",
+    "laterality": "bilateral",
+    "color": "#2B6CB0"
+  },
+  {
+    "id": "PC",
+    "code": "PC",
+    "names": { "zh": "手厥阴心包经", "pinyin": "Shǒu Juéyīn Xīnbāo Jīng", "es": "Pericardio", "en": "Pericardium" },
+    "element": "fire",
+    "polaridad": "yin",
+    "clockHour": 19,
+    "pointCount": 9,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.08, "y": 0.36, "z": 0.08 },
+      { "x": 0.3, "y": 0.34, "z": 0.03 },
+      { "x": 0.42, "y": 0.25, "z": 0.03 },
+      { "x": 0.48, "y": 0.14, "z": 0.02 }
+    ],
+    "flow": "chest-to-hand",
+    "laterality": "bilateral",
+    "color": "#E23B3B"
+  },
+  {
+    "id": "TE",
+    "code": "TE",
+    "names": { "zh": "手少阳三焦经", "pinyin": "Shǒu Shǎoyáng Sānjiāo Jīng", "es": "Triple Recalentador", "en": "Triple Energizer" },
+    "element": "fire",
+    "polaridad": "yang",
+    "clockHour": 21,
+    "pointCount": 23,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.48, "y": 0.13, "z": 0.0 },
+      { "x": 0.43, "y": 0.26, "z": 0.01 },
+      { "x": 0.32, "y": 0.4, "z": 0.0 },
+      { "x": 0.18, "y": 0.58, "z": 0.0 },
+      { "x": 0.08, "y": 0.78, "z": 0.08 }
+    ],
+    "flow": "hand-to-head",
+    "laterality": "bilateral",
+    "color": "#C45C26"
+  },
+  {
+    "id": "GB",
+    "code": "GB",
+    "names": { "zh": "足少阳胆经", "pinyin": "Zú Shǎoyáng Dǎn Jīng", "es": "Vesícula Biliar", "en": "Gallbladder" },
+    "element": "wood",
+    "polaridad": "yang",
+    "clockHour": 23,
+    "pointCount": 44,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.08, "y": 0.78, "z": 0.08 },
+      { "x": 0.055, "y": 0.7, "z": -0.07 },
+      { "x": 0.16, "y": 0.58, "z": 0.0 },
+      { "x": 0.14, "y": 0.1, "z": 0.04 },
+      { "x": 0.15, "y": -0.46, "z": 0.04 },
+      { "x": 0.1, "y": -0.78, "z": 0.05 },
+      { "x": 0.07, "y": -0.9, "z": 0.08 }
+    ],
+    "flow": "head-to-foot",
+    "laterality": "bilateral",
+    "color": "#3D8B40"
+  },
+  {
+    "id": "LR",
+    "code": "LR",
+    "names": { "zh": "足厥阴肝经", "pinyin": "Zú Juéyīn Gān Jīng", "es": "Hígado", "en": "Liver" },
+    "element": "wood",
+    "polaridad": "yin",
+    "clockHour": 1,
+    "pointCount": 14,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0.09, "y": -0.88, "z": 0.09 },
+      { "x": 0.08, "y": -0.55, "z": 0.03 },
+      { "x": 0.07, "y": -0.42, "z": 0.02 },
+      { "x": 0.12, "y": 0.12, "z": 0.06 },
+      { "x": 0.1, "y": 0.3, "z": 0.1 }
+    ],
+    "flow": "foot-to-chest",
+    "laterality": "bilateral",
+    "color": "#3D8B40"
+  },
+  {
+    "id": "GV",
+    "code": "GV",
+    "names": { "zh": "督脉", "pinyin": "Dū Mài", "es": "Vaso Gobernador", "en": "Governor Vessel" },
+    "polaridad": "yang",
+    "pointCount": 28,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0, "y": -0.08, "z": -0.1 },
+      { "x": 0, "y": 0.1, "z": -0.1 },
+      { "x": 0, "y": 0.61, "z": -0.07 },
+      { "x": 0, "y": 0.9, "z": 0.0 },
+      { "x": 0, "y": 0.72, "z": 0.1 }
+    ],
+    "flow": "ascending-back",
+    "laterality": "midline",
+    "color": "#8B5CF6"
+  },
+  {
+    "id": "CV",
+    "code": "CV",
+    "names": { "zh": "任脉", "pinyin": "Rèn Mài", "es": "Vaso Concepción", "en": "Conception Vessel" },
+    "polaridad": "yin",
+    "pointCount": 24,
+    "pointCodes": [],
+    "pathAnchors": [
+      { "x": 0, "y": -0.12, "z": 0.08 },
+      { "x": 0, "y": 0.14, "z": 0.11 },
+      { "x": 0, "y": 0.34, "z": 0.11 },
+      { "x": 0, "y": 0.66, "z": 0.1 }
+    ],
+    "flow": "ascending-front",
+    "laterality": "midline",
+    "color": "#F59E0B"
+  }
+]

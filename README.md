@@ -6,52 +6,45 @@ Atlas 3D interactivo del cuerpo humano con meridianos, puntos de acupuntura (est
 
 > Herramienta educativa. No es un dispositivo médico y no sustituye el criterio de un profesional de Medicina Tradicional China.
 
-## Alcance
+## Cómo desarrollar
 
-- Cuerpo humano 3D navegable (órbita, zoom, pan, táctil)
-- 14 meridianos principales (12 regulares + Ren Mai + Du Mai)
-- 361 puntos clásicos OMS + extras en fases posteriores
-- Click/tap en un punto → ficha: código, pinyin, hanzi, significado, localización, funciones, precauciones
-- Flujo de Qi animado a lo largo de cada meridiano
-- Búsqueda y filtros por meridiano, elemento y región
-- Interfaz en español primero; EN/ZH después
+Requisitos: Node.js 22.12+ o 24 (esta máquina usa 24.18).
 
-## Stack previsto
+```bash
+npm install
+npm run dev
+```
 
-- Vite + React + TypeScript + Tailwind
-- React Three Fiber + drei + Three.js
-- Zustand para estado
-- Datos en JSON versionado (`data/`)
-- Deploy estático en Vercel
+Otros scripts:
 
-## Cómo arrancar el megaproyecto con Grok Terminal
+```bash
+npm run typecheck
+npm test
+npm run build
+npm run preview
+```
 
-1. Clona este repo.
-2. Abre Grok Terminal / Grok Build en la raíz.
-3. Entra a **Plan mode** (`/plan`).
-4. Pega el bloque de [`docs/MEGAPROMPT_MAX.md`](docs/MEGAPROMPT_MAX.md) (desde `=== PEGAR DESDE AQUÍ ===` hasta `=== FIN ===`).
-5. Aprueba solo F0. No implementes los 361 puntos en el primer paso.
+`npm run build` deja el estático en `dist/`. En Vercel: framework Vite, output `dist`, `vercel.json` ya incluye fallback SPA.
 
-## Documentación
+## Alcance de este MVP
 
-- [Megaprompt MAX (pegar esto)](docs/MEGAPROMPT_MAX.md)
-- [Megaprompt compacto](docs/MEGAPROMPT_GROK_TERMINAL.md)
-- [Arquitectura](docs/ARQUITECTURA.md)
-- [Estimación de esfuerzo](docs/ESTIMACION_HH.md)
-- [AGENTS.md](AGENTS.md)
+- Cuerpo procedural (cápsulas), órbita / zoom / pan
+- 14 meridianos OMS: LU LI ST SP HT SI BL KI PC TE GB LR GV CV
+- 20 puntos estrella clickables con ficha (ES primero; toggle EN)
+- Flujo de Qi (tubo + partículas), play/pause/velocidad, color Wu Xing, boost circadiano
+- Búsqueda por código y pinyin; rail de meridianos; drawer / bottom sheet
+- **No** hay 361 coordenadas 3D. Los `pointCodes` listan nomenclatura OMS; el ancla espacial es solo el seed, `confidence: low`
 
-## Fases
+## Stack
 
-| Fase | Entregable |
-|------|------------|
-| F0 | Scaffold + canvas + schema |
-| F1 | Cuerpo 3D + 14 meridianos |
-| F2 | ~20 puntos estrella clickables + ficha |
-| F3 | Flujo de Qi |
-| F4 | Dataset 361 + extras (mapping revisado) |
-| F5 | Búsqueda, móvil, i18n |
-| F6 | Deploy Vercel + QA |
+Vite 8 + React 19.2 + TypeScript strict + Tailwind 4 + Zustand + React Three Fiber 9 + drei + three.
+
+React está pinneado a **19.2.x** porque `@react-three/fiber@9.7` no admite React 19.3.
+
+## Datos
+
+JSON versionado en `data/`. Ver `data/README.md`. Fuentes de nomenclatura: WHO y GB/T 12346. Textos educativos originales; no copiar manuales comerciales.
 
 ## Licencia
 
-Código: MIT. Textos educativos originales. Nomenclatura según estándares OMS. No copiar obras con copyright (p. ej. manuales comerciales de acupuntura).
+Código: MIT. Textos educativos originales. Nomenclatura según estándares OMS.

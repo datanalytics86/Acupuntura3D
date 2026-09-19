@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acupuntura3d.local/schema/meridian.json",
+  "title": "Meridian",
+  "type": "object",
+  "required": ["id", "code", "names", "pointCount", "pointCodes", "pathAnchors", "flow", "laterality", "color"],
+  "properties": {
+    "id": { "type": "string" },
+    "code": { "type": "string" },
+    "names": {
+      "type": "object",
+      "required": ["zh", "pinyin", "es", "en"],
+      "properties": {
+        "zh": { "type": "string" },
+        "pinyin": { "type": "string" },
+        "es": { "type": "string" },
+        "en": { "type": "string" }
+      }
+    },
+    "element": { "enum": ["wood", "fire", "earth", "metal", "water"] },
+    "polaridad": { "enum": ["yin", "yang"] },
+    "clockHour": { "type": "integer", "minimum": 0, "maximum": 23 },
+    "pointCount": { "type": "integer" },
+    "pointCodes": { "type": "array", "items": { "type": "string" } },
+    "pathAnchors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["x", "y", "z"],
+        "properties": {
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "z": { "type": "number" }
+        }
+      }
+    },
+    "flow": {
+      "enum": [
+        "chest-to-hand",
+        "hand-to-head",
+        "head-to-foot",
+        "foot-to-chest",
+        "ascending-front",
+        "ascending-back"
+      ]
+    },
+    "laterality": { "enum": ["bilateral", "midline"] },
+    "color": { "type": "string" }
+  }
+}

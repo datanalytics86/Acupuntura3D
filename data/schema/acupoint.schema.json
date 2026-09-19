@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acupuntura3d.local/schema/acupoint.json",
+  "title": "Acupoint",
+  "type": "object",
+  "required": [
+    "id",
+    "code",
+    "meridianId",
+    "index",
+    "names",
+    "location",
+    "functions",
+    "indications",
+    "precautions",
+    "laterality",
+    "region",
+    "sources",
+    "confidence"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "code": { "type": "string" },
+    "meridianId": { "type": "string" },
+    "index": { "type": "integer" },
+    "names": {
+      "type": "object",
+      "required": ["zh", "pinyin", "es", "en"],
+      "properties": {
+        "zh": { "type": "string" },
+        "pinyin": { "type": "string" },
+        "es": { "type": "string" },
+        "en": { "type": "string" }
+      }
+    },
+    "location": {
+      "type": "object",
+      "required": ["anatomicEs"],
+      "properties": {
+        "anatomicEs": { "type": "string" },
+        "cunNote": { "type": "string" }
+      }
+    },
+    "functions": { "type": "array", "items": { "type": "string" } },
+    "indications": { "type": "array", "items": { "type": "string" } },
+    "precautions": { "type": "array", "items": { "type": "string" } },
+    "combinations": { "type": "array", "items": { "type": "string" } },
+    "element": { "enum": ["wood", "fire", "earth", "metal", "water"] },
+    "polaridad": { "enum": ["yin", "yang"] },
+    "laterality": { "enum": ["L", "R", "C"] },
+    "region": { "type": "string" },
+    "position": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "z": { "type": "number" }
+      }
+    },
+    "sources": { "type": "array", "items": { "type": "string" } },
+    "confidence": { "enum": ["low", "medium", "high"] }
+  }
+}
