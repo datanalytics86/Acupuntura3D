@@ -14,7 +14,7 @@ export function SearchBox() {
       value={query}
       onChange={(e) => setSearch(e.target.value)}
       placeholder={t(locale, "search")}
-      className="w-full rounded-md border border-white/10 bg-black/40 px-3 py-1.5 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-amber-400/60"
+      className="w-full rounded-full border border-white/10 bg-black/30 px-4 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-amber-300/50 focus:bg-black/45"
     />
   );
 }

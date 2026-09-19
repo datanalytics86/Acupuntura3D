@@ -2,6 +2,7 @@ import type { Locale } from "@/types";
 
 const es = {
   title: "Acupuntura3D",
+  subtitle: "Atlas educativo OMS",
   search: "Buscar código o pinyin…",
   meridians: "Meridianos",
   stars: "Estrellas",
@@ -47,6 +48,7 @@ const es = {
 
 const en: typeof es = {
   title: "Acupuntura3D",
+  subtitle: "WHO educational atlas",
   search: "Search code or pinyin…",
   meridians: "Meridians",
   stars: "Star points",

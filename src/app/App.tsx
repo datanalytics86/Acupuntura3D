@@ -43,8 +43,10 @@ export function App() {
   }, [points, selected, setSelected, setSearch]);
 
   return (
-    <div className="relative h-dvh w-full overflow-hidden bg-[#07090c]">
+    <div className="relative h-dvh w-full overflow-hidden bg-[#07090d]">
       <CanvasRoot />
+      <div className="vignette" />
+      <div className="grain" />
       <Topbar />
       <MeridianRail />
       <PointDrawer />

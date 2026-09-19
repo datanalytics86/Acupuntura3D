@@ -47,10 +47,11 @@ function Flow({
       <meshStandardMaterial
         color={hex}
         emissive={hex}
-        emissiveIntensity={boosted ? 1.3 : 0.9}
+        emissiveIntensity={boosted ? 1.55 : 1.05}
         transparent
-        opacity={0.95}
+        opacity={0.92}
         depthWrite={false}
+        toneMapped={false}
       />
     </instancedMesh>
   );
