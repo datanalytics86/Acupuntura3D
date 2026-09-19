@@ -28,15 +28,17 @@ Atlas 3D interactivo del cuerpo humano con meridianos, puntos de acupuntura (est
 
 1. Clona este repo.
 2. Abre Grok Terminal / Grok Build en la raíz.
-3. Lee `AGENTS.md`.
-4. Pega el contenido de [`docs/MEGAPROMPT_GROK_TERMINAL.md`](docs/MEGAPROMPT_GROK_TERMINAL.md).
-5. Empieza en **Plan mode**. No implementes los 361 puntos en el primer paso.
+3. Entra a **Plan mode** (`/plan`).
+4. Pega el bloque de [`docs/MEGAPROMPT_MAX.md`](docs/MEGAPROMPT_MAX.md) (desde `=== PEGAR DESDE AQUÍ ===` hasta `=== FIN ===`).
+5. Aprueba solo F0. No implementes los 361 puntos en el primer paso.
 
 ## Documentación
 
-- [Megaprompt multiagente](docs/MEGAPROMPT_GROK_TERMINAL.md)
+- [Megaprompt MAX (pegar esto)](docs/MEGAPROMPT_MAX.md)
+- [Megaprompt compacto](docs/MEGAPROMPT_GROK_TERMINAL.md)
 - [Arquitectura](docs/ARQUITECTURA.md)
 - [Estimación de esfuerzo](docs/ESTIMACION_HH.md)
+- [AGENTS.md](AGENTS.md)
 
 ## Fases
 
