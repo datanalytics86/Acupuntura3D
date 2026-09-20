@@ -72,9 +72,8 @@ export function App() {
   }, [selected, atlasView, points, setAtlasView]);
 
   return (
-    <div className="relative h-dvh w-full overflow-hidden bg-[#07090d]">
+    <div className="relative h-dvh w-full overflow-hidden bg-[#EFE6D2]">
       <AtlasRoot />
-      <div className="vignette" />
       <div className="grain" />
       <Topbar />
       <MeridianRail />

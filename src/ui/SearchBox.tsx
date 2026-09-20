@@ -52,7 +52,7 @@ export function SearchBox() {
           }
         }}
         placeholder={t(locale, "search")}
-        className="w-full rounded-full border border-white/10 bg-black/30 px-4 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-amber-300/50 focus:bg-black/45"
+        className="w-full rounded-full border border-[#8A6A3B]/35 bg-[#F3EBD8] px-4 py-2 text-sm text-[#2A2118] outline-none placeholder:text-[#8A6A3B]/70 focus:border-[#8A6A3B] focus:bg-[#F7F1E4]"
       />
     </div>
   );

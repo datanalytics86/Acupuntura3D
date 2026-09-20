@@ -23,11 +23,11 @@ export function QiClock() {
           type="button"
           aria-pressed={playing}
           onClick={() => setPlaying(!playing)}
-          className="rounded-full bg-amber-300/18 px-4 py-1.5 text-xs tracking-wide text-amber-100"
+          className="rounded-full bg-[#8A6A3B] px-4 py-1.5 text-xs tracking-wide text-[#F7F1E4]"
         >
           {playing ? t(locale, "pause") : t(locale, "play")}
         </button>
-        <label className="flex items-center gap-2 text-[11px] text-zinc-400">
+        <label className="flex items-center gap-2 text-[11px] text-[#2A2118]">
           {t(locale, "speed")}
           <input
             type="range"
@@ -38,7 +38,7 @@ export function QiClock() {
             onChange={(e) => setSpeed(Number(e.target.value))}
             className="w-24"
           />
-          <span className="w-8 font-mono text-zinc-200">{speed.toFixed(2)}</span>
+          <span className="w-8 font-mono text-[#2A2118]">{speed.toFixed(2)}</span>
         </label>
         <div className="flex flex-1 flex-wrap justify-center gap-1">
           {blocks.map((m) => {
@@ -52,11 +52,11 @@ export function QiClock() {
                 title={`${String(start).padStart(2, "0")}:00–${String(end).padStart(2, "0")}:00`}
                 onClick={() => setHour(start)}
                 className={`min-w-9 rounded-full px-2 py-1 text-[10px] transition ${
-                  on ? "text-zinc-50" : active === m.id ? "text-zinc-200" : "text-zinc-500"
+                  on ? "text-[#2A2118]" : active === m.id ? "text-[#2A2118]" : "text-[#8A6A3B]"
                 }`}
                 style={{
-                  background: on ? `${m.color}66` : "rgba(255,255,255,0.04)",
-                  boxShadow: on ? `0 0 12px ${m.color}55` : undefined,
+                  background: on ? `${m.color}33` : "rgba(138,106,59,0.08)",
+                  boxShadow: on ? `inset 0 0 0 1px ${m.color}` : undefined,
                 }}
               >
                 <span className="block font-semibold">{m.id}</span>
@@ -65,7 +65,7 @@ export function QiClock() {
             );
           })}
         </div>
-        <label className="flex items-center gap-2 text-[11px] text-zinc-400">
+        <label className="flex items-center gap-2 text-[11px] text-[#2A2118]">
           {t(locale, "clock")}
           <input
             type="range"
@@ -76,7 +76,7 @@ export function QiClock() {
             onChange={(e) => setHour(Number(e.target.value))}
             className="w-28"
           />
-          <span className="w-12 font-mono text-amber-100">{String(hour).padStart(2, "0")}:00</span>
+          <span className="w-12 font-mono text-[#8A6A3B]">{String(hour).padStart(2, "0")}:00</span>
         </label>
       </div>
     </div>

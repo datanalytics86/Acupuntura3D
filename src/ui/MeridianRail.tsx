@@ -47,15 +47,15 @@ export function MeridianRail() {
       }`}
     >
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-[10px] font-semibold tracking-[0.2em] text-zinc-400 uppercase">
+        <h2 className="text-[10px] font-semibold tracking-[0.2em] text-[#8A6A3B] uppercase">
           {t(locale, "meridians")}
         </h2>
-        <label className="flex items-center gap-1.5 text-[11px] text-zinc-400">
+        <label className="flex items-center gap-1.5 text-[11px] text-[#2A2118]">
           <input
             type="checkbox"
             checked={starOnly}
             onChange={(e) => setStarOnly(e.target.checked)}
-            className="accent-amber-300"
+            className="accent-[#8A6A3B]"
           />
           {t(locale, "stars")}
         </label>
@@ -67,7 +67,9 @@ export function MeridianRail() {
             type="button"
             onClick={() => setElementFilter(element === el ? undefined : el)}
             className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] ${
-              element === el ? "bg-white/15 text-zinc-100" : "bg-white/5 text-zinc-500"
+              element === el
+                ? "bg-[#8A6A3B] text-[#F7F1E4]"
+                : "border border-[#8A6A3B]/35 text-[#2A2118]"
             }`}
           >
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: ELEMENT_DOT[el] }} />
@@ -85,7 +87,9 @@ export function MeridianRail() {
             <li
               key={m.id}
               className={`overflow-hidden rounded-xl border ${
-                active === m.id ? "border-amber-200/25 bg-white/5" : "border-white/6 bg-black/20"
+                active === m.id
+                  ? "border-[#8A6A3B]/50 bg-[#F3EBD8]"
+                  : "border-[#8A6A3B]/25 bg-[#F7F1E4]"
               }`}
             >
               <button
@@ -93,15 +97,15 @@ export function MeridianRail() {
                 onClick={() => setActive(active === m.id ? null : m.id)}
                 className="flex w-full items-center gap-2 px-2.5 py-2 text-left"
               >
-                <span className="h-2.5 w-2.5 rounded-full shadow-[0_0_10px_currentColor]" style={{ background: m.color, color: m.color }} />
-                <span className="text-xs font-semibold tracking-wide text-zinc-100">{m.id}</span>
-                <span className="truncate text-[11px] text-zinc-400">
+                <span className="h-2.5 w-2.5 rounded-full" style={{ background: m.color }} />
+                <span className="text-xs font-semibold tracking-wide text-[#2A2118]">{m.id}</span>
+                <span className="truncate text-[11px] text-[#8A6A3B]">
                   {locale === "en" ? m.names.en : m.names.es}
                 </span>
-                <span className="ml-auto text-[10px] text-zinc-500">{m.pointCount}</span>
+                <span className="ml-auto text-[10px] text-[#8A6A3B]">{m.pointCount}</span>
               </button>
               {open && kids.length > 0 ? (
-                <ul className="border-t border-white/5 px-1 py-1">
+                <ul className="border-t border-[#8A6A3B]/25 px-1 py-1">
                   {kids.map((p) => (
                     <li key={p.id}>
                       <button
@@ -111,12 +115,12 @@ export function MeridianRail() {
                           setActive(p.meridianId);
                         }}
                         className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[12px] ${
-                          selected === p.id ? "bg-amber-300/12" : "hover:bg-white/5"
+                          selected === p.id ? "bg-[#8A6A3B]/15" : "hover:bg-[#8A6A3B]/10"
                         }`}
                       >
-                        <span className="font-mono text-amber-200">{p.code}</span>
-                        <span className="text-zinc-300">{p.names.pinyin}</span>
-                        <span className="hanzi ml-auto truncate text-zinc-500">{p.names.zh}</span>
+                        <span className="font-mono text-[#8A6A3B]">{p.code}</span>
+                        <span className="text-[#2A2118]">{p.names.pinyin}</span>
+                        <span className="hanzi ml-auto truncate text-[#8A6A3B]">{p.names.zh}</span>
                       </button>
                     </li>
                   ))}
@@ -126,8 +130,8 @@ export function MeridianRail() {
           );
         })}
         {filtered.some((p) => p.meridianId.startsWith("EX")) ? (
-          <li className="rounded-xl border border-white/6 bg-black/20 p-2">
-            <div className="mb-1 text-[10px] tracking-widest text-zinc-500 uppercase">Extras</div>
+          <li className="rounded-xl border border-[#8A6A3B]/25 bg-[#F7F1E4] p-2">
+            <div className="mb-1 text-[10px] tracking-widest text-[#8A6A3B] uppercase">Extras</div>
             {filtered
               .filter((p) => p.meridianId.startsWith("EX"))
               .map((p) => (
@@ -135,11 +139,11 @@ export function MeridianRail() {
                   key={p.id}
                   type="button"
                   onClick={() => setSelected(p.id)}
-                  className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[12px] hover:bg-white/5"
+                  className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[12px] text-[#2A2118] hover:bg-[#8A6A3B]/10"
                 >
-                  <span className="font-mono text-amber-200">{p.code}</span>
+                  <span className="font-mono text-[#8A6A3B]">{p.code}</span>
                   <span>{p.names.pinyin}</span>
-                  <span className="hanzi ml-auto text-zinc-500">{p.names.zh}</span>
+                  <span className="hanzi ml-auto text-[#8A6A3B]">{p.names.zh}</span>
                 </button>
               ))}
           </li>

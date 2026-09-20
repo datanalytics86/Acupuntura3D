@@ -53,11 +53,11 @@ export function Points2D() {
       })}
       {focus ? (
         <g transform={`translate(${focus.position.x} ${focus.position.y - 22})`}>
-          <rect x={-46} y={-12} width={92} height={20} rx={10} fill="#07090d" opacity={0.78} />
+          <rect x={-46} y={-12} width={92} height={20} rx={10} fill="#F7F1E4" stroke="#1E3A5F" strokeWidth={1} />
           <text
             textAnchor="middle"
             y={3}
-            fill="#fde68a"
+            fill="#1E3A5F"
             fontSize={11}
             fontFamily="Outfit, sans-serif"
           >

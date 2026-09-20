@@ -1,8 +1,8 @@
 import type { Locale } from "@/types";
 
 const es = {
-  title: "Acupuntura3D",
-  subtitle: "Atlas educativo OMS",
+  title: "Enciclopedia del cuerpo",
+  subtitle: "Atlas de meridianos",
   search: "Buscar código o pinyin…",
   meridians: "Meridianos",
   stars: "Estrellas",
@@ -27,13 +27,13 @@ const es = {
   precautions: "Precauciones",
   location: "Localización",
   sources: "Fuentes",
-  confidence: "Confianza del ancla 3D",
+  confidence: "Confianza del ancla",
   combinations: "Combinaciones didácticas",
   element: "Elemento",
   polarity: "Polaridad",
   laterality: "Lateralidad",
   close: "Cerrar",
-  mapped: "mapeados en 3D",
+  mapped: "mapeados en el atlas",
   omsPoints: "puntos OMS (nomenclatura)",
   disclaimer:
     "Herramienta educativa. No es un dispositivo médico y no sustituye a un profesional de Medicina Tradicional China.",
@@ -49,8 +49,8 @@ const es = {
 };
 
 const en: typeof es = {
-  title: "Acupuntura3D",
-  subtitle: "WHO educational atlas",
+  title: "Encyclopedia of the body",
+  subtitle: "Meridian atlas",
   search: "Search code or pinyin…",
   meridians: "Meridians",
   stars: "Star points",
@@ -75,13 +75,13 @@ const en: typeof es = {
   precautions: "Precautions",
   location: "Location",
   sources: "Sources",
-  confidence: "3D anchor confidence",
+  confidence: "Anchor confidence",
   combinations: "Teaching combinations",
   element: "Element",
   polarity: "Polarity",
   laterality: "Laterality",
   close: "Close",
-  mapped: "mapped in 3D",
+  mapped: "mapped on the atlas",
   omsPoints: "WHO points (names only)",
   disclaimer:
     "Educational tool. Not a medical device and not a substitute for a Traditional Chinese Medicine professional.",

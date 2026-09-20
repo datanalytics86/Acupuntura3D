@@ -28,21 +28,21 @@ export function Topbar() {
       <div className="panel pointer-events-auto flex items-center gap-3 rounded-2xl px-3 py-2">
         <button
           type="button"
-          className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] md:hidden"
+          className="rounded-full border border-[#8A6A3B]/35 px-2.5 py-1 text-[11px] text-[#2A2118] md:hidden"
           onClick={() => setRailOpen(!railOpen)}
         >
           {t(locale, "meridians")}
         </button>
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-300/15 text-amber-200">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F7F1E4] text-[#6B2D3C] ring-1 ring-[#8A6A3B]/35">
           <span className="hanzi text-lg leading-none">针</span>
         </div>
         <div>
-          <h1 className="display text-[1.15rem] leading-none font-semibold tracking-wide text-amber-100">
+          <h1 className="display text-[1.15rem] leading-none font-semibold tracking-wide text-[#2A2118]">
             {t(locale, "title")}
           </h1>
-          <p className="mt-0.5 text-[10px] tracking-[0.18em] text-zinc-500 uppercase">{t(locale, "subtitle")}</p>
+          <p className="mt-0.5 text-[10px] tracking-[0.18em] text-[#8A6A3B] uppercase">{t(locale, "subtitle")}</p>
         </div>
-        <div className="ml-1 flex rounded-full bg-black/30 p-0.5">
+        <div className="ml-1 flex rounded-full border border-[#8A6A3B]/35 bg-[#F7F1E4] p-0.5">
           {(["anterior", "posterior"] as const).map((v) => (
             <button
               key={v}
@@ -50,7 +50,7 @@ export function Topbar() {
               aria-pressed={atlasView === v}
               onClick={() => setAtlasView(v)}
               className={`rounded-full px-2.5 py-1 text-[11px] ${
-                atlasView === v ? "bg-amber-300/20 text-amber-100" : "text-zinc-500"
+                atlasView === v ? "bg-[#8A6A3B] text-[#F7F1E4]" : "text-[#2A2118]"
               }`}
             >
               {t(locale, v)}
@@ -60,7 +60,7 @@ export function Topbar() {
       </div>
       <div className="panel pointer-events-auto flex w-full max-w-xl flex-col gap-2 rounded-2xl p-2 md:items-end">
         <SearchBox />
-        <div className="flex flex-wrap items-center gap-1 text-[11px]">
+        <div className="flex flex-wrap items-center gap-1 text-[11px] text-[#2A2118]">
           {LAYERS.map((key) => (
             <button
               key={key}
@@ -69,21 +69,23 @@ export function Topbar() {
               onClick={() => toggle(key)}
               className={`rounded-full px-2.5 py-1 transition ${
                 layers[key]
-                  ? "bg-amber-300/18 text-amber-100"
-                  : "bg-white/5 text-zinc-500 hover:text-zinc-300"
+                  ? "bg-[#8A6A3B] text-[#F7F1E4]"
+                  : "border border-[#8A6A3B]/35 text-[#2A2118] hover:bg-[#8A6A3B]/10"
               }`}
             >
               {t(locale, LAYER_LABEL[key])}
             </button>
           ))}
-          <span className="mx-1 h-3 w-px bg-white/10" />
+          <span className="mx-1 h-3 w-px bg-[#8A6A3B]/35" />
           {(["es", "en"] as Locale[]).map((l) => (
             <button
               key={l}
               type="button"
               aria-pressed={locale === l}
               onClick={() => setLocale(l)}
-              className={`rounded-full px-2 py-1 uppercase ${locale === l ? "bg-white/10 text-amber-100" : "text-zinc-500"}`}
+              className={`rounded-full px-2 py-1 uppercase ${
+                locale === l ? "bg-[#8A6A3B] text-[#F7F1E4]" : "text-[#8A6A3B]"
+              }`}
             >
               {l}
             </button>
@@ -94,7 +96,7 @@ export function Topbar() {
               type="button"
               aria-pressed={quality === q}
               onClick={() => setQuality(q)}
-              className={`rounded-full px-2 py-1 ${quality === q ? "text-emerald-200" : "text-zinc-500"}`}
+              className={`rounded-full px-2 py-1 ${quality === q ? "text-[#2A2118] font-medium" : "text-[#8A6A3B]"}`}
             >
               {q === "high" ? t(locale, "qualityHigh") : q === "medium" ? t(locale, "qualityMedium") : t(locale, "qualityLow")}
             </button>

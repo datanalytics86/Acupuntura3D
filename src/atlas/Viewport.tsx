@@ -86,13 +86,14 @@ export function Viewport({ children }: { children: ReactNode }) {
       aria-label="Atlas corporal de meridianos"
     >
       <defs>
+        {/* Kept while Figure.tsx still paints fill="url(#skinWash)". */}
         <linearGradient id="skinWash" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#d7c4ad" />
           <stop offset="48%" stopColor="#cbb7a0" />
           <stop offset="100%" stopColor="#8f7a66" />
         </linearGradient>
       </defs>
-      <rect x={vbX - 40} y={vbY - 40} width={vbW + 80} height={vbH + 80} fill="#07090d" />
+      <rect x={vbX - 40} y={vbY - 40} width={vbW + 80} height={vbH + 80} fill="#F3EBD8" />
       {children}
     </svg>
   );
