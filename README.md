@@ -24,7 +24,21 @@ npm run build
 npm run preview
 ```
 
-`npm run build` deja el estático en `dist/`. En Vercel: framework Vite, output `dist`, `vercel.json` ya incluye fallback SPA.
+`npm run build` deja el estático en `dist/`.
+
+## Producción
+
+Deploy estático en Vercel (framework Vite, output `dist`, Node 22, **cero env vars**). Runbook y rollback: [`docs/DEPLOY.md`](docs/DEPLOY.md).
+
+URL de producción: conectar el repo en Vercel (proyecto `acupuntura3d`) o:
+
+```bash
+npx vercel login
+npx vercel link --yes --project acupuntura3d
+npx vercel deploy --prod --yes
+```
+
+CI: `.github/workflows/ci.yml` (typecheck, test, build, budget `< 8 MB`).
 
 ## Alcance de este MVP
 

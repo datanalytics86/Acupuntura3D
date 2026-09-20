@@ -12,6 +12,8 @@ Español primero. No es un dispositivo médico.
 2. Entra en Plan mode. No implementes F4 (361 puntos) en el primer ciclo.
 3. Commits atómicos por fase. TypeScript estricto.
 
+Ciclo deploy: ver docs/MEGAPROMPT_DEPLOY.md. No reabrir F4 en un ciclo de release. Ver docs/DEPLOY.md.
+
 ## Stack
 Vite + React + TypeScript + Tailwind + Zustand
 @react-three/fiber + @react-three/drei + three
