@@ -45,8 +45,8 @@
     "confidence": "low",
     "position2d": {
       "anterior": {
-        "x": 188,
-        "y": 628
+        "x": 168,
+        "y": 800
       }
     },
     "views": [
@@ -93,8 +93,8 @@
     "confidence": "low",
     "position2d": {
       "anterior": {
-        "x": 210,
-        "y": 590
+        "x": 200,
+        "y": 735
       }
     },
     "views": [
@@ -142,8 +142,8 @@
     "confidence": "low",
     "position2d": {
       "anterior": {
-        "x": 348,
-        "y": 1080
+        "x": 338,
+        "y": 1185
       }
     },
     "views": [
@@ -192,8 +192,8 @@
     "confidence": "low",
     "position2d": {
       "anterior": {
-        "x": 368,
-        "y": 1248
+        "x": 362,
+        "y": 1365
       }
     },
     "views": [
@@ -239,8 +239,8 @@
     "confidence": "low",
     "position2d": {
       "anterior": {
-        "x": 230,
-        "y": 618
+        "x": 226,
+        "y": 760
       }
     },
     "views": [
@@ -288,7 +288,7 @@
     "position2d": {
       "anterior": {
         "x": 220,
-        "y": 600
+        "y": 740
       }
     },
     "views": [
@@ -334,8 +334,8 @@
     "confidence": "low",
     "position2d": {
       "anterior": {
-        "x": 352,
-        "y": 1428
+        "x": 350,
+        "y": 1460
       }
     },
     "views": [
@@ -381,8 +381,8 @@
     "confidence": "low",
     "position2d": {
       "anterior": {
-        "x": 330,
-        "y": 1005
+        "x": 328,
+        "y": 1135
       }
     },
     "views": [
@@ -430,8 +430,8 @@
     "confidence": "low",
     "position2d": {
       "posterior": {
-        "x": 364,
-        "y": 168
+        "x": 358,
+        "y": 235
       }
     },
     "views": [
@@ -478,8 +478,8 @@
     "confidence": "low",
     "position2d": {
       "posterior": {
-        "x": 372,
-        "y": 500
+        "x": 368,
+        "y": 680
       }
     },
     "views": [
@@ -525,8 +525,8 @@
     "confidence": "low",
     "position2d": {
       "posterior": {
-        "x": 352,
-        "y": 980
+        "x": 348,
+        "y": 1120
       }
     },
     "views": [
@@ -572,8 +572,8 @@
     "confidence": "low",
     "position2d": {
       "anterior": {
-        "x": 356,
-        "y": 1320
+        "x": 358,
+        "y": 1410
       }
     },
     "views": [
@@ -621,7 +621,7 @@
     "position2d": {
       "anterior": {
         "x": 400,
-        "y": 430
+        "y": 530
       }
     },
     "views": [
@@ -669,7 +669,7 @@
     "position2d": {
       "anterior": {
         "x": 400,
-        "y": 320
+        "y": 400
       }
     },
     "views": [
@@ -715,7 +715,7 @@
     "position2d": {
       "anterior": {
         "x": 400,
-        "y": 48
+        "y": 52
       },
       "posterior": {
         "x": 400,
@@ -766,7 +766,7 @@
     "position2d": {
       "posterior": {
         "x": 400,
-        "y": 205
+        "y": 268
       }
     },
     "views": [
@@ -813,8 +813,8 @@
     "confidence": "low",
     "position2d": {
       "anterior": {
-        "x": 216,
-        "y": 575
+        "x": 210,
+        "y": 715
       }
     },
     "views": [
@@ -860,8 +860,8 @@
     "confidence": "low",
     "position2d": {
       "anterior": {
-        "x": 176,
-        "y": 640
+        "x": 158,
+        "y": 805
       }
     },
     "views": [
@@ -905,7 +905,7 @@
     "position2d": {
       "anterior": {
         "x": 400,
-        "y": 108
+        "y": 125
       }
     },
     "views": [
@@ -949,7 +949,7 @@
     "position2d": {
       "posterior": {
         "x": 382,
-        "y": 205
+        "y": 268
       }
     },
     "views": [
