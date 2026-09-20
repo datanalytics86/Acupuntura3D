@@ -44,18 +44,20 @@ CI: `.github/workflows/ci.yml` (typecheck, test, build, budget `< 8 MB`).
 
 ## Alcance de este MVP
 
-- Cuerpo procedural (cápsulas), órbita / zoom / pan
+Atlas **2D** (lámina de museo, SVG). No es un visor 3D.
+
+- Figura humana adulta de pie, vistas Anterior / Posterior
 - 14 meridianos OMS: LU LI ST SP HT SI BL KI PC TE GB LR GV CV
 - 20 puntos estrella clickables con ficha (ES primero; toggle EN)
-- Flujo de Qi (tubo + partículas), play/pause/velocidad, color Wu Xing, boost circadiano
-- Búsqueda por código y pinyin; rail de meridianos; drawer / bottom sheet
-- **No** hay 361 coordenadas 3D. Los `pointCodes` listan nomenclatura OMS; el ancla espacial es solo el seed, `confidence: low`
+- Flujo de Qi 2D (trazo + pulso), play/pause/velocidad, color Wu Xing
+- Búsqueda por código y pinyin; rail; drawer / bottom sheet
+- **No** hay 361 coordenadas. Anclas 2D solo del seed, `confidence: low`
 
 ## Stack
 
-Vite 8 + React 19.2 + TypeScript strict + Tailwind 4 + Zustand + React Three Fiber 9 + drei + three.
+Vite 8 + React 19.2 + TypeScript strict + Tailwind 4 + Zustand. Vista: SVG inline (sin R3F).
 
-React está pinneado a **19.2.x** porque `@react-three/fiber@9.7` no admite React 19.3.
+React está pinneado a **19.2.x**.
 
 ## Datos
 

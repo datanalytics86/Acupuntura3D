@@ -59,6 +59,7 @@ describe("seed data", () => {
       code: string;
       names: { zh: string };
       precautions: string[];
+      position2d?: { anterior?: { x: number; y: number } };
     }[];
     const codes = seed.map((p) => p.code);
     expect(seed.length).toBeGreaterThanOrEqual(20);
@@ -73,6 +74,7 @@ describe("seed data", () => {
     expect(sp6?.precautions.some((x) => x.toLowerCase().includes("embarazo"))).toBe(true);
     const cv12 = seed.find((p) => p.code === "CV12");
     expect(cv12?.names.zh).toBe("中脘");
+    expect(st36?.position2d?.anterior).toBeTruthy();
   });
 
   it("OMS classic pointCounts sum to 361 and GV/CV have no clockHour", () => {
@@ -89,5 +91,11 @@ describe("seed data", () => {
     expect(cv?.clockHour).toBeUndefined();
     expect(gv?.pointCodes).toHaveLength(28);
     expect(cv?.pointCodes).toHaveLength(24);
+  });
+
+  it("does not mount R3F Canvas in App", () => {
+    const app = readFileSync(join(root, "src/app/App.tsx"), "utf8");
+    expect(app).not.toMatch(/@react-three\/fiber/);
+    expect(app).toMatch(/AtlasRoot/);
   });
 });
