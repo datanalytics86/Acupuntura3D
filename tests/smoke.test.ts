@@ -99,3 +99,53 @@ describe("seed data", () => {
     expect(app).toMatch(/AtlasRoot/);
   });
 });
+
+describe("Encarta figure", () => {
+  it("keeps the 800×1600 landmark contract", async () => {
+    const { VIEW_W, VIEW_H, Y } = await import("../src/atlas/figure/landmarks");
+    expect(VIEW_W).toBe(800);
+    expect(VIEW_H).toBe(1600);
+    expect(Y.vertex).toBe(40);
+    expect(Y.sole).toBe(1480);
+  });
+
+  it("builds the body from an Encarta part kit, not a clay blob", async () => {
+    const { ANTERIOR_FILLS } = await import("../src/atlas/figure/parts/anterior");
+    const { POSTERIOR_FILLS } = await import("../src/atlas/figure/parts/posterior");
+    expect(ANTERIOR_FILLS.length).toBeGreaterThanOrEqual(24);
+    expect(POSTERIOR_FILLS.length).toBeGreaterThanOrEqual(24);
+    expect(ANTERIOR_FILLS.some((s) => s.id === "trunk")).toBe(true);
+    expect(POSTERIOR_FILLS.some((s) => s.id === "occipital" || s.id === "trunk")).toBe(true);
+    const figure = readFileSync(join(root, "src/atlas/figure/Figure.tsx"), "utf8");
+    expect(figure).toMatch(/ANTERIOR_FILLS/);
+    expect(figure).toMatch(/POSTERIOR_FILLS/);
+    expect(figure).not.toMatch(/skinWash/);
+    expect(figure).not.toMatch(/@react-three/);
+  });
+
+  it("has encyclopedia hands and feet, not paddles", () => {
+    const hands = readFileSync(join(root, "src/atlas/figure/parts/hands.ts"), "utf8");
+    const feet = readFileSync(join(root, "src/atlas/figure/parts/feet.ts"), "utf8");
+    expect(hands).toMatch(/thumb/);
+    expect(hands).toMatch(/index/);
+    expect(hands).toMatch(/pinky/);
+    expect(feet).toMatch(/toe1/);
+    expect(feet).toMatch(/toe5/);
+    expect(feet).toMatch(/heel/);
+  });
+
+  it("attributes an original plate, not a copyright scan", () => {
+    const attr = readFileSync(join(root, "public/atlas/ATTRIBUTION.md"), "utf8");
+    expect(attr.toLowerCase()).toMatch(/original/);
+    expect(attr.toLowerCase()).toMatch(/not scans/);
+  });
+
+  it("paints the atlas on encyclopedia paper", () => {
+    const css = readFileSync(join(root, "src/app/index.css"), "utf8");
+    const viewport = readFileSync(join(root, "src/atlas/Viewport.tsx"), "utf8");
+    expect(css).toMatch(/#EFE6D2/);
+    expect(css).not.toMatch(/background: #07090d/);
+    expect(viewport).toMatch(/#F3EBD8/);
+    expect(viewport).not.toMatch(/#07090d/);
+  });
+});
