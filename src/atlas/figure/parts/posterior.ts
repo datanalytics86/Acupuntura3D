@@ -243,6 +243,22 @@ export const POSTERIOR_STROKES: StrokeShape[] = [
     opacity: 0.26,
     linecap: "round",
   },
+  {
+    id: "poplitealL",
+    d: `M 308 1114 Q 330 1128 352 1114`,
+    stroke: SKIN.outline,
+    strokeWidth: 0.95,
+    opacity: 0.28,
+    linecap: "round",
+  },
+  {
+    id: "poplitealR",
+    d: `M 448 1114 Q 470 1128 492 1114`,
+    stroke: SKIN.outline,
+    strokeWidth: 0.95,
+    opacity: 0.28,
+    linecap: "round",
+  },
 ];
 
 export const POSTERIOR_CONTOURS: string[] = [TRUNK_D, ARM_L_D, ARM_R_D];
