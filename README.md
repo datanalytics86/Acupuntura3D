@@ -30,7 +30,9 @@ npm run preview
 
 Deploy estático en Vercel (framework Vite, output `dist`, Node 22, **cero env vars**). Runbook y rollback: [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
-URL de producción: conectar el repo en Vercel (proyecto `acupuntura3d`) o:
+**Producción:** https://acupuntura3d.vercel.app
+
+Si hay que redeployar:
 
 ```bash
 npx vercel login

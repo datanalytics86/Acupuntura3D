@@ -67,5 +67,6 @@ Dashboard → Deployments → el último **READY** anterior → **Instant Rollba
 
 ## URL
 
-Producción: *pendiente de `npx vercel deploy --prod` autenticado.*
-Preview: cada PR en Vercel tras conectar el repo.
+- Producción: https://acupuntura3d.vercel.app
+- Dashboard: https://vercel.com/datanalytics86s-projects/acupuntura3d
+- Preview: cada PR (repo ya conectado a Vercel).
