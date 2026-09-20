@@ -4,402 +4,956 @@
     "code": "LI4",
     "meridianId": "LI",
     "index": 4,
-    "names": { "zh": "合谷", "pinyin": "Hégǔ", "es": "Valle de la unión", "en": "Union Valley" },
+    "names": {
+      "zh": "合谷",
+      "pinyin": "Hégǔ",
+      "es": "Valle de la unión",
+      "en": "Union Valley"
+    },
     "location": {
       "anatomicEs": "Dorso de la mano, entre el I y II metacarpiano, en el punto más alto del músculo al juntar pulgar e índice.",
       "cunNote": "A mitad del II metacarpiano, lado radial."
     },
-    "functions": ["Punto Yuan del Intestino Grueso", "Dispersa viento externo en textos clásicos", "Regula el Qi de la cara y la mano"],
-    "indications": ["Uso tradicional educativo: cefalea, dolor dental, dolor de mano"],
-    "precautions": ["Evitar en embarazo (tradición clásica)"],
-    "combinations": ["LI4 + LR3 (las «cuatro puertas») en didáctica de apertura del Qi"],
+    "functions": [
+      "Punto Yuan del Intestino Grueso",
+      "Dispersa viento externo en textos clásicos",
+      "Regula el Qi de la cara y la mano"
+    ],
+    "indications": [
+      "Uso tradicional educativo: cefalea, dolor dental, dolor de mano"
+    ],
+    "precautions": [
+      "Evitar en embarazo (tradición clásica)"
+    ],
+    "combinations": [
+      "LI4 + LR3 (las «cuatro puertas») en didáctica de apertura del Qi"
+    ],
     "element": "metal",
     "polaridad": "yang",
     "laterality": "L",
     "region": "mano",
-    "position": { "x": 0.48, "y": 0.15, "z": 0.05 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.48,
+      "y": 0.15,
+      "z": 0.05
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 188,
+        "y": 628
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "LU7",
     "code": "LU7",
     "meridianId": "LU",
     "index": 7,
-    "names": { "zh": "列缺", "pinyin": "Lièquē", "es": "Secuencia quebrada", "en": "Broken Sequence" },
+    "names": {
+      "zh": "列缺",
+      "pinyin": "Lièquē",
+      "es": "Secuencia quebrada",
+      "en": "Broken Sequence"
+    },
     "location": {
       "anatomicEs": "Borde radial del antebrazo, proximal a la apófisis estiloides del radio.",
       "cunNote": "1,5 cun proximal al pliegue de la muñeca."
     },
-    "functions": ["Luo del Pulmón", "Punto de apertura de Ren Mai en la tradición de los ocho extraordinarios"],
-    "indications": ["Uso tradicional educativo: nuca, tos, vías respiratorias altas"],
+    "functions": [
+      "Luo del Pulmón",
+      "Punto de apertura de Ren Mai en la tradición de los ocho extraordinarios"
+    ],
+    "indications": [
+      "Uso tradicional educativo: nuca, tos, vías respiratorias altas"
+    ],
     "precautions": [],
     "element": "metal",
     "polaridad": "yin",
     "laterality": "L",
     "region": "muñeca",
-    "position": { "x": 0.45, "y": 0.24, "z": 0.04 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.45,
+      "y": 0.24,
+      "z": 0.04
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 210,
+        "y": 590
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "ST36",
     "code": "ST36",
     "meridianId": "ST",
     "index": 36,
-    "names": { "zh": "足三里", "pinyin": "Zúsānlǐ", "es": "Tres li del pie", "en": "Leg Three Li" },
+    "names": {
+      "zh": "足三里",
+      "pinyin": "Zúsānlǐ",
+      "es": "Tres li del pie",
+      "en": "Leg Three Li"
+    },
     "location": {
       "anatomicEs": "Cara anterolateral de la pierna, lateral a la cresta tibial.",
       "cunNote": "3 cun distal a ST35 (ojo de la rodilla), un dedo lateral a la tibia."
     },
-    "functions": ["He inferior del Estómago", "Tonifica Qi y sangre en la didáctica clásica", "Harmoniza el jiao medio"],
-    "indications": ["Uso tradicional educativo: digestión, fatiga, fortalecimiento general"],
+    "functions": [
+      "He inferior del Estómago",
+      "Tonifica Qi y sangre en la didáctica clásica",
+      "Harmoniza el jiao medio"
+    ],
+    "indications": [
+      "Uso tradicional educativo: digestión, fatiga, fortalecimiento general"
+    ],
     "precautions": [],
     "element": "earth",
     "polaridad": "yang",
     "laterality": "L",
     "region": "pierna",
-    "position": { "x": 0.13, "y": -0.52, "z": 0.07 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.13,
+      "y": -0.52,
+      "z": 0.07
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 348,
+        "y": 1080
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "SP6",
     "code": "SP6",
     "meridianId": "SP",
     "index": 6,
-    "names": { "zh": "三阴交", "pinyin": "Sānyīnjiāo", "es": "Cruce de los tres yin", "en": "Three Yin Intersection" },
+    "names": {
+      "zh": "三阴交",
+      "pinyin": "Sānyīnjiāo",
+      "es": "Cruce de los tres yin",
+      "en": "Three Yin Intersection"
+    },
     "location": {
       "anatomicEs": "Cara medial de la pierna, posterior al borde medial de la tibia.",
       "cunNote": "3 cun proximal al maléolo medial."
     },
-    "functions": ["Cruce de Bazo, Hígado y Riñón", "Regula el jiao inferior en la enseñanza clásica"],
-    "indications": ["Uso tradicional educativo: ginecología educativa, sueño, digestión"],
-    "precautions": ["Evitar en embarazo (tradición clásica)"],
+    "functions": [
+      "Cruce de Bazo, Hígado y Riñón",
+      "Regula el jiao inferior en la enseñanza clásica"
+    ],
+    "indications": [
+      "Uso tradicional educativo: ginecología educativa, sueño, digestión"
+    ],
+    "precautions": [
+      "Evitar en embarazo (tradición clásica)"
+    ],
     "element": "earth",
     "polaridad": "yin",
     "laterality": "L",
     "region": "pierna",
-    "position": { "x": 0.08, "y": -0.7, "z": 0.0 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.08,
+      "y": -0.7,
+      "z": 0
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 368,
+        "y": 1248
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "HT7",
     "code": "HT7",
     "meridianId": "HT",
     "index": 7,
-    "names": { "zh": "神门", "pinyin": "Shénmén", "es": "Puerta del shen", "en": "Spirit Gate" },
+    "names": {
+      "zh": "神门",
+      "pinyin": "Shénmén",
+      "es": "Puerta del shen",
+      "en": "Spirit Gate"
+    },
     "location": {
       "anatomicEs": "Pliegue palmar de la muñeca, lado cubital, radial al tendón del flexor cubital del carpo."
     },
-    "functions": ["Yuan y Shu del Corazón", "Calma el shen en la didáctica clásica"],
-    "indications": ["Uso tradicional educativo: inquietud, insomnio, palpitaciones educativas"],
+    "functions": [
+      "Yuan y Shu del Corazón",
+      "Calma el shen en la didáctica clásica"
+    ],
+    "indications": [
+      "Uso tradicional educativo: inquietud, insomnio, palpitaciones educativas"
+    ],
     "precautions": [],
     "element": "fire",
     "polaridad": "yin",
     "laterality": "L",
     "region": "muñeca",
-    "position": { "x": 0.43, "y": 0.19, "z": -0.01 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.43,
+      "y": 0.19,
+      "z": -0.01
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 230,
+        "y": 618
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "PC6",
     "code": "PC6",
     "meridianId": "PC",
     "index": 6,
-    "names": { "zh": "内关", "pinyin": "Nèiguān", "es": "Barrera interna", "en": "Inner Pass" },
+    "names": {
+      "zh": "内关",
+      "pinyin": "Nèiguān",
+      "es": "Barrera interna",
+      "en": "Inner Pass"
+    },
     "location": {
       "anatomicEs": "Cara palmar del antebrazo, entre palmar largo y flexor radial del carpo.",
       "cunNote": "2 cun proximal al pliegue de la muñeca."
     },
-    "functions": ["Luo del Pericardio", "Punto de apertura de Yin Wei"],
-    "indications": ["Uso tradicional educativo: náusea, opresión torácica, ansiedad educativa"],
+    "functions": [
+      "Luo del Pericardio",
+      "Punto de apertura de Yin Wei"
+    ],
+    "indications": [
+      "Uso tradicional educativo: náusea, opresión torácica, ansiedad educativa"
+    ],
     "precautions": [],
     "element": "fire",
     "polaridad": "yin",
     "laterality": "L",
     "region": "antebrazo",
-    "position": { "x": 0.42, "y": 0.25, "z": 0.03 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.42,
+      "y": 0.25,
+      "z": 0.03
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 220,
+        "y": 600
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "LR3",
     "code": "LR3",
     "meridianId": "LR",
     "index": 3,
-    "names": { "zh": "太冲", "pinyin": "Tàichōng", "es": "Gran asalto", "en": "Great Surge" },
+    "names": {
+      "zh": "太冲",
+      "pinyin": "Tàichōng",
+      "es": "Gran asalto",
+      "en": "Great Surge"
+    },
     "location": {
       "anatomicEs": "Dorso del pie, entre el I y II metatarsiano, en la depresión distal a la unión de las bases."
     },
-    "functions": ["Yuan y Shu del Hígado", "Suaviza el Qi de Hígado en la enseñanza clásica"],
-    "indications": ["Uso tradicional educativo: cefalea de vértex, irritabilidad educativa, distensión"],
+    "functions": [
+      "Yuan y Shu del Hígado",
+      "Suaviza el Qi de Hígado en la enseñanza clásica"
+    ],
+    "indications": [
+      "Uso tradicional educativo: cefalea de vértex, irritabilidad educativa, distensión"
+    ],
     "precautions": [],
     "element": "wood",
     "polaridad": "yin",
     "laterality": "L",
     "region": "pie",
-    "position": { "x": 0.09, "y": -0.88, "z": 0.09 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.09,
+      "y": -0.88,
+      "z": 0.09
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 352,
+        "y": 1428
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "GB34",
     "code": "GB34",
     "meridianId": "GB",
     "index": 34,
-    "names": { "zh": "阳陵泉", "pinyin": "Yánglíngquán", "es": "Fuente de la colina yang", "en": "Yang Mound Spring" },
+    "names": {
+      "zh": "阳陵泉",
+      "pinyin": "Yánglíngquán",
+      "es": "Fuente de la colina yang",
+      "en": "Yang Mound Spring"
+    },
     "location": {
       "anatomicEs": "Cara lateral de la pierna, en la depresión anterior e inferior a la cabeza del peroné."
     },
-    "functions": ["He de Vesícula Biliar", "Punto Hui de tendones y músculos"],
-    "indications": ["Uso tradicional educativo: costado, tendones, movilidad de rodilla y cadera"],
+    "functions": [
+      "He de Vesícula Biliar",
+      "Punto Hui de tendones y músculos"
+    ],
+    "indications": [
+      "Uso tradicional educativo: costado, tendones, movilidad de rodilla y cadera"
+    ],
     "precautions": [],
     "element": "wood",
     "polaridad": "yang",
     "laterality": "L",
     "region": "pierna",
-    "position": { "x": 0.15, "y": -0.46, "z": 0.04 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.15,
+      "y": -0.46,
+      "z": 0.04
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 330,
+        "y": 1005
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "GB20",
     "code": "GB20",
     "meridianId": "GB",
     "index": 20,
-    "names": { "zh": "风池", "pinyin": "Fēngchí", "es": "Estanque del viento", "en": "Wind Pool" },
+    "names": {
+      "zh": "风池",
+      "pinyin": "Fēngchí",
+      "es": "Estanque del viento",
+      "en": "Wind Pool"
+    },
     "location": {
       "anatomicEs": "Nuca, en la depresión entre el esternocleidomastoideo y el trapecio, a la altura de la depresión suboccipital."
     },
-    "functions": ["Dispersa viento en la didáctica de cabeza y ojos", "Conecta con el cerebro en la tradición de los puntos de nuca"],
-    "indications": ["Uso tradicional educativo: nuca rígida, cefalea occipital, ojos"],
-    "precautions": ["Profundidad y dirección: zona delicada; solo contexto educativo"],
+    "functions": [
+      "Dispersa viento en la didáctica de cabeza y ojos",
+      "Conecta con el cerebro en la tradición de los puntos de nuca"
+    ],
+    "indications": [
+      "Uso tradicional educativo: nuca rígida, cefalea occipital, ojos"
+    ],
+    "precautions": [
+      "Profundidad y dirección: zona delicada; solo contexto educativo"
+    ],
     "element": "wood",
     "polaridad": "yang",
     "laterality": "L",
     "region": "nuca",
-    "position": { "x": 0.055, "y": 0.7, "z": -0.07 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.055,
+      "y": 0.7,
+      "z": -0.07
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "posterior": {
+        "x": 364,
+        "y": 168
+      }
+    },
+    "views": [
+      "posterior"
+    ]
   },
   {
     "id": "BL23",
     "code": "BL23",
     "meridianId": "BL",
     "index": 23,
-    "names": { "zh": "肾俞", "pinyin": "Shènshū", "es": "Shu de riñón", "en": "Kidney Shu" },
+    "names": {
+      "zh": "肾俞",
+      "pinyin": "Shènshū",
+      "es": "Shu de riñón",
+      "en": "Kidney Shu"
+    },
     "location": {
       "anatomicEs": "Región lumbar, a 1,5 cun lateral de la apófisis espinosa de L2.",
       "cunNote": "1,5 cun lateral a la línea media posterior."
     },
-    "functions": ["Bei Shu de Riñón", "Fortalece la raíz en la didáctica de zangfu"],
-    "indications": ["Uso tradicional educativo: lumbar, oídos, rodillas, vitalidad educativa"],
+    "functions": [
+      "Bei Shu de Riñón",
+      "Fortalece la raíz en la didáctica de zangfu"
+    ],
+    "indications": [
+      "Uso tradicional educativo: lumbar, oídos, rodillas, vitalidad educativa"
+    ],
     "precautions": [],
     "element": "water",
     "polaridad": "yang",
     "laterality": "L",
     "region": "lumbar",
-    "position": { "x": 0.045, "y": 0.1, "z": -0.08 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.045,
+      "y": 0.1,
+      "z": -0.08
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "posterior": {
+        "x": 372,
+        "y": 500
+      }
+    },
+    "views": [
+      "posterior"
+    ]
   },
   {
     "id": "BL40",
     "code": "BL40",
     "meridianId": "BL",
     "index": 40,
-    "names": { "zh": "委中", "pinyin": "Wěizhōng", "es": "Centro del pliegue", "en": "Middle of the Crook" },
+    "names": {
+      "zh": "委中",
+      "pinyin": "Wěizhōng",
+      "es": "Centro del pliegue",
+      "en": "Middle of the Crook"
+    },
     "location": {
       "anatomicEs": "Punto medio del pliegue poplíteo, entre los tendones de bíceps femoral y semitendinoso."
     },
-    "functions": ["He de Vejiga", "Comanda lumbar y rodilla en la tradición de los cuatro puntos de comando"],
-    "indications": ["Uso tradicional educativo: lumbar, hueco poplíteo, calor de verano educativo"],
+    "functions": [
+      "He de Vejiga",
+      "Comanda lumbar y rodilla en la tradición de los cuatro puntos de comando"
+    ],
+    "indications": [
+      "Uso tradicional educativo: lumbar, hueco poplíteo, calor de verano educativo"
+    ],
     "precautions": [],
     "element": "water",
     "polaridad": "yang",
     "laterality": "L",
     "region": "hueco poplíteo",
-    "position": { "x": 0.11, "y": -0.4, "z": -0.05 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.11,
+      "y": -0.4,
+      "z": -0.05
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "posterior": {
+        "x": 352,
+        "y": 980
+      }
+    },
+    "views": [
+      "posterior"
+    ]
   },
   {
     "id": "KI3",
     "code": "KI3",
     "meridianId": "KI",
     "index": 3,
-    "names": { "zh": "太溪", "pinyin": "Tàixī", "es": "Gran arroyo", "en": "Great Stream" },
+    "names": {
+      "zh": "太溪",
+      "pinyin": "Tàixī",
+      "es": "Gran arroyo",
+      "en": "Great Stream"
+    },
     "location": {
       "anatomicEs": "Depresión entre el maléolo medial y el tendón de Aquiles, a la altura de la punta del maléolo."
     },
-    "functions": ["Yuan y Shu de Riñón", "Nutre yin de Riñón en la didáctica clásica"],
-    "indications": ["Uso tradicional educativo: lumbar, oídos, garganta seca educativa"],
+    "functions": [
+      "Yuan y Shu de Riñón",
+      "Nutre yin de Riñón en la didáctica clásica"
+    ],
+    "indications": [
+      "Uso tradicional educativo: lumbar, oídos, garganta seca educativa"
+    ],
     "precautions": [],
     "element": "water",
     "polaridad": "yin",
     "laterality": "L",
     "region": "tobillo",
-    "position": { "x": 0.08, "y": -0.78, "z": -0.03 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.08,
+      "y": -0.78,
+      "z": -0.03
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 356,
+        "y": 1320
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "CV12",
     "code": "CV12",
     "meridianId": "CV",
     "index": 12,
-    "names": { "zh": "中脘", "pinyin": "Zhōngwǎn", "es": "Cavidad media", "en": "Middle Cavity" },
+    "names": {
+      "zh": "中脘",
+      "pinyin": "Zhōngwǎn",
+      "es": "Cavidad media",
+      "en": "Middle Cavity"
+    },
     "location": {
       "anatomicEs": "Línea media anterior del abdomen, entre apófisis xifoides y ombligo.",
       "cunNote": "4 cun superior al ombligo."
     },
-    "functions": ["Mu de Estómago", "Hui de fu", "Harmoniza el jiao medio"],
-    "indications": ["Uso tradicional educativo: epigastrio, digestión, distensión"],
+    "functions": [
+      "Mu de Estómago",
+      "Hui de fu",
+      "Harmoniza el jiao medio"
+    ],
+    "indications": [
+      "Uso tradicional educativo: epigastrio, digestión, distensión"
+    ],
     "precautions": [],
     "polaridad": "yin",
     "laterality": "C",
     "region": "abdomen",
-    "position": { "x": 0, "y": 0.14, "z": 0.11 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0,
+      "y": 0.14,
+      "z": 0.11
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 400,
+        "y": 430
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "CV17",
     "code": "CV17",
     "meridianId": "CV",
     "index": 17,
-    "names": { "zh": "膻中", "pinyin": "Dànzhōng", "es": "Centro del pecho", "en": "Chest Center" },
+    "names": {
+      "zh": "膻中",
+      "pinyin": "Dànzhōng",
+      "es": "Centro del pecho",
+      "en": "Chest Center"
+    },
     "location": {
       "anatomicEs": "Línea media del esternón, a la altura del cuarto espacio intercostal.",
       "cunNote": "Nivel de los pezones en el maniquí de referencia."
     },
-    "functions": ["Mu de Pericardio", "Hui de Qi", "Desciende Qi rebelde de pecho"],
-    "indications": ["Uso tradicional educativo: opresión torácica, asma educativa, pecho"],
+    "functions": [
+      "Mu de Pericardio",
+      "Hui de Qi",
+      "Desciende Qi rebelde de pecho"
+    ],
+    "indications": [
+      "Uso tradicional educativo: opresión torácica, asma educativa, pecho"
+    ],
     "precautions": [],
     "polaridad": "yin",
     "laterality": "C",
     "region": "tórax",
-    "position": { "x": 0, "y": 0.34, "z": 0.11 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0,
+      "y": 0.34,
+      "z": 0.11
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 400,
+        "y": 320
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "GV20",
     "code": "GV20",
     "meridianId": "GV",
     "index": 20,
-    "names": { "zh": "百会", "pinyin": "Bǎihuì", "es": "Cien reuniones", "en": "Hundred Meetings" },
+    "names": {
+      "zh": "百会",
+      "pinyin": "Bǎihuì",
+      "es": "Cien reuniones",
+      "en": "Hundred Meetings"
+    },
     "location": {
       "anatomicEs": "Vértice del cráneo, en la línea media, en la intersección con la línea que une los ápices de las orejas."
     },
-    "functions": ["Mar de los yang", "Eleva el yang en la didáctica de Du Mai"],
-    "indications": ["Uso tradicional educativo: vértice, concentración, prolapso educativo"],
+    "functions": [
+      "Mar de los yang",
+      "Eleva el yang en la didáctica de Du Mai"
+    ],
+    "indications": [
+      "Uso tradicional educativo: vértice, concentración, prolapso educativo"
+    ],
     "precautions": [],
     "polaridad": "yang",
     "laterality": "C",
     "region": "vértice",
-    "position": { "x": 0, "y": 0.9, "z": 0.0 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0,
+      "y": 0.9,
+      "z": 0
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 400,
+        "y": 48
+      },
+      "posterior": {
+        "x": 400,
+        "y": 48
+      }
+    },
+    "views": [
+      "anterior",
+      "posterior"
+    ]
   },
   {
     "id": "GV14",
     "code": "GV14",
     "meridianId": "GV",
     "index": 14,
-    "names": { "zh": "大椎", "pinyin": "Dàzhuī", "es": "Gran vértebra", "en": "Great Vertebra" },
+    "names": {
+      "zh": "大椎",
+      "pinyin": "Dàzhuī",
+      "es": "Gran vértebra",
+      "en": "Great Vertebra"
+    },
     "location": {
       "anatomicEs": "Línea media posterior, en la depresión inferior a la apófisis espinosa de C7."
     },
-    "functions": ["Reunión de los yang", "Libera el exterior en la didáctica de viento-frío/calor"],
-    "indications": ["Uso tradicional educativo: nuca, fiebre educativa, rigidez de hombros"],
+    "functions": [
+      "Reunión de los yang",
+      "Libera el exterior en la didáctica de viento-frío/calor"
+    ],
+    "indications": [
+      "Uso tradicional educativo: nuca, fiebre educativa, rigidez de hombros"
+    ],
     "precautions": [],
     "polaridad": "yang",
     "laterality": "C",
     "region": "C7",
-    "position": { "x": 0, "y": 0.61, "z": -0.07 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0,
+      "y": 0.61,
+      "z": -0.07
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "posterior": {
+        "x": 400,
+        "y": 205
+      }
+    },
+    "views": [
+      "posterior"
+    ]
   },
   {
     "id": "TE5",
     "code": "TE5",
     "meridianId": "TE",
     "index": 5,
-    "names": { "zh": "外关", "pinyin": "Wàiguān", "es": "Barrera externa", "en": "Outer Pass" },
+    "names": {
+      "zh": "外关",
+      "pinyin": "Wàiguān",
+      "es": "Barrera externa",
+      "en": "Outer Pass"
+    },
     "location": {
       "anatomicEs": "Cara dorsal del antebrazo, entre radio y cúbito.",
       "cunNote": "2 cun proximal al pliegue dorsal de la muñeca."
     },
-    "functions": ["Luo del Triple Recalentador", "Punto de apertura de Yang Wei"],
-    "indications": ["Uso tradicional educativo: sien, oído, calor externo educativo"],
+    "functions": [
+      "Luo del Triple Recalentador",
+      "Punto de apertura de Yang Wei"
+    ],
+    "indications": [
+      "Uso tradicional educativo: sien, oído, calor externo educativo"
+    ],
     "precautions": [],
     "element": "fire",
     "polaridad": "yang",
     "laterality": "L",
     "region": "antebrazo",
-    "position": { "x": 0.43, "y": 0.26, "z": 0.01 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.43,
+      "y": 0.26,
+      "z": 0.01
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 216,
+        "y": 575
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "SI3",
     "code": "SI3",
     "meridianId": "SI",
     "index": 3,
-    "names": { "zh": "后溪", "pinyin": "Hòuxī", "es": "Arroyo posterior", "en": "Back Stream" },
+    "names": {
+      "zh": "后溪",
+      "pinyin": "Hòuxī",
+      "es": "Arroyo posterior",
+      "en": "Back Stream"
+    },
     "location": {
       "anatomicEs": "Borde cubital de la mano, proximal a la cabeza del V metacarpiano, en el extremo del pliegue palmar al cerrar el puño."
     },
-    "functions": ["Shu del Intestino Delgado", "Punto de apertura de Du Mai"],
-    "indications": ["Uso tradicional educativo: nuca, columna, mano"],
+    "functions": [
+      "Shu del Intestino Delgado",
+      "Punto de apertura de Du Mai"
+    ],
+    "indications": [
+      "Uso tradicional educativo: nuca, columna, mano"
+    ],
     "precautions": [],
     "element": "fire",
     "polaridad": "yang",
     "laterality": "L",
     "region": "mano",
-    "position": { "x": 0.47, "y": 0.14, "z": -0.03 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "WHO Standard Acupuncture Point Locations (2008)", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.47,
+      "y": 0.14,
+      "z": -0.03
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "WHO Standard Acupuncture Point Locations (2008)",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 176,
+        "y": 640
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "EX-HN3",
     "code": "EX-HN3",
     "meridianId": "EX-HN",
     "index": 3,
-    "names": { "zh": "印堂", "pinyin": "Yìntáng", "es": "Sello del aula", "en": "Hall of Impression" },
+    "names": {
+      "zh": "印堂",
+      "pinyin": "Yìntáng",
+      "es": "Sello del aula",
+      "en": "Hall of Impression"
+    },
     "location": {
       "anatomicEs": "Línea media de la frente, a mitad de camino entre las cejas (entrecejo)."
     },
-    "functions": ["Calma el shen en la didáctica extra", "Abre la nariz en textos educativos"],
-    "indications": ["Uso tradicional educativo: frente, insomnio educativo, congestión nasal educativa"],
+    "functions": [
+      "Calma el shen en la didáctica extra",
+      "Abre la nariz en textos educativos"
+    ],
+    "indications": [
+      "Uso tradicional educativo: frente, insomnio educativo, congestión nasal educativa"
+    ],
     "precautions": [],
     "laterality": "C",
     "region": "entrecejo",
-    "position": { "x": 0, "y": 0.79, "z": 0.09 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0,
+      "y": 0.79,
+      "z": 0.09
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "anterior": {
+        "x": 400,
+        "y": 108
+      }
+    },
+    "views": [
+      "anterior"
+    ]
   },
   {
     "id": "EX-B1",
     "code": "EX-B1",
     "meridianId": "EX-B",
     "index": 1,
-    "names": { "zh": "定喘", "pinyin": "Dìngchuǎn", "es": "Calmar el asma", "en": "Calm Dyspnea" },
+    "names": {
+      "zh": "定喘",
+      "pinyin": "Dìngchuǎn",
+      "es": "Calmar el asma",
+      "en": "Calm Dyspnea"
+    },
     "location": {
       "anatomicEs": "0,5 cun lateral a la depresión inferior a C7 (GV14).",
       "cunNote": "Paravertebral de C7."
     },
-    "functions": ["Punto extra para disnea en la tradición educativa"],
-    "indications": ["Uso tradicional educativo: sibilancias educativas, nuca"],
+    "functions": [
+      "Punto extra para disnea en la tradición educativa"
+    ],
+    "indications": [
+      "Uso tradicional educativo: sibilancias educativas, nuca"
+    ],
     "precautions": [],
     "laterality": "L",
     "region": "paravertebral C7",
-    "position": { "x": 0.025, "y": 0.61, "z": -0.07 },
-    "sources": ["WHO Standard Acupuncture Nomenclature", "GB/T 12346"],
-    "confidence": "low"
+    "position": {
+      "x": 0.025,
+      "y": 0.61,
+      "z": -0.07
+    },
+    "sources": [
+      "WHO Standard Acupuncture Nomenclature",
+      "GB/T 12346"
+    ],
+    "confidence": "low",
+    "position2d": {
+      "posterior": {
+        "x": 382,
+        "y": 205
+      }
+    },
+    "views": [
+      "posterior"
+    ]
   }
 ]

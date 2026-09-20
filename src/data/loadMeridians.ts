@@ -1,5 +1,6 @@
 import meridiansJson from "@data/meridians.json";
 import type { Meridian } from "@/types";
+import { MERIDIAN_ANCHORS_2D } from "@/atlas/meridianAnchors";
 import { MERIDIAN_IDS, seriesCodes } from "./ids";
 
 export function loadMeridians(): Meridian[] {
@@ -16,5 +17,6 @@ export function loadMeridians(): Meridian[] {
   return rows.map((m) => ({
     ...m,
     pointCodes: m.pointCodes.length === m.pointCount ? m.pointCodes : seriesCodes(m.id, m.pointCount),
+    anchors2d: m.anchors2d ?? MERIDIAN_ANCHORS_2D[m.id],
   }));
 }
