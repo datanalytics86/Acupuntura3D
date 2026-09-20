@@ -20,6 +20,8 @@ export function Topbar() {
   const toggle = useViewerStore((s) => s.toggleLayer);
   const railOpen = useViewerStore((s) => s.railOpen);
   const setRailOpen = useViewerStore((s) => s.setRailOpen);
+  const atlasView = useViewerStore((s) => s.atlasView);
+  const setAtlasView = useViewerStore((s) => s.setAtlasView);
 
   return (
     <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-2 p-3 md:flex-row md:items-start md:justify-between">
@@ -39,6 +41,21 @@ export function Topbar() {
             {t(locale, "title")}
           </h1>
           <p className="mt-0.5 text-[10px] tracking-[0.18em] text-zinc-500 uppercase">{t(locale, "subtitle")}</p>
+        </div>
+        <div className="ml-1 flex rounded-full bg-black/30 p-0.5">
+          {(["anterior", "posterior"] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              aria-pressed={atlasView === v}
+              onClick={() => setAtlasView(v)}
+              className={`rounded-full px-2.5 py-1 text-[11px] ${
+                atlasView === v ? "bg-amber-300/20 text-amber-100" : "text-zinc-500"
+              }`}
+            >
+              {t(locale, v)}
+            </button>
+          ))}
         </div>
       </div>
       <div className="panel pointer-events-auto flex w-full max-w-xl flex-col gap-2 rounded-2xl p-2 md:items-end">

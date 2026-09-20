@@ -110,3 +110,20 @@ input[type="search"]::-webkit-search-cancel-button {
 .scroll-thin::-webkit-scrollbar-track {
   background: transparent;
 }
+
+.qi-dash {
+  stroke-dasharray: 16 12;
+  animation: qi-flow 2.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qi-dash {
+    animation: none;
+  }
+}
+
+@keyframes qi-flow {
+  to {
+    stroke-dashoffset: -56;
+  }
+}

@@ -4,6 +4,12 @@ export type Polaridad = "yin" | "yang";
 export type Elemento = "wood" | "fire" | "earth" | "metal" | "water";
 export type QualityTier = "high" | "medium" | "low";
 export type Locale = "es" | "en" | "zh";
+export type AtlasView = "anterior" | "posterior";
+
+export interface Point2D {
+  x: number;
+  y: number;
+}
 
 export interface Names {
   zh: string;
@@ -28,6 +34,11 @@ export interface Acupoint {
   laterality: Laterality;
   region: string;
   position?: { x: number; y: number; z: number };
+  position2d?: {
+    anterior?: Point2D;
+    posterior?: Point2D;
+  };
+  views?: AtlasView[];
   sources: string[];
   confidence: Confidence;
 }
@@ -50,6 +61,7 @@ export interface Meridian {
   pointCount: number;
   pointCodes: string[];
   pathAnchors: { x: number; y: number; z: number }[];
+  anchors2d?: { anterior?: Point2D[]; posterior?: Point2D[] };
   flow: MeridianFlow;
   laterality: "bilateral" | "midline";
   color: string;
@@ -73,4 +85,8 @@ export interface ViewerState {
   qualityTier: QualityTier;
   searchQuery: string;
   filters: { element?: Elemento; region?: string; starOnly: boolean };
+  atlasView: AtlasView;
+  atlasZoom: number;
+  atlasPan: Point2D;
+  bothSides: boolean;
 }

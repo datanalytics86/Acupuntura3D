@@ -5,6 +5,8 @@ export type {
   Elemento,
   QualityTier,
   Locale,
+  AtlasView,
+  Point2D,
   Names,
   Acupoint,
   MeridianFlow,

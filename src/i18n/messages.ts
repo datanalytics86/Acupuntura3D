@@ -44,6 +44,8 @@ const es = {
   water: "Agua",
   yin: "Yin",
   yang: "Yang",
+  anterior: "Anterior",
+  posterior: "Posterior",
 };
 
 const en: typeof es = {
@@ -90,6 +92,8 @@ const en: typeof es = {
   water: "Water",
   yin: "Yin",
   yang: "Yang",
+  anterior: "Anterior",
+  posterior: "Posterior",
 };
 
 export const MESSAGES: Record<Exclude<Locale, "zh">, typeof es> = { es, en };

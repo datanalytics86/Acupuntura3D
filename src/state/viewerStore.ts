@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Elemento, Locale, QualityTier, ViewerState } from "@/types";
+import type { AtlasView, Elemento, Locale, Point2D, QualityTier, ViewerState } from "@/types";
 import { detectQuality, prefersReducedMotion } from "@/lib/quality";
 
 const QUALITY_KEY = "acu3d.quality";
@@ -35,6 +35,11 @@ interface ViewerActions {
   setStarOnly: (v: boolean) => void;
   setRailOpen: (v: boolean) => void;
   followQi: (meridianId: string) => void;
+  setAtlasView: (v: AtlasView) => void;
+  setAtlasZoom: (z: number) => void;
+  setAtlasPan: (p: Point2D) => void;
+  resetAtlasCamera: () => void;
+  setBothSides: (v: boolean) => void;
 }
 
 const initialHour = new Date().getHours();
@@ -57,6 +62,10 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set) => ({
   qualityTier: initialQuality(),
   searchQuery: "",
   filters: { starOnly: true },
+  atlasView: "anterior",
+  atlasZoom: 1,
+  atlasPan: { x: 400, y: 800 },
+  bothSides: true,
   railOpen: true,
   setSelected: (id) => set({ selectedPointId: id }),
   setHovered: (id) => set({ hoveredPointId: id }),
@@ -93,4 +102,9 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set) => ({
         labels: false,
       },
     }),
+  setAtlasView: (v) => set({ atlasView: v }),
+  setAtlasZoom: (z) => set({ atlasZoom: Math.min(6, Math.max(1, z)) }),
+  setAtlasPan: (p) => set({ atlasPan: p }),
+  resetAtlasCamera: () => set({ atlasZoom: 1, atlasPan: { x: 400, y: 800 } }),
+  setBothSides: (v) => set({ bothSides: v }),
 }));
