@@ -1,107 +1,95 @@
+import { CX } from "./landmarks";
 import {
-  ANTERIOR_ARM_L_D,
-  ANTERIOR_ARM_R_D,
-  ANTERIOR_TRUNK_D,
-} from "./anteriorSilhouette";
-import {
-  POSTERIOR_ARM_L_D,
-  POSTERIOR_ARM_R_D,
-  POSTERIOR_TRUNK_D,
-} from "./posteriorSilhouette";
-import {
-  EAR_L,
-  EAR_R,
-  GLUTEAL_FOLD,
-  HAIR_CAP,
-  POPLITEAL,
-  SPINE_LINE,
-  STERNAL_LINE,
-  interiorPaths,
-} from "./interiorShading";
-import { CX, Y } from "./landmarks";
+  ANTERIOR_CONTOURS,
+  ANTERIOR_FILLS,
+  ANTERIOR_STROKES,
+  POSTERIOR_CONTOURS,
+  POSTERIOR_FILLS,
+  POSTERIOR_STROKES,
+  SKIN,
+} from "./parts";
 import { useViewerStore } from "@/state/viewerStore";
+
+function Gradients() {
+  return (
+    <defs>
+      <linearGradient id="encSkin" x1="0.18" y1="0" x2="0.92" y2="1">
+        <stop offset="0%" stopColor="#F6D7C0" />
+        <stop offset="45%" stopColor="#E8C4A8" />
+        <stop offset="100%" stopColor="#C48A6A" />
+      </linearGradient>
+      <linearGradient id="encSkinL" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#F6D7C0" />
+        <stop offset="50%" stopColor="#E8C4A8" />
+        <stop offset="100%" stopColor="#D09A78" />
+      </linearGradient>
+      <linearGradient id="encSkinR" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#E8C4A8" />
+        <stop offset="40%" stopColor="#D09A78" />
+        <stop offset="100%" stopColor="#C48A6A" />
+      </linearGradient>
+      <radialGradient id="encMuscle" cx="0.34" cy="0.28" r="0.72">
+        <stop offset="0%" stopColor="#C48A6A" stopOpacity="0.06" />
+        <stop offset="65%" stopColor="#C48A6A" stopOpacity="0.22" />
+        <stop offset="100%" stopColor="#A56B50" stopOpacity="0.16" />
+      </radialGradient>
+      <linearGradient id="encHair" x1="0.3" y1="0" x2="0.75" y2="1">
+        <stop offset="0%" stopColor="#5A4036" />
+        <stop offset="100%" stopColor="#3D2A22" />
+      </linearGradient>
+      <radialGradient id="encGround" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0%" stopColor="#8A6A3B" stopOpacity="0.28" />
+        <stop offset="100%" stopColor="#8A6A3B" stopOpacity="0" />
+      </radialGradient>
+    </defs>
+  );
+}
 
 export function Figure() {
   const view = useViewerStore((s) => s.atlasView);
   const showBody = useViewerStore((s) => s.visibleLayers.body);
   if (!showBody) return null;
-  const trunk = view === "anterior" ? ANTERIOR_TRUNK_D : POSTERIOR_TRUNK_D;
-  const armL = view === "anterior" ? ANTERIOR_ARM_L_D : POSTERIOR_ARM_L_D;
-  const armR = view === "anterior" ? ANTERIOR_ARM_R_D : POSTERIOR_ARM_R_D;
-  const shade = interiorPaths(view);
-  const clip = view === "anterior" ? "url(#clipAnterior)" : "url(#clipPosterior)";
+
+  const fills = view === "anterior" ? ANTERIOR_FILLS : POSTERIOR_FILLS;
+  const strokes = view === "anterior" ? ANTERIOR_STROKES : POSTERIOR_STROKES;
+  const contours = view === "anterior" ? ANTERIOR_CONTOURS : POSTERIOR_CONTOURS;
 
   return (
     <g>
-      <defs>
-        <clipPath id="clipAnterior">
-          <path d={ANTERIOR_TRUNK_D} />
-          <path d={ANTERIOR_ARM_L_D} />
-          <path d={ANTERIOR_ARM_R_D} />
-        </clipPath>
-        <clipPath id="clipPosterior">
-          <path d={POSTERIOR_TRUNK_D} />
-          <path d={POSTERIOR_ARM_L_D} />
-          <path d={POSTERIOR_ARM_R_D} />
-        </clipPath>
-        <linearGradient id="sideShade" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#5c4638" stopOpacity="0.2" />
-          <stop offset="42%" stopColor="#5c4638" stopOpacity="0" />
-          <stop offset="100%" stopColor="#5c4638" stopOpacity="0.07" />
-        </linearGradient>
-      </defs>
-      <ellipse cx={CX} cy={820} rx={250} ry={680} fill="#cbb7a0" opacity={0.06} />
-      <path d={trunk} fill="url(#skinWash)" />
-      <path d={armL} fill="url(#skinWash)" />
-      <path d={armR} fill="url(#skinWash)" />
-      <g clipPath={clip}>
-        <rect x={210} y={40} width={190} height={1460} fill="url(#sideShade)" />
-        {shade.map((p, i) => (
-          <path key={`${view}-sh-${i}`} d={p} fill="#6a5344" opacity={0.14} />
-        ))}
-        {view === "anterior" ? (
-          <>
-            <path d={HAIR_CAP} fill="#3f322c" opacity={0.32} />
-            <path d={EAR_L} fill="#b89a82" />
-            <path d={EAR_R} fill="#b89a82" />
-            <path d={STERNAL_LINE} stroke="#6a5344" strokeWidth={0.9} opacity={0.28} fill="none" />
-            <path
-              d={`M 310 276 Q 358 266 ${CX} 260 Q 442 266 490 276`}
-              stroke="#6a5344"
-              strokeWidth={1.15}
-              fill="none"
-              opacity={0.3}
-            />
-            <ellipse cx={370} cy={Y.eyes} rx={10} ry={4.2} fill="#3f322c" opacity={0.38} />
-            <ellipse cx={430} cy={Y.eyes} rx={10} ry={4.2} fill="#3f322c" opacity={0.38} />
-            <path
-              d={`M ${CX} 130 Q ${CX + 3} 150 ${CX} ${Y.nose}`}
-              stroke="#6a5344"
-              strokeWidth={1.35}
-              fill="none"
-              opacity={0.42}
-            />
-            <path
-              d={`M ${CX - 13} ${Y.mouth} Q ${CX} ${Y.mouth + 6} ${CX + 13} ${Y.mouth}`}
-              stroke="#6a5344"
-              strokeWidth={1.15}
-              fill="none"
-              opacity={0.34}
-            />
-          </>
-        ) : (
-          <>
-            <path d={HAIR_CAP} fill="#3f322c" opacity={0.36} />
-            <path d={SPINE_LINE} stroke="#6a5344" strokeWidth={1.35} opacity={0.32} fill="none" />
-            <path d={GLUTEAL_FOLD} stroke="#6a5344" strokeWidth={1.45} fill="none" opacity={0.36} />
-            <path d={POPLITEAL(336)} stroke="#6a5344" strokeWidth={1.15} fill="none" opacity={0.32} />
-            <path d={POPLITEAL(464)} stroke="#6a5344" strokeWidth={1.15} fill="none" opacity={0.32} />
-          </>
-        )}
-      </g>
-      <path d={trunk} fill="none" stroke="#1a140f" strokeWidth={1.35} />
-      <path d={armL} fill="none" stroke="#1a140f" strokeWidth={1.35} />
-      <path d={armR} fill="none" stroke="#1a140f" strokeWidth={1.35} />
+      <Gradients />
+      <ellipse cx={CX} cy={1506} rx={168} ry={20} fill="url(#encGround)" />
+      {fills.map((p) => (
+        <path
+          key={`${view}-${p.id}`}
+          d={p.d}
+          fill={p.fill}
+          opacity={p.opacity ?? 1}
+          stroke="none"
+        />
+      ))}
+      {strokes.map((s) => (
+        <path
+          key={`${view}-${s.id}`}
+          d={s.d}
+          fill="none"
+          stroke={s.stroke}
+          strokeWidth={s.strokeWidth}
+          opacity={s.opacity ?? 1}
+          strokeLinecap={s.linecap ?? "round"}
+          strokeLinejoin={s.linejoin ?? "round"}
+        />
+      ))}
+      {contours.map((d, i) => (
+        <path
+          key={`${view}-ink-${i}`}
+          d={d}
+          fill="none"
+          stroke={SKIN.outline}
+          strokeWidth={0.95}
+          opacity={0.72}
+          strokeLinejoin="round"
+        />
+      ))}
     </g>
   );
 }
