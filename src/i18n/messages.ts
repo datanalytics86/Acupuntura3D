@@ -94,6 +94,7 @@ const en: typeof es = {
 
 export const MESSAGES: Record<Exclude<Locale, "zh">, typeof es> = { es, en };
 
+/** locale "zh" falls back to EN on purpose; no ZH copy in this release. */
 export function t(locale: Locale, key: keyof typeof es): string {
   const table = locale === "zh" ? en : MESSAGES[locale];
   return table[key];

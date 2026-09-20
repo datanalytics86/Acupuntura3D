@@ -5,6 +5,7 @@ import { Topbar } from "@/ui/Topbar";
 import { MeridianRail } from "@/ui/MeridianRail";
 import { PointDrawer } from "@/ui/PointDrawer";
 import { QiClock } from "@/ui/QiClock";
+import { LegalModal } from "@/ui/LegalModal";
 import { loadAcupoints } from "@/data";
 import { useViewerStore } from "@/state/viewerStore";
 
@@ -13,10 +14,15 @@ export function App() {
   const selected = useViewerStore((s) => s.selectedPointId);
   const setSelected = useViewerStore((s) => s.setSelected);
   const setSearch = useViewerStore((s) => s.setSearch);
+  const locale = useViewerStore((s) => s.locale);
+
+  useEffect(() => {
+    document.documentElement.lang = locale === "zh" ? "en" : locale;
+  }, [locale]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "/" && !(e.target instanceof HTMLInputElement)) {
+      if (e.key === "/" && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement)) {
         e.preventDefault();
         const el = document.querySelector<HTMLInputElement>('input[type="search"]');
         el?.focus();
@@ -52,6 +58,7 @@ export function App() {
       <PointDrawer />
       <QiClock />
       <Disclaimer />
+      <LegalModal />
     </div>
   );
 }

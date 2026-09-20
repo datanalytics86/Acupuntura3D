@@ -48,6 +48,7 @@ export function Topbar() {
             <button
               key={key}
               type="button"
+              aria-pressed={layers[key]}
               onClick={() => toggle(key)}
               className={`rounded-full px-2.5 py-1 transition ${
                 layers[key]
@@ -63,6 +64,7 @@ export function Topbar() {
             <button
               key={l}
               type="button"
+              aria-pressed={locale === l}
               onClick={() => setLocale(l)}
               className={`rounded-full px-2 py-1 uppercase ${locale === l ? "bg-white/10 text-amber-100" : "text-zinc-500"}`}
             >
@@ -73,6 +75,7 @@ export function Topbar() {
             <button
               key={q}
               type="button"
+              aria-pressed={quality === q}
               onClick={() => setQuality(q)}
               className={`rounded-full px-2 py-1 ${quality === q ? "text-emerald-200" : "text-zinc-500"}`}
             >

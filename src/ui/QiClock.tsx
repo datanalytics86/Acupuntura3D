@@ -21,6 +21,7 @@ export function QiClock() {
       <div className="panel pointer-events-auto flex w-full max-w-4xl flex-col gap-2 rounded-2xl p-2.5 md:flex-row md:items-center">
         <button
           type="button"
+          aria-pressed={playing}
           onClick={() => setPlaying(!playing)}
           className="rounded-full bg-amber-300/18 px-4 py-1.5 text-xs tracking-wide text-amber-100"
         >
