@@ -1,6 +1,6 @@
 import { Html, Instance, Instances } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Mesh } from "three";
 import type { Acupoint, Meridian } from "@/types";
 import { getMeridianColor } from "@/lib/colors";
@@ -22,10 +22,17 @@ export function AcupointInstances({
   const setHovered = useViewerStore((s) => s.setHovered);
   const setActive = useViewerStore((s) => s.setActiveMeridian);
   const halo = useRef<Mesh>(null);
+  const hovering = useRef(false);
 
   const items = useMemo(() => buildPointInstances(points, meridians), [points, meridians]);
   const focus = items.find((it) => it.point.id === (hovered ?? selected));
   const selectedInst = items.find((it) => it.point.id === selected && it.side !== "R");
+
+  useEffect(() => {
+    return () => {
+      document.body.style.cursor = "auto";
+    };
+  }, []);
 
   useFrame((state) => {
     if (!halo.current || !selectedInst) return;
@@ -54,10 +61,12 @@ export function AcupointInstances({
               color={isSel ? "#ffe9b0" : color}
               onPointerOver={(e) => {
                 e.stopPropagation();
+                hovering.current = true;
                 setHovered(it.point.id);
                 document.body.style.cursor = "pointer";
               }}
               onPointerOut={() => {
+                hovering.current = false;
                 setHovered(null);
                 document.body.style.cursor = "auto";
               }}

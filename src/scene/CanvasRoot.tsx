@@ -1,28 +1,39 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Grid, OrbitControls } from "@react-three/drei";
+import { AdaptiveDpr, AdaptiveEvents, ContactShadows, Grid, OrbitControls } from "@react-three/drei";
 import { useMemo, useRef } from "react";
+import type { MutableRefObject } from "react";
 import { Vector3 } from "three";
 import { loadAcupoints, loadMeridians } from "@/data";
+import { canvasDpr } from "@/lib/quality";
 import { useViewerStore } from "@/state/viewerStore";
 import { ProceduralBody } from "./body/ProceduralBody";
 import { MeridianTubes } from "./meridians/MeridianTubes";
 import { AcupointInstances } from "./points/AcupointInstances";
 import { QiParticles } from "./qi/QiParticles";
 import { Starfield } from "./atmosphere/Starfield";
-import { buildPointInstances } from "./picking";
+import { buildPointInstances, type PointInstance } from "./picking";
 
-function CameraRig() {
+type OrbitHandle = { target: Vector3 };
+
+function CameraRig({ controlsRef }: { controlsRef: MutableRefObject<OrbitHandle | null> }) {
   const selected = useViewerStore((s) => s.selectedPointId);
   const meridians = useMemo(() => loadMeridians(), []);
   const points = useMemo(() => loadAcupoints(), []);
   const instances = useMemo(() => buildPointInstances(points, meridians), [points, meridians]);
+  const byId = useMemo(() => {
+    const map = new Map<string, PointInstance>();
+    for (const it of instances) {
+      if (!map.has(it.point.id)) map.set(it.point.id, it);
+    }
+    return map;
+  }, [instances]);
   const { camera } = useThree();
-  const controls = useThree((s) => s.controls) as { target: Vector3 } | null;
   const target = useRef(new Vector3(0, 0.22, 0));
 
   useFrame((_, dt) => {
+    const controls = controlsRef.current;
     if (!selected || !controls) return;
-    const inst = instances.find((i) => i.point.id === selected);
+    const inst = byId.get(selected);
     if (!inst) return;
     const dest = new Vector3(...inst.position);
     target.current.lerp(dest, 1 - Math.pow(0.001, dt));
@@ -37,15 +48,23 @@ export function CanvasRoot() {
   const meridians = useMemo(() => loadMeridians(), []);
   const points = useMemo(() => loadAcupoints(), []);
   const setSelected = useViewerStore((s) => s.setSelected);
+  const tier = useViewerStore((s) => s.qualityTier);
+  const controlsRef = useRef<OrbitHandle | null>(null);
 
   return (
     <Canvas
       className="absolute inset-0"
       camera={{ position: [1.85, 0.52, 2.45], fov: 38, near: 0.05, far: 50 }}
-      dpr={[1, 2]}
-      gl={{ antialias: true, alpha: false }}
+      dpr={canvasDpr(tier)}
+      gl={{
+        antialias: tier !== "low",
+        alpha: false,
+        powerPreference: tier === "low" ? "low-power" : "high-performance",
+      }}
       onPointerMissed={() => setSelected(null)}
     >
+      <AdaptiveDpr />
+      <AdaptiveEvents />
       <color attach="background" args={["#07090d"]} />
       <fog attach="fog" args={["#07090d", 4.2, 14]} />
       <Starfield />
@@ -56,6 +75,9 @@ export function CanvasRoot() {
       <pointLight position={[0, 1.1, 0.4]} intensity={0.35} color="#e8c98a" distance={3.2} />
       <OrbitControls
         makeDefault
+        ref={(node) => {
+          controlsRef.current = node;
+        }}
         enableDamping
         dampingFactor={0.08}
         minDistance={0.55}
@@ -77,13 +99,15 @@ export function CanvasRoot() {
         <ringGeometry args={[0.42, 0.428, 64]} />
         <meshBasicMaterial color="#e8c98a" transparent opacity={0.28} />
       </mesh>
-      <axesHelper args={[0.16]} />
-      <ContactShadows position={[0, -0.918, 0]} opacity={0.38} scale={5} blur={2.6} far={2.2} />
+      {import.meta.env.DEV ? <axesHelper args={[0.16]} /> : null}
+      {tier === "high" ? (
+        <ContactShadows position={[0, -0.918, 0]} opacity={0.38} scale={5} blur={2.6} far={2.2} />
+      ) : null}
       <ProceduralBody />
       <MeridianTubes meridians={meridians} />
       <AcupointInstances points={points} meridians={meridians} />
       <QiParticles meridians={meridians} />
-      <CameraRig />
+      <CameraRig controlsRef={controlsRef} />
     </Canvas>
   );
 }

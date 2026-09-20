@@ -60,8 +60,11 @@ describe("seed data", () => {
       names: { zh: string };
       precautions: string[];
     }[];
-    expect(seed.map((p) => p.code)).toEqual(STAR_CODES);
-    expect(seed).toHaveLength(20);
+    const codes = seed.map((p) => p.code);
+    expect(seed.length).toBeGreaterThanOrEqual(20);
+    for (const star of STAR_CODES) {
+      expect(codes).toContain(star);
+    }
     const st36 = seed.find((p) => p.code === "ST36");
     expect(st36?.names.zh).toBe("足三里");
     const li4 = seed.find((p) => p.code === "LI4");
@@ -70,5 +73,21 @@ describe("seed data", () => {
     expect(sp6?.precautions.some((x) => x.toLowerCase().includes("embarazo"))).toBe(true);
     const cv12 = seed.find((p) => p.code === "CV12");
     expect(cv12?.names.zh).toBe("中脘");
+  });
+
+  it("OMS classic pointCounts sum to 361 and GV/CV have no clockHour", () => {
+    const meridians = JSON.parse(readFileSync(join(root, "data/meridians.json"), "utf8")) as {
+      id: string;
+      pointCount: number;
+      clockHour?: number;
+      pointCodes: string[];
+    }[];
+    expect(meridians.reduce((sum, m) => sum + m.pointCount, 0)).toBe(361);
+    const gv = meridians.find((m) => m.id === "GV");
+    const cv = meridians.find((m) => m.id === "CV");
+    expect(gv?.clockHour).toBeUndefined();
+    expect(cv?.clockHour).toBeUndefined();
+    expect(gv?.pointCodes).toHaveLength(28);
+    expect(cv?.pointCodes).toHaveLength(24);
   });
 });

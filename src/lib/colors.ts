@@ -27,5 +27,6 @@ export const MERIDIAN_COLORS: Record<string, string> = {
 };
 
 export function getMeridianColor(id: string): string {
+  if (id.startsWith("EX")) return MERIDIAN_COLORS.EX ?? "#94A3B8";
   return MERIDIAN_COLORS[id] ?? "#94A3B8";
 }

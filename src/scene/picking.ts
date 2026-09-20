@@ -16,7 +16,9 @@ export function buildPointInstances(
   for (const point of points) {
     if (!point.position) continue;
     const mer = byId.get(point.meridianId);
-    const bilateral = mer?.laterality === "bilateral" && point.laterality !== "C";
+    const extraBilateral = point.meridianId.startsWith("EX-B") || point.code === "EX-B1";
+    const bilateral =
+      (mer?.laterality === "bilateral" || extraBilateral) && point.laterality !== "C";
     out.push({
       point,
       position: [point.position.x, point.position.y, point.position.z],

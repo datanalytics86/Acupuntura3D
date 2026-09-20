@@ -4,13 +4,13 @@ import { STAR_CODES } from "./ids";
 
 export function loadAcupoints(): Acupoint[] {
   const rows = seedJson as Acupoint[];
-  if (rows.length !== 20) {
-    throw new Error(`acupoints.seed.json must have 20 rows, got ${rows.length}`);
+  if (rows.length < 20) {
+    throw new Error(`acupoints.seed.json must have at least 20 rows, got ${rows.length}`);
   }
-  const codes = rows.map((p) => p.code);
-  for (let i = 0; i < STAR_CODES.length; i += 1) {
-    if (codes[i] !== STAR_CODES[i]) {
-      throw new Error(`star code mismatch at ${i}: expected ${STAR_CODES[i]}, got ${codes[i]}`);
+  const codes = new Set(rows.map((p) => p.code));
+  for (const star of STAR_CODES) {
+    if (!codes.has(star)) {
+      throw new Error(`missing star acupoint ${star}`);
     }
   }
   return rows;

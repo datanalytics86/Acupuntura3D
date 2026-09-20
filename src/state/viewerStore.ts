@@ -1,5 +1,23 @@
 import { create } from "zustand";
 import type { Elemento, Locale, QualityTier, ViewerState } from "@/types";
+import { detectQuality, prefersReducedMotion } from "@/lib/quality";
+
+const QUALITY_KEY = "acu3d.quality";
+
+function readSavedQuality(): QualityTier | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const saved = window.localStorage.getItem(QUALITY_KEY);
+    if (saved === "high" || saved === "medium" || saved === "low") return saved;
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+function initialQuality(): QualityTier {
+  return readSavedQuality() ?? detectQuality();
+}
 
 interface ViewerActions {
   railOpen: boolean;
@@ -32,11 +50,11 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set) => ({
     qi: true,
     labels: false,
   },
-  qiPlaying: true,
+  qiPlaying: !prefersReducedMotion(),
   qiSpeed: 1,
   clockHour: initialHour,
   locale: "es",
-  qualityTier: "high",
+  qualityTier: initialQuality(),
   searchQuery: "",
   filters: { starOnly: true },
   railOpen: true,
@@ -51,7 +69,14 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set) => ({
   setQiSpeed: (v) => set({ qiSpeed: Math.min(4, Math.max(0.25, v)) }),
   setClockHour: (h) => set({ clockHour: ((h % 24) + 24) % 24 }),
   setLocale: (l) => set({ locale: l }),
-  setQuality: (q) => set({ qualityTier: q }),
+  setQuality: (q) => {
+    try {
+      window.localStorage.setItem(QUALITY_KEY, q);
+    } catch {
+      /* ignore */
+    }
+    set({ qualityTier: q });
+  },
   setSearch: (q) => set({ searchQuery: q }),
   setElementFilter: (e) => set((s) => ({ filters: { ...s.filters, element: e } })),
   setStarOnly: (v) => set((s) => ({ filters: { ...s.filters, starOnly: v } })),
@@ -59,7 +84,7 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set) => ({
   followQi: (meridianId) =>
     set({
       activeMeridianId: meridianId,
-      qiPlaying: true,
+      qiPlaying: prefersReducedMotion() ? false : true,
       visibleLayers: {
         body: true,
         meridians: true,

@@ -73,7 +73,12 @@ export function QiParticles({ meridians }: { meridians: Meridian[] }) {
   if (!visible || quality === "low") return null;
 
   const count = quality === "high" ? 28 : 12;
-  const list = active ? meridians.filter((m) => m.id === active) : meridians.slice(0, 4);
+  const list =
+    quality === "medium"
+      ? meridians.filter((m) => m.id === active)
+      : active
+        ? meridians.filter((m) => m.id === active)
+        : meridians.slice(0, 4);
 
   return (
     <group>
