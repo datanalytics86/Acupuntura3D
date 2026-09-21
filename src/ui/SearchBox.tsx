@@ -1,5 +1,6 @@
 import { useId, useMemo } from "react";
 import { loadAcupoints } from "@/data";
+import { matchCenter } from "@/atlas/centers";
 import { pointOnView } from "@/atlas/mapCoords";
 import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
@@ -19,6 +20,7 @@ export function SearchBox() {
   const setZoom = useViewerStore((s) => s.setAtlasZoom);
   const setView = useViewerStore((s) => s.setAtlasView);
   const setRegion = useViewerStore((s) => s.setAtlasRegion);
+  const focusCenter = useViewerStore((s) => s.focusCenter);
   const view = useViewerStore((s) => s.atlasView);
   const points = useMemo(() => loadAcupoints(), []);
 
@@ -36,6 +38,11 @@ export function SearchBox() {
           setSearch(value);
           const q = fold(value.trim());
           if (!q) return;
+          const center = matchCenter(value.trim());
+          if (center) {
+            focusCenter(center.id);
+            return;
+          }
           const exact = points.filter(
             (p) => fold(p.code) === q || fold(p.names.pinyin.replace(/\s/g, "")) === q,
           );

@@ -197,8 +197,24 @@ body {
   box-shadow: none;
 }
 
+.atlas-frame {
+  transition:
+    left var(--dur-paper) var(--ease-paper),
+    right var(--dur-paper) var(--ease-paper);
+}
+
+.center-live {
+  animation: center-breathe 2.6s cubic-bezier(0.45, 0.05, 0.55, 1) infinite;
+}
+
 .drawer-in {
   animation: drawer-in var(--dur-paper) var(--ease-paper);
+}
+
+@keyframes center-breathe {
+  50% {
+    opacity: 0.72;
+  }
 }
 
 @keyframes drawer-in {
@@ -251,7 +267,8 @@ input[type="range"]::-webkit-slider-thumb {
 @media (prefers-reduced-motion: reduce) {
   .qi-pulse,
   .qi-dash,
-  .drawer-in {
+  .drawer-in,
+  .center-live {
     animation: none !important;
   }
 

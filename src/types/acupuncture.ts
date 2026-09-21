@@ -78,6 +78,7 @@ export interface ViewerState {
     points: boolean;
     qi: boolean;
     labels: boolean;
+    centers: boolean;
   };
   qiPlaying: boolean;
   qiSpeed: number;
@@ -88,6 +89,7 @@ export interface ViewerState {
   filters: { element?: Elemento; region?: string; starOnly: boolean };
   atlasView: AtlasView;
   atlasRegion: AtlasRegion;
+  selectedCenterId: "lower" | "middle" | "upper" | null;
   atlasZoom: number;
   atlasPan: Point2D;
   bothSides: boolean;

@@ -133,6 +133,17 @@ describe("Encarta figure", () => {
     expect(attr.toLowerCase()).toMatch(/not scans/);
   });
 
+  it("marks three didactic dantian without clinical claims", async () => {
+    const { CENTERS, matchCenter } = await import("../src/atlas/centers");
+    expect(CENTERS.map((c) => c.zh)).toEqual(["上丹田", "中丹田", "下丹田"]);
+    expect(matchCenter("dan tien")?.id).toBe("lower");
+    expect(matchCenter("上丹田")?.id).toBe("upper");
+    for (const center of CENTERS) {
+      expect(`${center.noteEs} ${center.noteEn}`.toLowerCase()).toMatch(/baja|low/);
+      expect(`${center.noteEs} ${center.anchorEs}`.toLowerCase()).not.toMatch(/cura|trata|diagnos/);
+    }
+  });
+
   it("ships plate previews", () => {
     expect(readFileSync(join(root, "public/atlas/preview-anterior.svg"), "utf8")).toMatch(
       /body-anterior\.png/,

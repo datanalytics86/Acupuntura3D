@@ -11,6 +11,7 @@ const es = {
   tubes: "Canales",
   points: "Puntos",
   qi: "Qi",
+  centers: "Centros",
   locale: "Idioma",
   quality: "Calidad",
   qualityHigh: "Alta",
@@ -46,7 +47,7 @@ const es = {
   yang: "Yang",
   anterior: "Anterior",
   posterior: "Posterior",
-  choosePoint: "Elige un punto en la lámina.",
+  choosePoint: "Elige un punto o un dantian en la lámina.",
 };
 
 const en: typeof es = {
@@ -60,6 +61,7 @@ const en: typeof es = {
   tubes: "Channels",
   points: "Points",
   qi: "Qi",
+  centers: "Centers",
   locale: "Language",
   quality: "Quality",
   qualityHigh: "High",
@@ -95,7 +97,7 @@ const en: typeof es = {
   yang: "Yang",
   anterior: "Anterior",
   posterior: "Posterior",
-  choosePoint: "Choose a point on the plate.",
+  choosePoint: "Choose a point or a dantian on the plate.",
 };
 
 export const MESSAGES: Record<Exclude<Locale, "zh">, typeof es> = { es, en };

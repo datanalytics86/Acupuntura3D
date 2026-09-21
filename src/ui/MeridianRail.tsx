@@ -35,7 +35,7 @@ export function MeridianRail() {
 
   return (
     <aside
-      className={`scroll-thin absolute top-28 bottom-28 left-3 z-20 w-[18.5rem] overflow-y-auto border border-brass-line bg-paper px-3 py-3 transition-transform duration-200 md:top-20 md:translate-x-0 ${
+      className={`scroll-thin absolute top-28 bottom-24 left-3 z-20 w-[18.5rem] overflow-y-auto border border-brass-line bg-paper px-3 py-3 transition-transform duration-200 md:top-20 ${
         railOpen ? "translate-x-0" : "-translate-x-[120%]"
       }`}
       style={{ borderRadius: "var(--radius-plate)", transitionTimingFunction: "var(--ease-paper)" }}

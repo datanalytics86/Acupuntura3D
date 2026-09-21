@@ -3,12 +3,13 @@ import { useViewerStore } from "@/state/viewerStore";
 import { SearchBox } from "./SearchBox";
 import type { Locale } from "@/types";
 
-const LAYERS = ["body", "meridians", "points", "qi"] as const;
-const LAYER_LABEL: Record<(typeof LAYERS)[number], "body" | "tubes" | "points" | "qi"> = {
+const LAYERS = ["body", "meridians", "points", "qi", "centers"] as const;
+const LAYER_LABEL: Record<(typeof LAYERS)[number], "body" | "tubes" | "points" | "qi" | "centers"> = {
   body: "body",
   meridians: "tubes",
   points: "points",
   qi: "qi",
+  centers: "centers",
 };
 
 export function Topbar() {
@@ -25,7 +26,7 @@ export function Topbar() {
     <header className="running-head pointer-events-auto absolute inset-x-0 top-0 z-20 flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 md:px-5">
       <button
         type="button"
-        className="file-link md:hidden"
+        className="file-link"
         onClick={() => setRailOpen(!railOpen)}
       >
         {t(locale, "meridians")}
