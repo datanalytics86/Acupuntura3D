@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1600" width="800" height="1600">
+  <rect width="800" height="1600" fill="#E7DCC4"/>
+  <rect x="24" y="24" width="752" height="1552" fill="#F3EBD8" stroke="#c4b089"/>
+  <text x="400" y="72" text-anchor="middle" font-family="Georgia, serif" font-size="32" fill="#3a2a1c">Rostro — lámina</text>
+  <line x1="340" y1="86" x2="460" y2="86" stroke="#c4b089"/>
+  <path d="M400 220C520 234 600 350 622 520C640 690 610 860 560 1000C520 1110 466 1170 400 1184C334 1170 280 1110 240 1000C190 860 160 690 178 520C200 350 280 234 400 220Z" fill="#e0b48e" stroke="#4a3224" stroke-width="1.3"/>
+  <path d="M268 460C250 350 300 230 400 208C500 230 550 350 532 460C496 400 460 372 400 364C340 372 304 400 268 460Z" fill="#3c2c24"/>
+  <path d="M280 520C330 498 370 500 404 522" fill="none" stroke="#3a2a22" stroke-width="2"/>
+  <path d="M520 520C470 498 430 500 396 522" fill="none" stroke="#3a2a22" stroke-width="2"/>
+  <path d="M276 590C310 568 360 566 396 590C360 610 312 612 276 590Z" fill="#f7efe4" stroke="#4a3224"/>
+  <path d="M524 590C490 568 440 566 404 590C440 610 488 612 524 590Z" fill="#f7efe4" stroke="#4a3224"/>
+  <circle cx="326" cy="592" r="14" fill="#6a3a2a"/><circle cx="326" cy="592" r="6" fill="#1c120e"/>
+  <circle cx="474" cy="592" r="14" fill="#6a3a2a"/><circle cx="474" cy="592" r="6" fill="#1c120e"/>
+  <path d="M400 540C396 640 394 710 400 760" fill="none" stroke="#a67b62" stroke-width="1.4"/>
+  <path d="M400 760C370 772 350 796 342 820C366 804 386 796 400 798C414 796 434 804 458 820C450 796 430 772 400 760Z" fill="#e7b89a" stroke="#4a3224"/>
+  <path d="M330 900C360 880 386 874 400 878C414 874 440 880 470 900C440 928 418 940 400 938C382 940 360 928 330 900Z" fill="#d9a090" stroke="#4a3224"/>
+  <text x="400" y="200" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#2A2118">GV20 百会</text>
+  <text x="400" y="500" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#2A2118">EX-HN3 印堂</text>
+</svg>

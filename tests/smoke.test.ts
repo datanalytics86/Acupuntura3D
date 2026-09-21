@@ -145,9 +145,9 @@ describe("Encarta figure", () => {
   it("paints the atlas on encyclopedia paper", () => {
     const css = readFileSync(join(root, "src/app/index.css"), "utf8");
     const viewport = readFileSync(join(root, "src/atlas/Viewport.tsx"), "utf8");
-    expect(css).toMatch(/#EFE6D2/);
+    expect(css).toMatch(/--color-paper/);
     expect(css).not.toMatch(/background: #07090d/);
-    expect(viewport).toMatch(/#F3EBD8/);
+    expect(viewport).toMatch(/var\(--color-paper\)/);
     expect(viewport).not.toMatch(/#07090d/);
   });
 });

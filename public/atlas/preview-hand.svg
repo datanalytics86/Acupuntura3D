@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1600" width="800" height="1600">
+  <rect width="800" height="1600" fill="#E7DCC4"/>
+  <rect x="24" y="24" width="752" height="1552" fill="#F3EBD8" stroke="#c4b089"/>
+  <text x="400" y="72" text-anchor="middle" font-family="Georgia, serif" font-size="32" fill="#3a2a1c">Mano — dorso</text>
+  <line x1="340" y1="86" x2="460" y2="86" stroke="#c4b089"/>
+  <path d="M250 1040C236 960 248 860 286 800L560 812C604 860 624 980 590 1120C560 1260 520 1340 450 1360L340 1360C290 1320 258 1180 250 1040Z" fill="#e0b48e" stroke="#4a3224" stroke-width="1.3"/>
+  <path d="M286 830C274 760 270 700 292 660C276 590 272 520 290 450C300 390 314 330 330 300C348 328 356 400 348 470C340 540 348 610 334 670C352 720 360 780 356 830C332 846 302 844 286 830Z" fill="#e4c2a2" stroke="#4a3224"/>
+  <path d="M368 820C356 740 352 680 376 640C360 560 358 470 378 390C390 320 408 250 430 220C452 250 460 340 450 430C440 520 448 600 432 660C454 710 462 770 456 820C428 838 388 836 368 820Z" fill="#e4c2a2" stroke="#4a3224"/>
+  <path d="M466 824C456 750 454 690 476 650C464 580 466 500 486 420C498 360 516 310 534 292C552 320 556 400 546 490C536 570 542 640 526 690C546 740 552 790 546 828C518 844 486 840 466 824Z" fill="#e4c2a2" stroke="#4a3224"/>
+  <path d="M556 836C550 760 558 690 576 640C572 580 584 530 602 490C614 460 628 440 640 434C652 452 650 500 640 560C632 620 624 700 630 770C638 810 620 840 600 844C578 850 562 846 556 836Z" fill="#e4c2a2" stroke="#4a3224"/>
+  <path d="M248 1040C210 1000 150 920 132 820C122 760 150 700 196 690C230 684 262 730 270 790C278 860 300 960 286 1040Z" fill="#e0b48e" stroke="#4a3224" stroke-width="1.3"/>
+  <text x="236" y="940" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#2A2118">LI4 合谷</text>
+  <text x="600" y="880" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#2A2118">SI3 后溪</text>
+</svg>

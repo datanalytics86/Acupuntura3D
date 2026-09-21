@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1600" width="800" height="1600">
+  <rect width="800" height="1600" fill="#E7DCC4"/>
+  <rect x="24" y="24" width="752" height="1552" fill="#F3EBD8" stroke="#c4b089"/>
+  <text x="400" y="72" text-anchor="middle" font-family="Georgia, serif" font-size="32" fill="#3a2a1c">Pie — empeine y maléolo</text>
+  <line x1="280" y1="86" x2="520" y2="86" stroke="#c4b089"/>
+  <path d="M300 200C270 200 248 260 246 380C244 520 250 660 268 760L392 760C410 640 414 500 410 360C406 260 380 200 340 200Z" fill="#e0b48e" stroke="#4a3224" stroke-width="1.3"/>
+  <path d="M268 740C220 800 180 900 188 1020C196 1120 250 1200 330 1180C300 1120 292 1020 320 940C348 860 390 800 430 770" fill="#e7c4a4" stroke="#4a3224" stroke-width="1.3"/>
+  <path d="M360 760C430 740 500 800 560 940C600 1040 680 1120 760 1100C800 1090 820 1040 800 1000C760 940 680 940 640 1000C680 900 700 820 660 760C620 720 540 740 480 800C430 740 390 750 360 760Z" fill="#e0b48e" stroke="#4a3224" stroke-width="1.3"/>
+  <path d="M760 1040C820 1020 880 1040 900 1100C910 1140 880 1180 830 1170C790 1160 760 1120 750 1080Z" fill="#e4c2a2" stroke="#4a3224"/>
+  <path d="M800 1030C830 1000 860 1010 868 1040C860 1070 830 1076 808 1056" fill="#e7c4a4" stroke="#4a3224"/>
+  <path d="M790 1080C824 1064 856 1076 860 1108C848 1130 816 1128 792 1108" fill="#e7c4a4" stroke="#4a3224"/>
+  <circle cx="390" cy="800" r="26" fill="#e8c2a4" stroke="#4a3224"/>
+  <text x="330" y="520" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#2A2118">SP6 三阴交</text>
+  <text x="640" y="940" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#2A2118">LR3 太冲</text>
+</svg>
