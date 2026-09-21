@@ -74,7 +74,6 @@ export function App() {
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-[#EFE6D2]">
       <AtlasRoot />
-      <div className="grain" />
       <Topbar />
       <MeridianRail />
       <PointDrawer />
