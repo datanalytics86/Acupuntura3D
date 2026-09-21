@@ -46,6 +46,7 @@ const es = {
   yang: "Yang",
   anterior: "Anterior",
   posterior: "Posterior",
+  choosePoint: "Elige un punto en la lámina.",
 };
 
 const en: typeof es = {
@@ -94,6 +95,7 @@ const en: typeof es = {
   yang: "Yang",
   anterior: "Anterior",
   posterior: "Posterior",
+  choosePoint: "Choose a point on the plate.",
 };
 
 export const MESSAGES: Record<Exclude<Locale, "zh">, typeof es> = { es, en };

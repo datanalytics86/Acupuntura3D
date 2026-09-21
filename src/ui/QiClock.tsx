@@ -12,22 +12,16 @@ export function QiClock() {
   const setSpeed = useViewerStore((s) => s.setQiSpeed);
   const hour = useViewerStore((s) => s.clockHour);
   const setHour = useViewerStore((s) => s.setClockHour);
-  const active = useViewerStore((s) => s.activeMeridianId);
 
   const blocks = meridians.filter((m) => m.clockHour !== undefined);
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-11 z-20 flex justify-center px-3 md:bottom-12">
-      <div className="panel pointer-events-auto flex w-full max-w-4xl flex-col gap-2 rounded-2xl p-2.5 md:flex-row md:items-center">
-        <button
-          type="button"
-          aria-pressed={playing}
-          onClick={() => setPlaying(!playing)}
-          className="rounded-full bg-[#8A6A3B] px-4 py-1.5 text-xs tracking-wide text-[#F7F1E4]"
-        >
+    <div className="pointer-events-none absolute inset-x-0 bottom-10 z-20 flex justify-center px-3 md:bottom-11">
+      <div className="pointer-events-auto flex w-full max-w-4xl flex-col gap-2 border border-brass-line bg-paper px-3 py-2 md:flex-row md:items-center">
+        <button type="button" aria-pressed={playing} onClick={() => setPlaying(!playing)} className="stamp-btn">
           {playing ? t(locale, "pause") : t(locale, "play")}
         </button>
-        <label className="flex items-center gap-2 text-[11px] text-[#2A2118]">
+        <label className="flex items-center gap-2 text-[11px] tracking-[0.12em] text-ink uppercase">
           {t(locale, "speed")}
           <input
             type="range"
@@ -38,7 +32,7 @@ export function QiClock() {
             onChange={(e) => setSpeed(Number(e.target.value))}
             className="w-24"
           />
-          <span className="w-8 font-mono text-[#2A2118]">{speed.toFixed(2)}</span>
+          <span className="w-8 font-mono normal-case">{speed.toFixed(2)}</span>
         </label>
         <div className="flex flex-1 flex-wrap justify-center gap-1">
           {blocks.map((m) => {
@@ -51,13 +45,7 @@ export function QiClock() {
                 type="button"
                 title={`${String(start).padStart(2, "0")}:00–${String(end).padStart(2, "0")}:00`}
                 onClick={() => setHour(start)}
-                className={`min-w-9 rounded-full px-2 py-1 text-[10px] transition ${
-                  on ? "text-[#2A2118]" : active === m.id ? "text-[#2A2118]" : "text-[#8A6A3B]"
-                }`}
-                style={{
-                  background: on ? `${m.color}33` : "rgba(138,106,59,0.08)",
-                  boxShadow: on ? `inset 0 0 0 1px ${m.color}` : undefined,
-                }}
+                className={`clock-mark ${on ? "is-on" : ""}`}
               >
                 <span className="block font-semibold">{m.id}</span>
                 <span className="block text-[8px] opacity-70">{String(start).padStart(2, "0")}h</span>
@@ -65,7 +53,7 @@ export function QiClock() {
             );
           })}
         </div>
-        <label className="flex items-center gap-2 text-[11px] text-[#2A2118]">
+        <label className="flex items-center gap-2 text-[11px] tracking-[0.12em] text-ink uppercase">
           {t(locale, "clock")}
           <input
             type="range"
@@ -76,7 +64,7 @@ export function QiClock() {
             onChange={(e) => setHour(Number(e.target.value))}
             className="w-28"
           />
-          <span className="w-12 font-mono text-[#8A6A3B]">{String(hour).padStart(2, "0")}:00</span>
+          <span className="w-12 font-mono text-brass normal-case">{String(hour).padStart(2, "0")}:00</span>
         </label>
       </div>
     </div>

@@ -6,6 +6,7 @@ export type {
   QualityTier,
   Locale,
   AtlasView,
+  AtlasRegion,
   Point2D,
   Names,
   Acupoint,

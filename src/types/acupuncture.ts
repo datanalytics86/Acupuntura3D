@@ -5,6 +5,7 @@ export type Elemento = "wood" | "fire" | "earth" | "metal" | "water";
 export type QualityTier = "high" | "medium" | "low";
 export type Locale = "es" | "en" | "zh";
 export type AtlasView = "anterior" | "posterior";
+export type AtlasRegion = "body" | "face" | "hand" | "foot";
 
 export interface Point2D {
   x: number;
@@ -86,6 +87,7 @@ export interface ViewerState {
   searchQuery: string;
   filters: { element?: Elemento; region?: string; starOnly: boolean };
   atlasView: AtlasView;
+  atlasRegion: AtlasRegion;
   atlasZoom: number;
   atlasPan: Point2D;
   bothSides: boolean;

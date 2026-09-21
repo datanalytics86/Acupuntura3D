@@ -72,7 +72,7 @@ export function App() {
   }, [selected, atlasView, points, setAtlasView]);
 
   return (
-    <div className="relative h-dvh w-full overflow-hidden bg-[#EFE6D2]">
+    <div className="relative h-dvh w-full overflow-hidden bg-desk">
       <AtlasRoot />
       <Topbar />
       <MeridianRail />

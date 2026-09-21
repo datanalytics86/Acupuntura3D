@@ -21,7 +21,7 @@ export const MERIDIAN_COLORS: Record<string, string> = {
   TE: "#C45C26",
   GB: "#3D8B40",
   LR: "#3D8B40",
-  GV: "#8B5CF6",
+  GV: "#3F3428",
   CV: "#F59E0B",
   EX: "#94A3B8",
 };

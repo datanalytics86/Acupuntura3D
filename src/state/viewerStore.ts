@@ -1,6 +1,7 @@
 import { create } from "zustand";
-import type { AtlasView, Elemento, Locale, Point2D, QualityTier, ViewerState } from "@/types";
+import type { AtlasRegion, AtlasView, Elemento, Locale, Point2D, QualityTier, ViewerState } from "@/types";
 import { detectQuality, prefersReducedMotion } from "@/lib/quality";
+import { withPaperTransition } from "@/lib/paperTransition";
 
 const QUALITY_KEY = "acu3d.quality";
 
@@ -36,6 +37,7 @@ interface ViewerActions {
   setRailOpen: (v: boolean) => void;
   followQi: (meridianId: string) => void;
   setAtlasView: (v: AtlasView) => void;
+  setAtlasRegion: (r: AtlasRegion) => void;
   setAtlasZoom: (z: number) => void;
   setAtlasPan: (p: Point2D) => void;
   resetAtlasCamera: () => void;
@@ -63,6 +65,7 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set) => ({
   searchQuery: "",
   filters: { starOnly: true },
   atlasView: "anterior",
+  atlasRegion: "body",
   atlasZoom: 1,
   atlasPan: { x: 400, y: 800 },
   bothSides: true,
@@ -102,7 +105,9 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set) => ({
         labels: false,
       },
     }),
-  setAtlasView: (v) => set({ atlasView: v }),
+  setAtlasView: (v) => withPaperTransition(() => set({ atlasView: v })),
+  setAtlasRegion: (r) =>
+    withPaperTransition(() => set({ atlasRegion: r, atlasZoom: 1, atlasPan: { x: 400, y: 800 } })),
   setAtlasZoom: (z) => set({ atlasZoom: Math.min(6, Math.max(1, z)) }),
   setAtlasPan: (p) => set({ atlasPan: p }),
   resetAtlasCamera: () => set({ atlasZoom: 1, atlasPan: { x: 400, y: 800 } }),

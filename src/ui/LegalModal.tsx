@@ -32,12 +32,12 @@ export function LegalModal() {
       role="dialog"
       aria-modal="true"
     >
-      <div className="panel max-w-lg rounded-2xl p-6 text-[#2A2118]">
-        <p className="display mb-2 text-2xl text-[#2A2118]">{t(locale, "title")}</p>
-        <p className="text-sm leading-relaxed text-[#2A2118]">{text}</p>
+      <div className="marginalia max-w-lg p-6 text-ink">
+        <p className="display mb-2 text-2xl">{t(locale, "title")}</p>
+        <p className="text-sm leading-relaxed">{text}</p>
         <button
           type="button"
-          className="mt-5 w-full rounded-full bg-[#8A6A3B] px-4 py-2.5 text-sm text-[#F7F1E4]"
+          className="stamp-btn mt-5 w-full"
           onClick={() => {
             try {
               window.localStorage.setItem(FLAG, "1");

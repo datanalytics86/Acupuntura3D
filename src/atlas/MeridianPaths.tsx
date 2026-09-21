@@ -35,17 +35,19 @@ export function MeridianPaths() {
           (start < (start + 2) % 24
             ? hour >= start && hour < start + 2
             : hour >= start || hour < (start + 2) % 24);
+        const hot = !dim && (active === m.id || boosted);
         return sides(anchors, both && m.laterality === "bilateral").map((pts, i) => (
           <path
             key={`${m.id}-${i}`}
             d={anchorsToPath(pts)}
             fill="none"
             stroke={m.color}
-            strokeWidth={(dim ? 1.6 : 2.4) * (boosted && !dim ? 1.25 : 1)}
+            strokeWidth={dim ? 1.25 : 1.55}
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity={dim ? 0.22 : boosted ? 0.95 : 0.82}
-            className={m.id === "ST" || !dim ? "qi-dash" : undefined}
+            opacity={dim ? 0.18 : hot ? 0.95 : 0.72}
+            className={active === m.id ? "qi-pulse" : undefined}
+            style={{ mixBlendMode: "multiply" }}
             pathLength={1000}
           />
         ));

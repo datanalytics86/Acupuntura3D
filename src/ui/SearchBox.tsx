@@ -18,6 +18,7 @@ export function SearchBox() {
   const setPan = useViewerStore((s) => s.setAtlasPan);
   const setZoom = useViewerStore((s) => s.setAtlasZoom);
   const setView = useViewerStore((s) => s.setAtlasView);
+  const setRegion = useViewerStore((s) => s.setAtlasRegion);
   const view = useViewerStore((s) => s.atlasView);
   const points = useMemo(() => loadAcupoints(), []);
 
@@ -42,6 +43,7 @@ export function SearchBox() {
           const hit = exact[0];
           setSelected(hit.id);
           setActive(hit.meridianId);
+          setRegion("body");
           const here = pointOnView(hit, view);
           const other = view === "anterior" ? "posterior" : "anterior";
           const pos = here ?? pointOnView(hit, other);
@@ -52,7 +54,7 @@ export function SearchBox() {
           }
         }}
         placeholder={t(locale, "search")}
-        className="w-full rounded-full border border-[#8A6A3B]/35 bg-[#F3EBD8] px-4 py-2 text-sm text-[#2A2118] outline-none placeholder:text-[#8A6A3B]/70 focus:border-[#8A6A3B] focus:bg-[#F7F1E4]"
+        className="archive-field"
       />
     </div>
   );

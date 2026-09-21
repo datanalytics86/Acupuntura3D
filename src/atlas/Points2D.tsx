@@ -41,25 +41,23 @@ export function Points2D() {
             }}
             style={{ cursor: "pointer" }}
           >
-            <circle r={14} fill="transparent" />
-            {(isSel || isHov) && (
-              <circle r={isSel ? 16 : 13} fill={color} opacity={0.18} />
-            )}
-            <circle r={7.5} fill="none" stroke="#e8c98a" strokeWidth={1.4} />
-            <circle r={4.2} fill="#7d9b78" />
-            {isSel ? <circle r={2} fill="#fff8e7" /> : null}
+            <circle r={16} fill="transparent" />
+            {isSel || isHov ? <circle r={12} fill={color} opacity={0.16} /> : null}
+            <circle r={4.2} fill="var(--color-paper)" />
+            <circle r={3.2} fill="var(--color-jade-ink)" />
           </g>
         );
       })}
       {focus ? (
-        <g transform={`translate(${focus.position.x} ${focus.position.y - 22})`}>
-          <rect x={-46} y={-12} width={92} height={20} rx={10} fill="#F7F1E4" stroke="#1E3A5F" strokeWidth={1} />
+        <g transform={`translate(${focus.position.x} ${focus.position.y - 18})`}>
           <text
             textAnchor="middle"
-            y={3}
-            fill="#1E3A5F"
-            fontSize={11}
-            fontFamily="Outfit, sans-serif"
+            fill="var(--color-ink)"
+            stroke="var(--color-paper)"
+            strokeWidth={4}
+            paintOrder="stroke"
+            fontSize={15}
+            fontFamily="Cormorant Garamond, Times New Roman, serif"
           >
             {focus.point.code} {focus.point.names.zh}
           </text>
