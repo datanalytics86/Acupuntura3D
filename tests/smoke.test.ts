@@ -133,6 +133,20 @@ describe("Encarta figure", () => {
     expect(attr.toLowerCase()).toMatch(/not scans/);
   });
 
+  it("maps the organ clock to the meridian of the hour", async () => {
+    const { meridianAtHour } = await import("../src/atlas/qiTime");
+    const hours = [
+      { id: "LU", clockHour: 3 },
+      { id: "ST", clockHour: 7 },
+      { id: "GB", clockHour: 23 },
+      { id: "LR", clockHour: 1 },
+    ];
+    expect(meridianAtHour(4, hours)).toBe("LU");
+    expect(meridianAtHour(7, hours)).toBe("ST");
+    expect(meridianAtHour(0, hours)).toBe("GB");
+    expect(meridianAtHour(1, hours)).toBe("LR");
+  });
+
   it("marks three didactic dantian without clinical claims", async () => {
     const { CENTERS, matchCenter } = await import("../src/atlas/centers");
     expect(CENTERS.map((c) => c.zh)).toEqual(["上丹田", "中丹田", "下丹田"]);

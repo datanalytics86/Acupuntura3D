@@ -46,7 +46,6 @@ export function MeridianPaths() {
             strokeLinecap="round"
             strokeLinejoin="round"
             opacity={dim ? 0.18 : hot ? 0.95 : 0.72}
-            className={active === m.id ? "qi-pulse" : undefined}
             style={{ mixBlendMode: "multiply" }}
             pathLength={1000}
           />

@@ -60,18 +60,6 @@ export function Figure() {
             values="0.90 0.07 0.02 0 0.02  0.03 0.88 0.04 0 0.012  0.02 0.05 0.76 0 0  0 0 0 1 0"
           />
         </filter>
-        <filter id="fig-ink" x="-4%" y="-2%" width="108%" height="104%" colorInterpolationFilters="sRGB">
-          <feMorphology in="SourceAlpha" operator="dilate" radius="1.35" result="edge" />
-          <feComposite in="edge" in2="SourceAlpha" operator="out" result="ring" />
-          <feFlood floodColor="#4a3224" floodOpacity="0.92" result="ink" />
-          <feComposite in="ink" in2="ring" operator="in" />
-        </filter>
-        <filter id="fig-ink-heavy" x="-4%" y="-2%" width="108%" height="104%" colorInterpolationFilters="sRGB">
-          <feMorphology in="SourceAlpha" operator="dilate" radius="2.4" result="edge" />
-          <feComposite in="edge" in2="SourceAlpha" operator="out" result="ring" />
-          <feFlood floodColor="#4a3224" floodOpacity="0.55" result="ink" />
-          <feComposite in="ink" in2="ring" operator="in" />
-        </filter>
         <filter id="fig-black" colorInterpolationFilters="sRGB">
           <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" />
         </filter>
@@ -93,9 +81,6 @@ export function Figure() {
         </filter>
         <mask id="fig-skin" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="1600">
           <image href={plate.href} x={plate.x} y={plate.y} width={plate.width} height={plate.height} />
-        </mask>
-        <mask id="fig-torso" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="1600">
-          <rect x="180" y="280" width="440" height="540" fill="white" />
         </mask>
         <mask id="fig-paper" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="1600">
           <rect width="800" height="1600" fill="white" />
@@ -120,27 +105,6 @@ export function Figure() {
         style={{ mixBlendMode: "multiply" }}
       />
 
-      <image
-        href={plate.href}
-        x={plate.x}
-        y={plate.y}
-        width={plate.width}
-        height={plate.height}
-        preserveAspectRatio="xMidYMid meet"
-        filter="url(#fig-ink)"
-        style={{ mixBlendMode: "multiply" }}
-      />
-      <image
-        href={plate.href}
-        x={plate.x}
-        y={plate.y}
-        width={plate.width}
-        height={plate.height}
-        preserveAspectRatio="xMidYMid meet"
-        filter="url(#fig-ink-heavy)"
-        mask="url(#fig-torso)"
-        style={{ mixBlendMode: "multiply" }}
-      />
       <image
         href={plate.href}
         x={plate.x}
