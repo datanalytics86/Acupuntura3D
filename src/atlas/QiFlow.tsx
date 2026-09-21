@@ -41,11 +41,16 @@ function Stream({
 }) {
   const pathRef = useRef<SVGPathElement>(null);
   const beads = useRef<Array<SVGCircleElement | null>>([]);
+  const elapsed = useRef(0);
 
   useEffect(() => {
     if (!playing || !d || prefersReducedMotion()) return;
     let raf = 0;
-    const tick = (t: number) => {
+    let last = performance.now();
+    const tick = (now: number) => {
+      elapsed.current += now - last;
+      last = now;
+      const t = elapsed.current;
       const el = pathRef.current;
       const L = el?.getTotalLength() ?? 0;
       if (el && L > 1) {
@@ -94,14 +99,20 @@ function useOrganClock(on: boolean, speed: number) {
     let raf = 0;
     let last = performance.now();
     let acc = 0;
+    let seen = useViewerStore.getState().clockHour;
     const tick = (now: number) => {
+      const store = useViewerStore.getState();
+      if (store.clockHour !== seen) {
+        seen = store.clockHour;
+        acc = 0;
+      }
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       acc += dt * speed;
       if (acc >= CLOCK_HOUR_SECONDS) {
-        acc -= CLOCK_HOUR_SECONDS;
-        const store = useViewerStore.getState();
+        acc = 0;
         store.setClockHour(store.clockHour + 1);
+        seen = useViewerStore.getState().clockHour;
       }
       raf = requestAnimationFrame(tick);
     };

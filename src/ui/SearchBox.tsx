@@ -1,7 +1,6 @@
 import { useId, useMemo } from "react";
 import { loadAcupoints } from "@/data";
 import { matchCenter } from "@/atlas/centers";
-import { pointOnView } from "@/atlas/mapCoords";
 import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
 
@@ -14,14 +13,9 @@ export function SearchBox() {
   const locale = useViewerStore((s) => s.locale);
   const query = useViewerStore((s) => s.searchQuery);
   const setSearch = useViewerStore((s) => s.setSearch);
-  const setSelected = useViewerStore((s) => s.setSelected);
-  const setActive = useViewerStore((s) => s.setActiveMeridian);
-  const setPan = useViewerStore((s) => s.setAtlasPan);
-  const setZoom = useViewerStore((s) => s.setAtlasZoom);
-  const setView = useViewerStore((s) => s.setAtlasView);
-  const setRegion = useViewerStore((s) => s.setAtlasRegion);
+  const showPoint = useViewerStore((s) => s.showPoint);
   const focusCenter = useViewerStore((s) => s.focusCenter);
-  const view = useViewerStore((s) => s.atlasView);
+  const setRailOpen = useViewerStore((s) => s.setRailOpen);
   const points = useMemo(() => loadAcupoints(), []);
 
   return (
@@ -36,6 +30,7 @@ export function SearchBox() {
         onChange={(e) => {
           const value = e.target.value;
           setSearch(value);
+          if (value.trim()) setRailOpen(true);
           const q = fold(value.trim());
           if (!q) return;
           const center = matchCenter(value.trim());
@@ -47,18 +42,7 @@ export function SearchBox() {
             (p) => fold(p.code) === q || fold(p.names.pinyin.replace(/\s/g, "")) === q,
           );
           if (exact.length !== 1 || !exact[0]) return;
-          const hit = exact[0];
-          setSelected(hit.id);
-          setActive(hit.meridianId);
-          setRegion("body");
-          const here = pointOnView(hit, view);
-          const other = view === "anterior" ? "posterior" : "anterior";
-          const pos = here ?? pointOnView(hit, other);
-          if (!here && pointOnView(hit, other)) setView(other);
-          if (pos) {
-            setPan(pos);
-            setZoom(2.4);
-          }
+          showPoint(exact[0].id);
         }}
         placeholder={t(locale, "search")}
         className="archive-field"

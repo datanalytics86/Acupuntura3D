@@ -40,7 +40,9 @@ export function Points2D() {
         return (
           <g
             key={`${it.point.id}-${it.side}-${i}`}
+            data-atlas-hit=""
             transform={`translate(${it.position.x} ${it.position.y})`}
+            onPointerDown={(e) => e.stopPropagation()}
             onPointerOver={(e) => {
               e.stopPropagation();
               setHovered(it.point.id);

@@ -24,8 +24,11 @@ export function Viewport({ children }: { children: ReactNode }) {
   }
 
   function onPointerDown(e: PointerEvent<SVGSVGElement>) {
+    const target = e.target as Element | null;
+    if (target?.closest?.("[data-atlas-hit]")) return;
+    if (!e.isPrimary) return;
     const now = Date.now();
-    if (now - lastTap.current < 280) {
+    if (e.pointerType !== "touch" && now - lastTap.current < 280) {
       reset();
       lastTap.current = 0;
       return;

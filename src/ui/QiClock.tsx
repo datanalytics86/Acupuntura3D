@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { loadMeridians } from "@/data";
 import { t } from "@/i18n";
+import { prefersReducedMotion } from "@/lib/quality";
 import { useViewerStore } from "@/state/viewerStore";
 
 export function QiClock() {
@@ -18,7 +19,14 @@ export function QiClock() {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-8 z-20 flex justify-center px-3">
       <div className="pointer-events-auto flex w-full max-w-5xl items-center gap-3 overflow-x-auto border-t border-brass-line bg-paper px-3 py-1">
-        <button type="button" aria-pressed={playing} onClick={() => setPlaying(!playing)} className="stamp-btn shrink-0">
+        <button
+          type="button"
+          aria-pressed={playing}
+          disabled={prefersReducedMotion()}
+          title={prefersReducedMotion() ? (locale === "en" ? "Reduced motion is on" : "Movimiento reducido activo") : undefined}
+          onClick={() => setPlaying(!playing)}
+          className="stamp-btn shrink-0 disabled:opacity-50"
+        >
           {playing ? t(locale, "pause") : t(locale, "play")}
         </button>
         <div className="flex shrink-0 items-center">

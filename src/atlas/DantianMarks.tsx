@@ -17,9 +17,11 @@ function Seal({
 }) {
   return (
     <g
+      data-atlas-hit=""
       transform={`translate(${pos.x} ${pos.y})`}
       className={selected ? "center-live" : undefined}
       style={{ cursor: "pointer" }}
+      onPointerDown={(e) => e.stopPropagation()}
       onClick={(e) => {
         e.stopPropagation();
         onSelect(center.id);

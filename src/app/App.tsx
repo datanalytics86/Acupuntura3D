@@ -9,19 +9,18 @@ import { QiClock } from "@/ui/QiClock";
 import { LegalModal } from "@/ui/LegalModal";
 import { CENTERS } from "@/atlas/centers";
 import { loadAcupoints } from "@/data";
-import { pointOnView } from "@/atlas/mapCoords";
 import { useViewerStore } from "@/state/viewerStore";
 
 export function App() {
   const points = useMemo(() => loadAcupoints(), []);
   const selected = useViewerStore((s) => s.selectedPointId);
   const setSelected = useViewerStore((s) => s.setSelected);
+  const showPoint = useViewerStore((s) => s.showPoint);
   const selectedCenter = useViewerStore((s) => s.selectedCenterId);
   const focusCenter = useViewerStore((s) => s.focusCenter);
   const toggleLayer = useViewerStore((s) => s.toggleLayer);
   const setSearch = useViewerStore((s) => s.setSearch);
   const locale = useViewerStore((s) => s.locale);
-  const atlasView = useViewerStore((s) => s.atlasView);
   const setAtlasView = useViewerStore((s) => s.setAtlasView);
   const setRegion = useViewerStore((s) => s.setAtlasRegion);
 
@@ -31,6 +30,7 @@ export function App() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (document.getElementById("legal-gate")) return;
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         if (e.key === "Escape") (e.target as HTMLElement).blur();
         return;
@@ -46,6 +46,7 @@ export function App() {
         setSearch("");
         return;
       }
+      if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
       if (e.key === "a" || e.key === "A") {
         setAtlasView("anterior");
         return;
@@ -54,11 +55,11 @@ export function App() {
         setAtlasView("posterior");
         return;
       }
-      if ((e.key === "c" || e.key === "C") && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      if (e.key === "c" || e.key === "C") {
         toggleLayer("centers");
         return;
       }
-      if (e.key >= "1" && e.key <= "4" && !e.metaKey && !e.ctrlKey) {
+      if (e.key >= "1" && e.key <= "4") {
         setRegion((["body", "face", "hand", "foot"] as const)[Number(e.key) - 1]!);
         return;
       }
@@ -71,28 +72,18 @@ export function App() {
         if (next) focusCenter(next);
         return;
       }
+      if (!selected) return;
       const merId = points.find((pt) => pt.id === selected)?.meridianId;
-      const group = points.filter((pt) => (merId ? pt.meridianId === merId : true));
-      if (group.length === 0) return;
+      const group = points.filter((pt) => pt.meridianId === merId);
       const idx = group.findIndex((pt) => pt.id === selected);
+      if (idx < 0 || group.length === 0) return;
       const next =
-        e.key === "ArrowRight"
-          ? group[(idx + 1 + group.length) % group.length]
-          : group[(idx - 1 + group.length) % group.length];
-      if (next) setSelected(next.id);
+        e.key === "ArrowRight" ? group[(idx + 1) % group.length] : group[(idx - 1 + group.length) % group.length];
+      if (next) showPoint(next.id);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [points, selected, selectedCenter, setSelected, focusCenter, toggleLayer, setSearch, setAtlasView, setRegion]);
-
-  useEffect(() => {
-    const pt = points.find((p) => p.id === selected);
-    if (!pt) return;
-    if (!pointOnView(pt, atlasView)) {
-      const other = atlasView === "anterior" ? "posterior" : "anterior";
-      if (pointOnView(pt, other)) setAtlasView(other);
-    }
-  }, [selected, atlasView, points, setAtlasView]);
+  }, [points, selected, selectedCenter, setSelected, showPoint, focusCenter, toggleLayer, setSearch, setAtlasView, setRegion]);
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-desk">

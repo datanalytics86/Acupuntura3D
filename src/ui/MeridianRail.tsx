@@ -12,11 +12,10 @@ export function MeridianRail() {
   const active = useViewerStore((s) => s.activeMeridianId);
   const selected = useViewerStore((s) => s.selectedPointId);
   const setActive = useViewerStore((s) => s.setActiveMeridian);
-  const setSelected = useViewerStore((s) => s.setSelected);
+  const showPoint = useViewerStore((s) => s.showPoint);
   const query = useViewerStore((s) => s.searchQuery);
   const starOnly = useViewerStore((s) => s.filters.starOnly);
   const element = useViewerStore((s) => s.filters.element);
-  const setStarOnly = useViewerStore((s) => s.setStarOnly);
   const setElementFilter = useViewerStore((s) => s.setElementFilter);
   const railOpen = useViewerStore((s) => s.railOpen);
 
@@ -42,15 +41,7 @@ export function MeridianRail() {
     >
       <div className="mb-3 flex items-center justify-between border-b border-brass-line pb-2">
         <h2 className="text-[10px] font-semibold tracking-[0.22em] text-brass uppercase">{t(locale, "meridians")}</h2>
-        <label className="flex items-center gap-1.5 text-[11px] tracking-[0.12em] text-ink uppercase">
-          <input
-            type="checkbox"
-            checked={starOnly}
-            onChange={(e) => setStarOnly(e.target.checked)}
-            className="accent-brass"
-          />
-          {t(locale, "stars")}
-        </label>
+        <span className="text-[11px] tracking-[0.12em] text-brass uppercase">{t(locale, "stars")}</span>
       </div>
       <div className="mb-3 flex flex-wrap gap-x-3 gap-y-1">
         {ELEMENTS.map((el) => (
@@ -58,12 +49,16 @@ export function MeridianRail() {
             key={el}
             type="button"
             onClick={() => setElementFilter(element === el ? undefined : el)}
+            aria-pressed={element === el}
             className={`file-link ${element === el ? "is-on" : ""}`}
           >
             {t(locale, el)}
           </button>
         ))}
       </div>
+      {filtered.length === 0 ? (
+        <p className="px-2 py-3 text-sm text-brass">{t(locale, "noMatches")}</p>
+      ) : null}
       <ul>
         {meridians.map((m) => {
           const kids = filtered.filter((p) => p.meridianId === m.id);
@@ -88,10 +83,7 @@ export function MeridianRail() {
                     <li key={p.id}>
                       <button
                         type="button"
-                        onClick={() => {
-                          setSelected(p.id);
-                          setActive(p.meridianId);
-                        }}
+                        onClick={() => showPoint(p.id)}
                         className={`flex w-full items-baseline gap-2 px-3 py-1 text-left text-[12px] ${
                           selected === p.id ? "bg-paper-inset" : ""
                         }`}
@@ -116,7 +108,7 @@ export function MeridianRail() {
                 <button
                   key={p.id}
                   type="button"
-                  onClick={() => setSelected(p.id)}
+                  onClick={() => showPoint(p.id)}
                   className="flex w-full items-baseline gap-2 py-1 text-left text-[12px] text-ink"
                 >
                   <span className="font-mono text-brass">{p.code}</span>

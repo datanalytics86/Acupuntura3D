@@ -48,6 +48,7 @@ const es = {
   anterior: "Anterior",
   posterior: "Posterior",
   choosePoint: "Elige un punto o un dantian en la lámina.",
+  noMatches: "Ningún punto coincide.",
 };
 
 const en: typeof es = {
@@ -98,6 +99,7 @@ const en: typeof es = {
   anterior: "Anterior",
   posterior: "Posterior",
   choosePoint: "Choose a point or a dantian on the plate.",
+  noMatches: "No matching point.",
 };
 
 export const MESSAGES: Record<Exclude<Locale, "zh">, typeof es> = { es, en };

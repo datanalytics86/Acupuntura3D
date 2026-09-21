@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import type { AtlasRegion, AtlasView, Elemento, Locale, Point2D, QualityTier, ViewerState } from "@/types";
+import { loadAcupoints } from "@/data";
+import { pointOnView } from "@/atlas/mapCoords";
 import { CENTERS, positionOnView, type CenterId } from "@/atlas/centers";
 import { regionFrame } from "@/atlas/regionFrames";
 import { detectQuality, prefersReducedMotion } from "@/lib/quality";
@@ -29,6 +31,7 @@ function initialRail(): boolean {
 interface ViewerActions {
   railOpen: boolean;
   setSelected: (id: string | null) => void;
+  showPoint: (id: string) => void;
   setHovered: (id: string | null) => void;
   setActiveMeridian: (id: string | null) => void;
   toggleLayer: (key: keyof ViewerState["visibleLayers"]) => void;
@@ -80,13 +83,43 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
   bothSides: true,
   railOpen: initialRail(),
   setSelected: (id) => set({ selectedPointId: id, ...(id ? { selectedCenterId: null } : {}) }),
+  showPoint: (id) => {
+    const pt = loadAcupoints().find((p) => p.id === id);
+    if (!pt) return;
+    const s = get();
+    const here = pointOnView(pt, s.atlasView);
+    const other = s.atlasView === "anterior" ? "posterior" : "anterior";
+    const pos = here ?? pointOnView(pt, other);
+    const view = here ? s.atlasView : other;
+    const frame = s.atlasRegion === "body" ? null : regionFrame(s.atlasRegion, view);
+    const inDetail =
+      Boolean(pos && frame) &&
+      Math.abs(pos!.x - frame!.pan.x) < (400 / frame!.zoom) * 0.9 &&
+      Math.abs(pos!.y - frame!.pan.y) < (800 / frame!.zoom) * 0.86;
+    const apply = () =>
+      set({
+        selectedPointId: id,
+        selectedCenterId: null,
+        activeMeridianId: pt.meridianId,
+        atlasView: view,
+        ...(inDetail
+          ? { atlasPan: frame!.pan, atlasZoom: frame!.zoom }
+          : {
+              atlasRegion: "body" as const,
+              atlasPan: pos ?? { x: 400, y: 800 },
+              atlasZoom: pos ? 2.4 : 1,
+            }),
+      });
+    if (view !== s.atlasView) withPaperTransition(apply);
+    else apply();
+  },
   setHovered: (id) => set({ hoveredPointId: id }),
   setActiveMeridian: (id) => set({ activeMeridianId: id }),
   toggleLayer: (key) =>
     set((s) => ({
       visibleLayers: { ...s.visibleLayers, [key]: !s.visibleLayers[key] },
     })),
-  setQiPlaying: (v) => set({ qiPlaying: v }),
+  setQiPlaying: (v) => set({ qiPlaying: v && !prefersReducedMotion() }),
   setQiSpeed: (v) => set({ qiSpeed: Math.min(4, Math.max(0.25, v)) }),
   setClockHour: (h) => set({ clockHour: ((h % 24) + 24) % 24 }),
   setLocale: (l) => set({ locale: l }),

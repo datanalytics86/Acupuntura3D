@@ -130,7 +130,15 @@ export function PointDrawer() {
         ) : null}
         <section className="mb-4 text-[11px] leading-relaxed text-brass">
           <div>
-            {t(locale, "confidence")}: {point.confidence}
+            {t(locale, "confidence")}:{" "}
+            {t(
+              locale,
+              point.confidence === "high"
+                ? "qualityHigh"
+                : point.confidence === "medium"
+                  ? "qualityMedium"
+                  : "qualityLow",
+            )}
           </div>
           <div>
             {t(locale, "sources")}: {point.sources.join(" · ")}
