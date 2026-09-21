@@ -85,21 +85,7 @@ export function Viewport({ children }: { children: ReactNode }) {
       role="img"
       aria-label="Atlas corporal de meridianos"
     >
-      <defs>
-        <filter id="plateGrain" x="0%" y="0%" width="100%" height="100%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" />
-        </filter>
-      </defs>
-      <rect x={vbX - 40} y={vbY - 40} width={vbW + 80} height={vbH + 80} fill="#F3EBD8" />
-      <rect
-        x={vbX - 40}
-        y={vbY - 40}
-        width={vbW + 80}
-        height={vbH + 80}
-        filter="url(#plateGrain)"
-        opacity={0.055}
-        style={{ mixBlendMode: "multiply" }}
-      />
+      <rect x={vbX - 40} y={vbY - 40} width={vbW + 80} height={vbH + 80} fill="var(--color-paper)" />
       {children}
     </svg>
   );
