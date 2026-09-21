@@ -109,35 +109,37 @@ describe("Encarta figure", () => {
     expect(Y.sole).toBe(1480);
   });
 
-  it("builds the body from an Encarta part kit, not a clay blob", async () => {
-    const { ANTERIOR_FILLS } = await import("../src/atlas/figure/parts/anterior");
-    const { POSTERIOR_FILLS } = await import("../src/atlas/figure/parts/posterior");
-    expect(ANTERIOR_FILLS.length).toBeGreaterThanOrEqual(24);
-    expect(POSTERIOR_FILLS.length).toBeGreaterThanOrEqual(24);
-    expect(ANTERIOR_FILLS.some((s) => s.id === "trunk")).toBe(true);
-    expect(POSTERIOR_FILLS.some((s) => s.id === "occipital" || s.id === "trunk")).toBe(true);
+  it("paints licensed surface plates instead of the parametric kit", () => {
     const figure = readFileSync(join(root, "src/atlas/figure/Figure.tsx"), "utf8");
-    expect(figure).toMatch(/ANTERIOR_FILLS/);
-    expect(figure).toMatch(/POSTERIOR_FILLS/);
-    expect(figure).not.toMatch(/skinWash/);
-    expect(figure).not.toMatch(/@react-three/);
+    expect(figure).toMatch(/body-anterior\.png/);
+    expect(figure).toMatch(/body-posterior\.png/);
+    expect(figure).not.toMatch(/fingerD\(|capsuleD\(|ellipseD\(|encSkin|@react-three|<Canvas/);
+    for (const file of ["anterior.ts", "posterior.ts", "palette.ts"]) {
+      const text = readFileSync(join(root, "src/atlas/figure/parts", file), "utf8");
+      expect(text).not.toMatch(/fingerD\(|capsuleD\(|ellipseD\(|TRUNK_OUTER|encSkin/);
+    }
+    expect(readFileSync(join(root, "src/atlas/AtlasRoot.tsx"), "utf8")).not.toMatch(/rounded-\[8px\]/);
+    expect(readFileSync(join(root, "src/atlas/figure/PlateTitle.tsx"), "utf8")).toMatch(
+      /Cuerpo humano — vista anterior/,
+    );
   });
 
-  it("has encyclopedia hands and feet, not paddles", () => {
-    const hands = readFileSync(join(root, "src/atlas/figure/parts/hands.ts"), "utf8");
-    const feet = readFileSync(join(root, "src/atlas/figure/parts/feet.ts"), "utf8");
-    expect(hands).toMatch(/thumb/);
-    expect(hands).toMatch(/index/);
-    expect(hands).toMatch(/pinky/);
-    expect(feet).toMatch(/toe1/);
-    expect(feet).toMatch(/toe5/);
-    expect(feet).toMatch(/heel/);
-  });
-
-  it("attributes an original plate, not a copyright scan", () => {
+  it("attributes Goran tek-en and does not scan a commercial atlas", () => {
     const attr = readFileSync(join(root, "public/atlas/ATTRIBUTION.md"), "utf8");
-    expect(attr.toLowerCase()).toMatch(/original/);
+    expect(attr).toMatch(/Goran tek-en/);
+    expect(attr).toMatch(/CC BY-SA 4\.0/);
+    expect(attr).toMatch(/commons\.wikimedia\.org\/wiki\/File:Male_front_3d-shaded_human_illustration\.svg/);
+    expect(attr).toMatch(/commons\.wikimedia\.org\/wiki\/File:Male_back_3d-shaded_human_illustration\.svg/);
     expect(attr.toLowerCase()).toMatch(/not scans/);
+  });
+
+  it("ships plate previews", () => {
+    expect(readFileSync(join(root, "public/atlas/preview-anterior.svg"), "utf8")).toMatch(
+      /body-anterior\.png/,
+    );
+    expect(readFileSync(join(root, "public/atlas/preview-posterior.svg"), "utf8")).toMatch(
+      /body-posterior\.png/,
+    );
   });
 
   it("paints the atlas on encyclopedia paper", () => {

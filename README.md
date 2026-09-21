@@ -1,5 +1,7 @@
 # Acupuntura3D
 
+Lámina Encarta 2D.
+
 Atlas 3D interactivo del cuerpo humano con meridianos, puntos de acupuntura (estándar OMS) y visualización educativa del flujo de Qi.
 
 **Repositorio:** https://github.com/datanalytics86/Acupuntura3D

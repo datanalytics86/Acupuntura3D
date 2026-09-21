@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1600" width="800" height="1600">
+  <rect width="800" height="1600" fill="#F3EBD8"/>
+  <rect x="10" y="10" width="780" height="1580" fill="none" stroke="#c4b089" stroke-width="1.5"/>
+  <text x="36" y="26" fill="#3a2a1c" font-family="Georgia, 'Times New Roman', serif" font-size="18">Cuerpo humano — vista posterior</text>
+  <image href="body-posterior.png" x="97.47" y="40" width="605.06" height="1440"/>
+</svg>
