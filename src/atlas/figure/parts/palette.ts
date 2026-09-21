@@ -1,9 +1,10 @@
+/** Ink and paper swatches. Body color lives in the surface plates. */
 export const SKIN = {
-  light: "#F6D7C0",
-  mid: "#E8C4A8",
-  shadow: "#C48A6A",
-  deep: "#A56B50",
-  outline: "#6B4A36",
+  light: "#f4ddc4",
+  mid: "#e0b48e",
+  shadow: "#c08a68",
+  deep: "#a56b50",
+  outline: "#4a3224",
 } as const;
 
 export const HAIR = {
@@ -19,10 +20,5 @@ export const FEATURE = {
 } as const;
 
 export const FILL = {
-  skin: "url(#encSkin)",
-  skinL: "url(#encSkinL)",
-  skinR: "url(#encSkinR)",
-  muscle: "url(#encMuscle)",
-  hair: "url(#encHair)",
-  shadow: "url(#encGround)",
+  ground: "#8A6A3B",
 } as const;
