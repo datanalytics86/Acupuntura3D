@@ -23,8 +23,7 @@ function initialQuality(): QualityTier {
 }
 
 function initialRail(): boolean {
-  if (typeof window === "undefined") return true;
-  return window.matchMedia("(min-width: 768px)").matches;
+  return false;
 }
 
 interface ViewerActions {

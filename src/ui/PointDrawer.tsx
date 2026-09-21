@@ -36,7 +36,7 @@ export function PointDrawer() {
       role="dialog"
       aria-modal="true"
       aria-label={`${point.code} ${point.names.pinyin}`}
-      className="marginalia drawer-in scroll-thin absolute top-28 right-3 bottom-28 z-20 flex w-full max-w-md flex-col overflow-y-auto outline-none max-md:bottom-28 md:top-20"
+      className="marginalia drawer-in scroll-thin absolute top-28 right-3 bottom-[5.5rem] z-20 flex w-full max-w-md flex-col overflow-y-auto outline-none md:top-[4.25rem]"
     >
       <div className="h-px w-full" style={{ background: mer?.color ?? "var(--color-brass)" }} />
       <div className="flex flex-1 flex-col p-4">

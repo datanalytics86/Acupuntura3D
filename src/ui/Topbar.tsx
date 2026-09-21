@@ -26,7 +26,8 @@ export function Topbar() {
     <header className="running-head pointer-events-auto absolute inset-x-0 top-0 z-20 flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 md:px-5">
       <button
         type="button"
-        className="file-link"
+        className={`file-link ${railOpen ? "is-on" : ""}`}
+        aria-pressed={railOpen}
         onClick={() => setRailOpen(!railOpen)}
       >
         {t(locale, "meridians")}
