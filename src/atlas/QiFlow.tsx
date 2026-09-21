@@ -69,7 +69,7 @@ function Stream({
 
   if (!d) return null;
   return (
-    <g pointerEvents="none" style={{ mixBlendMode: "multiply" }}>
+    <g pointerEvents="none">
       <path ref={pathRef} d={d} fill="none" stroke="none" />
       {Array.from({ length: count }, (_, i) => (
         <circle
@@ -77,7 +77,7 @@ function Stream({
           ref={(node) => {
             beads.current[i] = node;
           }}
-          r={i === 0 ? 4.4 : 3.1}
+          r={i === 0 ? 5.2 : 3.4}
           fill={color}
           stroke="var(--color-paper)"
           strokeWidth={i === 0 ? 1.6 : 1}

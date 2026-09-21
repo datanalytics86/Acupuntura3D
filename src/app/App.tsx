@@ -23,6 +23,7 @@ export function App() {
   const locale = useViewerStore((s) => s.locale);
   const atlasView = useViewerStore((s) => s.atlasView);
   const setAtlasView = useViewerStore((s) => s.setAtlasView);
+  const setRegion = useViewerStore((s) => s.setAtlasRegion);
 
   useEffect(() => {
     document.documentElement.lang = locale === "zh" ? "en" : locale;
@@ -57,6 +58,10 @@ export function App() {
         toggleLayer("centers");
         return;
       }
+      if (e.key >= "1" && e.key <= "4" && !e.metaKey && !e.ctrlKey) {
+        setRegion((["body", "face", "hand", "foot"] as const)[Number(e.key) - 1]!);
+        return;
+      }
       if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
       if (selectedCenter) {
         const order = CENTERS.map((c) => c.id);
@@ -78,7 +83,7 @@ export function App() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [points, selected, selectedCenter, setSelected, focusCenter, toggleLayer, setSearch, setAtlasView]);
+  }, [points, selected, selectedCenter, setSelected, focusCenter, toggleLayer, setSearch, setAtlasView, setRegion]);
 
   useEffect(() => {
     const pt = points.find((p) => p.id === selected);

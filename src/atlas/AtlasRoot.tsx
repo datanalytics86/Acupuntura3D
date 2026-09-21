@@ -1,8 +1,5 @@
 import { Viewport } from "./Viewport";
 import { Figure } from "./figure/Figure";
-import { FacePlate } from "./figure/FacePlate";
-import { FootPlate } from "./figure/FootPlate";
-import { HandPlate } from "./figure/HandPlate";
 import { PlateTitle } from "./figure/PlateTitle";
 import { MeridianPaths } from "./MeridianPaths";
 import { QiFlow } from "./QiFlow";
@@ -34,23 +31,11 @@ export function AtlasRoot() {
         <PlateTitle />
         <div className="relative min-h-0 flex-1">
           <Viewport>
-            {region === "body" ? (
-              <>
-                <Figure />
-                <MeridianPaths />
-                <QiFlow />
-                <Points2D />
-                <DantianMarks frame="body" />
-              </>
-            ) : null}
-            {region === "face" ? (
-              <>
-                <FacePlate />
-                <DantianMarks frame="face" />
-              </>
-            ) : null}
-            {region === "hand" ? <HandPlate /> : null}
-            {region === "foot" ? <FootPlate /> : null}
+            <Figure />
+            <MeridianPaths />
+            <QiFlow />
+            <Points2D />
+            <DantianMarks frame="body" />
           </Viewport>
         </div>
         {!selected && !center ? (
@@ -59,9 +44,11 @@ export function AtlasRoot() {
           </p>
         ) : null}
         <p className="px-5 pt-0.5 pb-2 text-[10px] tracking-[0.14em] text-brass">
-          {region === "body" ? "Goran tek-en · CC BY-SA 4.0 · lámina adaptada" : "Lámina del atlas · tinta sobre papel"}
+          {region === "body"
+            ? "Goran tek-en · CC BY-SA 4.0 · lámina adaptada"
+            : "Detalle de la misma lámina · Goran tek-en · CC BY-SA 4.0"}
           <span className="mx-2 text-brass-line">·</span>
-          A/P vista · C centros · / buscar
+          A/P · 1–4 región · C centros · / buscar
         </p>
       </div>
     </div>

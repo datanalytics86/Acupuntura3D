@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { AtlasRegion, AtlasView, Elemento, Locale, Point2D, QualityTier, ViewerState } from "@/types";
 import { CENTERS, positionOnView, type CenterId } from "@/atlas/centers";
+import { regionFrame } from "@/atlas/regionFrames";
 import { detectQuality, prefersReducedMotion } from "@/lib/quality";
 import { withPaperTransition } from "@/lib/paperTransition";
 
@@ -114,9 +115,21 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
         qi: true,
       },
     }),
-  setAtlasView: (v) => withPaperTransition(() => set({ atlasView: v })),
+  setAtlasView: (v) =>
+    withPaperTransition(() => {
+      const region = get().atlasRegion;
+      if (region === "body") {
+        set({ atlasView: v });
+        return;
+      }
+      const frame = regionFrame(region, v);
+      set({ atlasView: v, atlasPan: frame.pan, atlasZoom: frame.zoom });
+    }),
   setAtlasRegion: (r) =>
-    withPaperTransition(() => set({ atlasRegion: r, atlasZoom: 1, atlasPan: { x: 400, y: 800 } })),
+    withPaperTransition(() => {
+      const frame = regionFrame(r, get().atlasView);
+      set({ atlasRegion: r, atlasPan: frame.pan, atlasZoom: frame.zoom });
+    }),
   focusCenter: (id) => {
     if (!id) {
       set({ selectedCenterId: null });
@@ -125,10 +138,11 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     const s = get();
     const center = CENTERS.find((c) => c.id === id);
     if (!center) return;
-    const onFace = s.atlasRegion === "face" && center.face;
+    const onFace = s.atlasRegion === "face" && center.id === "upper";
     const here = positionOnView(center, s.atlasView);
     const view = onFace ? s.atlasView : here ? s.atlasView : "anterior";
-    const pos = onFace ? center.face : (positionOnView(center, view) ?? center.anterior);
+    const framed = onFace ? regionFrame("face", view) : null;
+    const pos = framed ? framed.pan : (positionOnView(center, view) ?? center.anterior);
     const apply = () =>
       set({
         selectedCenterId: id,
@@ -136,7 +150,7 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
         atlasView: view,
         atlasRegion: onFace ? "face" : "body",
         atlasPan: pos ?? s.atlasPan,
-        atlasZoom: onFace ? 1.35 : 2.15,
+        atlasZoom: framed ? framed.zoom : 2.15,
         visibleLayers: { ...s.visibleLayers, centers: true },
       });
     if (view !== s.atlasView) withPaperTransition(apply);
@@ -144,6 +158,6 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
   },
   setAtlasZoom: (z) => set({ atlasZoom: Math.min(6, Math.max(1, z)) }),
   setAtlasPan: (p) => set({ atlasPan: p }),
-  resetAtlasCamera: () => set({ atlasZoom: 1, atlasPan: { x: 400, y: 800 } }),
+  resetAtlasCamera: () => set({ atlasRegion: "body", atlasZoom: 1, atlasPan: { x: 400, y: 800 } }),
   setBothSides: (v) => set({ bothSides: v }),
 }));
