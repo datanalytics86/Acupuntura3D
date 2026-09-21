@@ -244,7 +244,7 @@ PASS si:
 - No claims clínicos.
 - No copiar Encarta / Netter / Deadman / Kenhub / Visible Body.
 - Raster: ATTRIBUTION.md con URL + licencia + autor.
-- CV12 hanzi = 中腔 (no 中腔 equivocado: no 中腔 wait — correcto es 中腔 Zhongwan). Usar 中腔.
+- CV12 hanzi = 中腔. No lo cambies.
 - No fotos de personas reales como figura del producto.
 - No merge a `main`. El humano decide producción.
 
