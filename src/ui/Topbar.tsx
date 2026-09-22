@@ -1,91 +1,92 @@
 import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
 import { SearchBox } from "./SearchBox";
-import type { Locale } from "@/types";
+import type { AtlasRegion, Locale } from "@/types";
 
 const HIT = { minWidth: 44, minHeight: 44 } as const;
 
-const LAYERS = ["body", "meridians", "points", "qi", "centers"] as const;
-const LAYER_LABEL: Record<(typeof LAYERS)[number], "body" | "tubes" | "points" | "qi" | "centers"> = {
-  body: "body",
-  meridians: "tubes",
-  points: "points",
-  qi: "qi",
-  centers: "centers",
+const REGIONS: readonly AtlasRegion[] = ["body", "face", "hand", "foot"];
+
+const REGION_LABEL: Record<"es" | "en", Record<AtlasRegion, string>> = {
+  es: { body: "Cuerpo", face: "Rostro", hand: "Mano", foot: "Pie" },
+  en: { body: "Body", face: "Face", hand: "Hand", foot: "Foot" },
 };
 
 export function Topbar() {
   const locale = useViewerStore((s) => s.locale);
   const setLocale = useViewerStore((s) => s.setLocale);
-  const layers = useViewerStore((s) => s.visibleLayers);
-  const toggle = useViewerStore((s) => s.toggleLayer);
   const railOpen = useViewerStore((s) => s.railOpen);
   const setRailOpen = useViewerStore((s) => s.setRailOpen);
   const atlasView = useViewerStore((s) => s.atlasView);
   const setAtlasView = useViewerStore((s) => s.setAtlasView);
+  const atlasRegion = useViewerStore((s) => s.atlasRegion);
+  const setAtlasRegion = useViewerStore((s) => s.setAtlasRegion);
+  const regionLang = locale === "es" ? "es" : "en";
 
   return (
-    <header className="running-head pointer-events-auto absolute inset-x-0 top-0 z-20 flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 md:px-5">
+    <header className="running-head pointer-events-auto absolute inset-x-0 top-0 z-20 flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 min-[1100px]:flex-nowrap md:px-5">
       <button
         type="button"
-        className={`file-link ${railOpen ? "is-on" : ""}`}
+        className={`file-link shrink-0 ${railOpen ? "is-on" : ""}`}
         style={HIT}
         aria-pressed={railOpen}
         onClick={() => setRailOpen(!railOpen)}
       >
         {t(locale, "meridians")}
       </button>
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         <span className="hanzi text-xl leading-none text-ink">针</span>
         <span className="h-6 w-px bg-brass-line" aria-hidden />
-        <div>
+        <div className="whitespace-nowrap">
           <h1 className="display text-[1.2rem] leading-none font-semibold text-ink">{t(locale, "title")}</h1>
           <p className="mt-0.5 text-[10px] tracking-[0.2em] text-brass uppercase">{t(locale, "subtitle")}</p>
         </div>
       </div>
-      <div className="flex items-center gap-3" role="group" aria-label={t(locale, "anterior")}>
+      <div
+        className="order-last flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-1 min-[1100px]:order-none min-[1100px]:w-auto min-[1100px]:shrink-0 min-[1100px]:flex-nowrap"
+        role="group"
+        aria-label={regionLang === "es" ? "Vista y región" : "View and region"}
+      >
         {(["anterior", "posterior"] as const).map((v) => (
           <button
             key={v}
             type="button"
             aria-pressed={atlasView === v}
             onClick={() => setAtlasView(v)}
-            className={`file-link ${atlasView === v ? "is-on" : ""}`}
+            className={`file-link shrink-0 ${atlasView === v ? "is-on" : ""}`}
             style={HIT}
           >
             {t(locale, v)}
           </button>
         ))}
-      </div>
-      <div className="flex flex-wrap items-center gap-3">
-        {LAYERS.map((key) => (
+        {REGIONS.map((id) => (
           <button
-            key={key}
+            key={id}
             type="button"
-            aria-pressed={layers[key]}
-            onClick={() => toggle(key)}
-            className={`file-link ${layers[key] ? "is-on" : ""}`}
+            aria-pressed={atlasRegion === id}
+            onClick={() => setAtlasRegion(id)}
+            className={`file-link shrink-0 ${atlasRegion === id ? "is-on" : ""}`}
             style={HIT}
           >
-            {t(locale, LAYER_LABEL[key])}
+            {REGION_LABEL[regionLang][id]}
           </button>
         ))}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         {(["es", "en"] as Locale[]).map((l) => (
           <button
             key={l}
             type="button"
             aria-pressed={locale === l}
             onClick={() => setLocale(l)}
-            className={`file-link ${locale === l ? "is-on" : ""}`}
+            className={`file-link shrink-0 ${locale === l ? "is-on" : ""}`}
             style={HIT}
           >
             {l}
           </button>
         ))}
       </div>
-      <div className="min-w-[12rem] flex-1 md:max-w-xs md:flex-none">
+      <div className="ml-auto w-56 max-w-full shrink-0">
         <SearchBox />
       </div>
     </header>

@@ -25,7 +25,7 @@ export function App() {
   const setRegion = useViewerStore((s) => s.setAtlasRegion);
 
   useEffect(() => {
-    document.documentElement.lang = locale === "zh" ? "en" : locale;
+    document.documentElement.lang = locale;
   }, [locale]);
 
   useEffect(() => {

@@ -5,6 +5,17 @@ import { useViewerStore } from "@/state/viewerStore";
 
 const ELEMENTS = ["wood", "fire", "earth", "metal", "water"] as const;
 
+const HIT = { minWidth: 44, minHeight: 44 } as const;
+
+const LAYERS = ["body", "meridians", "points", "qi", "centers"] as const;
+const LAYER_LABEL: Record<(typeof LAYERS)[number], "body" | "meridians" | "points" | "qi" | "centers"> = {
+  body: "body",
+  meridians: "meridians",
+  points: "points",
+  qi: "qi",
+  centers: "centers",
+};
+
 export function MeridianRail() {
   const meridians = useMemo(() => loadMeridians(), []);
   const points = useMemo(() => loadAcupoints(), []);
@@ -18,6 +29,8 @@ export function MeridianRail() {
   const element = useViewerStore((s) => s.filters.element);
   const setElementFilter = useViewerStore((s) => s.setElementFilter);
   const railOpen = useViewerStore((s) => s.railOpen);
+  const layers = useViewerStore((s) => s.visibleLayers);
+  const toggle = useViewerStore((s) => s.toggleLayer);
 
   const q = query.trim().toLowerCase();
   const filtered = points.filter((p) => {
@@ -39,9 +52,25 @@ export function MeridianRail() {
       }`}
       style={{ borderRadius: "var(--radius-plate)", transitionTimingFunction: "var(--ease-paper)" }}
     >
-      <div className="mb-3 flex items-center justify-between border-b border-brass-line pb-2">
-        <h2 className="text-[10px] font-semibold tracking-[0.22em] text-brass uppercase">{t(locale, "meridians")}</h2>
-        <span className="text-[11px] tracking-[0.12em] text-brass uppercase">{t(locale, "stars")}</span>
+      <div className="mb-3 border-b border-brass-line pb-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[10px] font-semibold tracking-[0.22em] text-brass uppercase">{t(locale, "meridians")}</h2>
+          <span className="text-[11px] tracking-[0.12em] text-brass uppercase">{t(locale, "stars")}</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-2" role="group" aria-label={t(locale, "layers")}>
+          {LAYERS.map((key) => (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={layers[key]}
+              onClick={() => toggle(key)}
+              className={`file-link shrink-0 ${layers[key] ? "is-on" : ""}`}
+              style={HIT}
+            >
+              {t(locale, LAYER_LABEL[key])}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="mb-3 flex flex-wrap gap-x-3 gap-y-1">
         {ELEMENTS.map((el) => (
