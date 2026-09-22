@@ -18,7 +18,7 @@ export function QiClock() {
 
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-8 z-20 flex justify-center px-3">
-      <div className="pointer-events-auto flex w-full max-w-5xl items-center gap-3 overflow-x-auto border-t border-brass-line bg-paper px-3 py-1">
+      <div className="pointer-events-auto flex w-full max-w-5xl flex-nowrap items-center gap-3 overflow-x-auto border-t border-brass-line bg-paper px-3 py-1">
         <button
           type="button"
           aria-pressed={playing}
@@ -26,6 +26,7 @@ export function QiClock() {
           title={prefersReducedMotion() ? (locale === "en" ? "Reduced motion is on" : "Movimiento reducido activo") : undefined}
           onClick={() => setPlaying(!playing)}
           className="stamp-btn shrink-0 disabled:opacity-50"
+          style={{ minWidth: 44, minHeight: 44 }}
         >
           {playing ? t(locale, "pause") : t(locale, "play")}
         </button>
@@ -40,7 +41,8 @@ export function QiClock() {
                 type="button"
                 title={`${m.id} ${String(start).padStart(2, "0")}:00–${String(end).padStart(2, "0")}:00`}
                 onClick={() => setHour(start)}
-                className={`clock-mark ${on ? "is-on" : ""}`}
+                className={`clock-mark shrink-0 ${on ? "is-on" : ""}`}
+                style={{ minWidth: 44, minHeight: 44 }}
               >
                 {m.id}
               </button>

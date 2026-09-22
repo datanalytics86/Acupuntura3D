@@ -37,6 +37,10 @@ export function PointDrawer() {
       aria-modal="true"
       aria-label={`${point.code} ${point.names.pinyin}`}
       className="marginalia drawer-in scroll-thin absolute top-28 right-3 bottom-[5.5rem] z-20 flex w-full max-w-md flex-col overflow-y-auto outline-none md:top-[4.25rem]"
+      onKeyDown={(e) => {
+        if (e.key !== "Escape") return;
+        setSelected(null);
+      }}
     >
       <div className="h-px w-full" style={{ background: mer?.color ?? "var(--color-brass)" }} />
       <div className="flex flex-1 flex-col p-4">
@@ -50,7 +54,13 @@ export function PointDrawer() {
               {name}
             </div>
           </div>
-          <button type="button" className="file-link" onClick={() => setSelected(null)} aria-label={t(locale, "close")}>
+          <button
+            type="button"
+            className="file-link"
+            style={{ minWidth: 44, minHeight: 44 }}
+            onClick={() => setSelected(null)}
+            aria-label={t(locale, "close")}
+          >
             Esc
           </button>
         </div>

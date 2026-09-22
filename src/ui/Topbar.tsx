@@ -3,6 +3,8 @@ import { useViewerStore } from "@/state/viewerStore";
 import { SearchBox } from "./SearchBox";
 import type { Locale } from "@/types";
 
+const HIT = { minWidth: 44, minHeight: 44 } as const;
+
 const LAYERS = ["body", "meridians", "points", "qi", "centers"] as const;
 const LAYER_LABEL: Record<(typeof LAYERS)[number], "body" | "tubes" | "points" | "qi" | "centers"> = {
   body: "body",
@@ -27,6 +29,7 @@ export function Topbar() {
       <button
         type="button"
         className={`file-link ${railOpen ? "is-on" : ""}`}
+        style={HIT}
         aria-pressed={railOpen}
         onClick={() => setRailOpen(!railOpen)}
       >
@@ -48,6 +51,7 @@ export function Topbar() {
             aria-pressed={atlasView === v}
             onClick={() => setAtlasView(v)}
             className={`file-link ${atlasView === v ? "is-on" : ""}`}
+            style={HIT}
           >
             {t(locale, v)}
           </button>
@@ -61,6 +65,7 @@ export function Topbar() {
             aria-pressed={layers[key]}
             onClick={() => toggle(key)}
             className={`file-link ${layers[key] ? "is-on" : ""}`}
+            style={HIT}
           >
             {t(locale, LAYER_LABEL[key])}
           </button>
@@ -74,6 +79,7 @@ export function Topbar() {
             aria-pressed={locale === l}
             onClick={() => setLocale(l)}
             className={`file-link ${locale === l ? "is-on" : ""}`}
+            style={HIT}
           >
             {l}
           </button>

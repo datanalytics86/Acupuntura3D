@@ -29,6 +29,10 @@ export function CenterDrawer() {
       aria-modal="true"
       aria-label={center.pinyin}
       className="marginalia drawer-in scroll-thin absolute top-28 right-3 bottom-[5.5rem] z-20 flex w-full max-w-md flex-col overflow-y-auto outline-none md:top-[4.25rem]"
+      onKeyDown={(e) => {
+        if (e.key !== "Escape") return;
+        focus(null);
+      }}
     >
       <div className="h-px w-full" style={{ background: "#7A3B32" }} />
       <div className="flex flex-1 flex-col p-4">
@@ -38,7 +42,13 @@ export function CenterDrawer() {
             <div className="hanzi display mt-1 text-6xl leading-none text-ink">{center.zh}</div>
             <div className="mt-2 text-sm text-ink">{center.pinyin}</div>
           </div>
-          <button type="button" className="file-link" onClick={() => focus(null)} aria-label={t(locale, "close")}>
+          <button
+            type="button"
+            className="file-link"
+            style={{ minWidth: 44, minHeight: 44 }}
+            onClick={() => focus(null)}
+            aria-label={t(locale, "close")}
+          >
             Esc
           </button>
         </div>
