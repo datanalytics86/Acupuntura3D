@@ -1,47 +1,33 @@
 # AGENTS.md — Acupuntura3D
 
-Eres Grok Build / Grok Terminal trabajando en un atlas 3D educativo de acupuntura.
+Eres Grok Build / Grok Terminal trabajando en un atlas 2D educativo de acupuntura.
 
 ## Misión
-Visualizador web del cuerpo humano con meridianos, puntos OMS e interacción.
-Click en un punto abre ficha. El Qi se ve circulando por los meridianos.
-Español primero. No es un dispositivo médico.
+Lámina del cuerpo: meridianos, puntos e interacción. Click en un punto abre ficha. El Qi se ve sobre los trazos. Español primero. No es un dispositivo médico.
+
+No es un visor 3D. No uses R3F, no uses three, no uses Canvas WebGL. No entres en Plan mode. No pidas entrar en Plan.
 
 ## Antes de codear
-1. Lee README.md, docs/ARQUITECTURA.md y docs/MEGAPROMPT_GROK_TERMINAL.md.
-2. Entra en Plan mode. No implementes F4 (361 puntos) en el primer ciclo.
-3. Commits atómicos por fase. TypeScript estricto.
-
-Ciclo deploy: ver docs/MEGAPROMPT_DEPLOY.md. No reabrir F4 en un ciclo de release. Ver docs/DEPLOY.md.
+1. Lee README.md, docs/ARQUITECTURA.md y docs/DEPLOY.md.
+2. No implementes los 361 puntos.
+3. Commits atómicos. TypeScript estricto.
 
 ## Stack
-Vite + React + TypeScript + Tailwind + Zustand
-@react-three/fiber + @react-three/drei + three
-Datos en JSON bajo data/. Sin backend en MVP.
-Deploy estático a Vercel.
-
-## Subagentes recomendados
-- A1 scaffold/UI shell
-- A2 data schema + seed
-- A3 body viewer R3F
-- A4 interacción + drawer
-- A5 Qi VFX
-- A6 QA + Vercel
-
-Máximo 4–6 subagentes en paralelo. Worktrees si hay solapamiento de archivos.
+Vite + React + TypeScript + Tailwind + Zustand.
+Datos JSON bajo `data/`. Sin backend.
+Deploy estático a Vercel (`npm run build` → `dist`).
 
 ## Reglas
-- No inventar coordenadas 3D de los 361 puntos. Si no hay ancla confiable, va a unmapped[].
+- No inventar 361 puntos. Si no hay ancla en el seed, no se fabrica.
 - No copiar texto de manuales con copyright. Nomenclatura OMS + resúmenes originales + fuente.
-- No afirmar eficacia clínica. Disclaimer visible.
+- No afirmar eficacia clínica. Aviso legal visible.
 - No secretos ni API keys.
-- `npm run dev` debe funcionar al cerrar cada fase.
+- No instalar `three`, `@react-three/fiber` ni `@react-three/drei`.
+- `npm run dev` debe abrir el atlas SVG.
 
-## Definition of done por fase
-F0: canvas + grid + schema compilando
-F1: GLB o maniquí + 14 curvas
-F2: 20 puntos estrella + ficha al click
-F3: Qi animado con play/pause
-F4: dataset expandido con confidence por punto
-F5: search/filtros/móvil
-F6: deploy Vercel + README de uso
+## Hecho de este atlas
+- Lámina en `<svg>`, vistas Anterior / Posterior
+- 20 puntos estrella con ficha al click
+- Qi 2D con play/pause
+- Búsqueda, rail, aviso legal
+- Producción: solo `main`, y solo después de mergear `feat/atlas-2d`. Hasta ese merge la URL pública sigue siendo el MVP 3D. Ver docs/DEPLOY.md.
