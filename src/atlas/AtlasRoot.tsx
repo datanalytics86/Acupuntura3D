@@ -39,15 +39,15 @@ export function AtlasRoot() {
           </Viewport>
         </div>
         {!selected && !center ? (
-          <p className="display pointer-events-none absolute right-6 bottom-8 text-[1.05rem] text-brass">
+          <p className="display pointer-events-none absolute right-6 bottom-8 text-[1.05rem] text-ink">
             {t(locale, "choosePoint")}
           </p>
         ) : null}
-        <p className="px-5 pt-0.5 pb-2 text-[10px] tracking-[0.14em] text-brass">
+        <p className="px-5 pt-0.5 pb-2 text-[10px] tracking-[0.14em] text-ink">
           {region === "body"
             ? "Goran tek-en · CC BY-SA 4.0 · lámina adaptada"
             : "Detalle de la misma lámina · Goran tek-en · CC BY-SA 4.0"}
-          <span className="mx-2 text-brass-line">·</span>
+          <span className="mx-2 text-ink">·</span>
           A/P · 1–4 región · C centros · / buscar
         </p>
       </div>
