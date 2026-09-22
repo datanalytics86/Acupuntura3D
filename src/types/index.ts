@@ -3,7 +3,6 @@ export type {
   Confidence,
   Polaridad,
   Elemento,
-  QualityTier,
   Locale,
   AtlasView,
   AtlasRegion,

@@ -20,7 +20,6 @@ export interface EnergyCenter {
   relatedPointId?: string;
   anterior?: Point2D;
   posterior?: Point2D;
-  face?: Point2D;
   aliases: string[];
 }
 
@@ -44,7 +43,6 @@ export const CENTERS: EnergyCenter[] = [
     relatedPointId: "EX-HN3",
     anterior: { x: CX, y: 108 },
     posterior: { x: CX, y: 64 },
-    face: { x: CX, y: 470 },
     aliases: ["dantian superior", "shang dantian", "shangdantian", "shang", "upper dantian", "上丹田"],
   },
   {

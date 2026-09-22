@@ -1,13 +1,3 @@
-import type { Elemento } from "@/types";
-
-export const ELEMENT_COLORS: Record<Elemento, string> = {
-  wood: "#3D8B40",
-  fire: "#E23B3B",
-  earth: "#C4A35A",
-  metal: "#C0C8D0",
-  water: "#2B6CB0",
-};
-
 export const MERIDIAN_COLORS: Record<string, string> = {
   LU: "#C0C8D0",
   LI: "#C0C8D0",

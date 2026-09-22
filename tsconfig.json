@@ -22,6 +22,5 @@
       "@data/*": ["data/*"]
     }
   },
-  "include": ["src", "data", "tests"],
-  "exclude": ["src/_legacy"]
+  "include": ["src", "data", "tests"]
 }

@@ -259,14 +259,7 @@ input[type="range"]::-webkit-slider-thumb {
   background: transparent;
 }
 
-.qi-pulse {
-  stroke-dasharray: 26 20 10 24;
-  animation: qi-flow 2.5s cubic-bezier(0.45, 0.05, 0.55, 1) infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .qi-pulse,
-  .qi-dash,
   .drawer-in,
   .center-live {
     animation: none !important;
@@ -276,20 +269,6 @@ input[type="range"]::-webkit-slider-thumb {
   ::view-transition-old(*),
   ::view-transition-new(*) {
     animation-duration: 0s !important;
-  }
-}
-
-@keyframes qi-flow {
-  0% {
-    stroke-dashoffset: 0;
-    stroke-opacity: 0.55;
-  }
-  45% {
-    stroke-opacity: 1;
-  }
-  100% {
-    stroke-dashoffset: -80;
-    stroke-opacity: 0.62;
   }
 }
 

@@ -1,5 +1,3 @@
-import type { Point2D } from "@/types";
-
 export const VIEW_W = 800;
 export const VIEW_H = 1600;
 export const CX = 400;
@@ -26,33 +24,3 @@ export const Y = {
   malleolus: 1410,
   sole: 1480,
 } as const;
-
-export const HALF = {
-  skull: 58,
-  neck: 32,
-  shoulder: 168,
-  chest: 128,
-  waist: 102,
-  hip: 138,
-  thigh: 118,
-  knee: 72,
-  calf: 68,
-  ankle: 42,
-  wrist: 210,
-} as const;
-
-export function mirrorX(p: Point2D): Point2D {
-  return { x: VIEW_W - p.x, y: p.y };
-}
-
-export function closedAdult(outerLeft: Point2D[], innerLeft: Point2D[]): Point2D[] {
-  const innerRight = innerLeft
-    .slice(0, -1)
-    .reverse()
-    .map(mirrorX);
-  const outerRight = outerLeft
-    .slice(1)
-    .reverse()
-    .map(mirrorX);
-  return [...outerLeft, ...innerLeft, ...innerRight, ...outerRight];
-}

@@ -60,7 +60,7 @@ function Seal({
   );
 }
 
-export function DantianMarks({ frame }: { frame: "body" | "face" }) {
+export function DantianMarks() {
   const view = useViewerStore((s) => s.atlasView);
   const visible = useViewerStore((s) => s.visibleLayers.centers);
   const selected = useViewerStore((s) => s.selectedCenterId);
@@ -68,13 +68,13 @@ export function DantianMarks({ frame }: { frame: "body" | "face" }) {
   if (!visible) return null;
 
   const placed = CENTERS.flatMap((center) => {
-    const pos = frame === "face" ? center.face : view === "posterior" ? center.posterior : center.anterior;
+    const pos = view === "posterior" ? center.posterior : center.anterior;
     return pos ? [{ center, pos }] : [];
   });
   if (placed.length === 0) return null;
 
   const axis =
-    frame === "body" && view === "anterior"
+    view === "anterior"
       ? placed.filter((p) => p.center.anterior).map((p) => p.pos)
       : [];
 

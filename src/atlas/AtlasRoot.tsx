@@ -35,7 +35,7 @@ export function AtlasRoot() {
             <MeridianPaths />
             <QiFlow />
             <Points2D />
-            <DantianMarks frame="body" />
+            <DantianMarks />
           </Viewport>
         </div>
         {!selected && !center ? (
