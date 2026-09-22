@@ -100,7 +100,12 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
   setQiPlaying: (v) => set({ qiPlaying: v && !prefersReducedMotion() }),
   setQiSpeed: (v) => set({ qiSpeed: Math.min(4, Math.max(0.25, v)) }),
   setClockHour: (h) => set({ clockHour: ((h % 24) + 24) % 24 }),
-  setLocale: (l) => set({ locale: l }),
+  setLocale: (l) => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = l === "zh" ? "en" : l;
+    }
+    set({ locale: l });
+  },
   setSearch: (q) => set({ searchQuery: q }),
   setElementFilter: (e) => set((s) => ({ filters: { ...s.filters, element: e } })),
   setRailOpen: (v) => set({ railOpen: v }),

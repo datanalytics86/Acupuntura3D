@@ -30,16 +30,20 @@ export function SearchBox() {
         onChange={(e) => {
           const value = e.target.value;
           setSearch(value);
-          if (value.trim()) setRailOpen(true);
-          const q = fold(value.trim());
+          const raw = value.trim();
+          if (raw) setRailOpen(true);
+          const q = fold(raw);
           if (!q) return;
-          const center = matchCenter(value.trim());
+          const center = matchCenter(raw);
           if (center) {
             focusCenter(center.id);
             return;
           }
           const exact = points.filter(
-            (p) => fold(p.code) === q || fold(p.names.pinyin.replace(/\s/g, "")) === q,
+            (p) =>
+              p.names.zh === raw ||
+              fold(p.code) === q ||
+              fold(p.names.pinyin.replace(/\s/g, "")) === q,
           );
           if (exact.length !== 1 || !exact[0]) return;
           showPoint(exact[0].id);

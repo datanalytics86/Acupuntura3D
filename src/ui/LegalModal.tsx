@@ -9,9 +9,18 @@ const COPY = {
   en: "Educational tool. Not a medical device and not a substitute for a Traditional Chinese Medicine professional.",
 } as const;
 
+function disclaimerAccepted(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(FLAG) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function LegalModal() {
   const locale = useViewerStore((s) => s.locale);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(() => !disclaimerAccepted());
   const acceptRef = useRef<HTMLButtonElement>(null);
 
   function accept() {
@@ -24,19 +33,12 @@ export function LegalModal() {
   }
 
   useEffect(() => {
-    try {
-      setOpen(window.localStorage.getItem(FLAG) !== "1");
-    } catch {
-      setOpen(true);
-    }
-  }, []);
-
-  useEffect(() => {
     if (!open) return;
     acceptRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape" || e.key === "Enter") {
         e.preventDefault();
+        e.stopPropagation();
         accept();
       }
     };
@@ -51,15 +53,23 @@ export function LegalModal() {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center px-4"
-      style={{ background: "rgba(42,33,24,0.45)" }}
+      style={{ background: "rgba(42,33,24,0.45)", pointerEvents: "auto" }}
       id="legal-gate"
       role="dialog"
       aria-modal="true"
+      onPointerDown={(e) => e.stopPropagation()}
     >
-      <div className="marginalia max-w-lg p-6 text-ink">
+      <div className="marginalia max-w-lg p-6 text-ink" onPointerDown={(e) => e.stopPropagation()}>
         <p className="display mb-2 text-2xl">{t(locale, "title")}</p>
         <p className="text-sm leading-relaxed">{text}</p>
-        <button ref={acceptRef} type="button" className="stamp-btn mt-5 w-full" onClick={accept}>
+        <button
+          ref={acceptRef}
+          type="button"
+          className="stamp-btn mt-5 w-full"
+          style={{ minWidth: 44, minHeight: 44 }}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={accept}
+        >
           {locale === "en" ? "I understand, enter the atlas" : "Entiendo, entrar al atlas"}
         </button>
       </div>

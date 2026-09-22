@@ -23,9 +23,19 @@ export function Viewport({ children }: { children: ReactNode }) {
     setZoom(next);
   }
 
+  function pointerOnHit(e: PointerEvent<SVGSVGElement>): boolean {
+    const path = typeof e.nativeEvent.composedPath === "function" ? e.nativeEvent.composedPath() : [];
+    for (const node of path) {
+      if (node instanceof Element && (node.hasAttribute("data-atlas-hit") || node.closest("[data-atlas-hit]"))) {
+        return true;
+      }
+    }
+    const target = e.target;
+    return target instanceof Element && Boolean(target.closest("[data-atlas-hit]"));
+  }
+
   function onPointerDown(e: PointerEvent<SVGSVGElement>) {
-    const target = e.target as Element | null;
-    if (target?.closest?.("[data-atlas-hit]")) return;
+    if (pointerOnHit(e)) return;
     if (!e.isPrimary) return;
     const now = Date.now();
     if (e.pointerType !== "touch" && now - lastTap.current < 280) {
