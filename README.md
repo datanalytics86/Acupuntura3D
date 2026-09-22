@@ -30,7 +30,7 @@ npm run preview
 
 ## Producción
 
-El atlas 2D vive en `feat/atlas-2d`. https://acupuntura3d.vercel.app todavía sirve el MVP 3D hasta que ese PR entre a `main`. Esa URL no es el atlas 2D.
+https://acupuntura3d.vercel.app sirve el atlas 2D desde `main`: lámina SVG, sin canvas WebGL.
 
 Runbook y rollback, solo desde `main` ya mergeado: [`docs/DEPLOY.md`](docs/DEPLOY.md).
 

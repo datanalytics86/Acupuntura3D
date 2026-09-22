@@ -2,7 +2,7 @@
 
 Atlas 2D estático. **Vite**, output `dist`. Cero backend, cero variables de entorno, cero secretos. No hay servidor de aplicación.
 
-La rama de producción es **main**, y solo después de mergear `feat/atlas-2d`. Hasta ese merge, https://acupuntura3d.vercel.app sigue sirviendo el MVP 3D. No despliegues esta línea a producción antes del merge. Esa URL no es el atlas 2D.
+La rama de producción es **main**. https://acupuntura3d.vercel.app sirve el atlas 2D (SVG, sin R3F).
 
 ## Runtime
 
@@ -62,10 +62,10 @@ Sobre el deploy del atlas 2D, después del merge a `main`:
 
 - 361 puntos. Solo el seed (20 estrella) más nomenclatura; lo no anclado no se inventa.
 - Backend, auth, DB, PWA offline.
-- i18n ZH real (`locale === "zh"` cae a EN).
+- Copy de interfaz en chino. El idioma de la UI es ES/EN. El hanzi de cada punto se queda.
 
 ## URL
 
-- Hoy, hasta el merge de `feat/atlas-2d`: https://acupuntura3d.vercel.app (MVP 3D).
+- Producción: https://acupuntura3d.vercel.app (atlas 2D).
 - Dashboard: https://vercel.com/datanalytics86s-projects/acupuntura3d
 - Preview: cada PR.
