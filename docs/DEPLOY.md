@@ -1,18 +1,19 @@
 # Deploy — Acupuntura3D
 
-SPA educativa estática. **Vite**, no Next.js: el canvas WebGL no necesita SSR y evita hidratación. Cero backend, cero variables de entorno, cero secretos.
+Atlas 2D estático. **Vite**, output `dist`. Cero backend, cero variables de entorno, cero secretos. No hay servidor de aplicación.
 
-## Stack
+La rama de producción es **main**, y solo después de mergear `feat/atlas-2d`. Hasta ese merge, https://acupuntura3d.vercel.app sigue sirviendo el MVP 3D. No despliegues esta línea a producción antes del merge. Esa URL no es el atlas 2D.
 
-- Node **22.x** (`engines`: `>=22.12.0 <25`)
-- Vite 8 → `dist/`
-- React **19.2.x** (no 19.3: peer de `@react-three/fiber@9.7`)
-- Tailwind 4, Zustand, R3F 9.7, drei, three, Vitest
+## Runtime
+
+- Node **>=22.12.0 <25** (`engines` en `package.json`; 22.x o 24.x)
+- Vite → `dist/`
+- React, TypeScript, Tailwind, Zustand
 
 ## Local
 
 ```bash
-node -v          # 22.x o 24.x
+node -v
 npm ci
 npm run typecheck
 npm test
@@ -20,53 +21,51 @@ npm run build
 npm run preview
 ```
 
-## Vercel Dashboard
+## Vercel
 
-1. Importar `datanalytics86/Acupuntura3D`.
+1. Proyecto: `acupuntura3d` (repo `datanalytics86/Acupuntura3D`).
 2. Framework: **Vite**. Root: `/`. Build: `npm run build`. Output: `dist`.
-3. Node.js: **22.x**. Production branch: **main**.
-4. **Cero env vars.**
-5. Preview = cada PR. Production = push a `main`.
-
-Proyecto Vercel: crear `acupuntura3d` si no existe.
+3. Node.js: **22.x** (dentro de `>=22.12.0 <25`).
+4. Production branch: **main**. Production solo cuando `feat/atlas-2d` ya está en `main`.
+5. **Cero env vars.**
+6. Preview = cada PR. Production = push a `main` ya mergeado.
 
 ## CLI (si hay sesión)
 
+Solo desde `main` ya mergeado con `feat/atlas-2d`:
+
 ```bash
-npx vercel login
-npx vercel link --yes --project acupuntura3d
 npx vercel deploy --prod --yes
 ```
 
 ## Rollback
 
-Dashboard → Deployments → el último **READY** anterior → **Instant Rollback**.
+Dashboard de Vercel → Deployments → el último **READY** anterior → **Instant Rollback**.
 
 ## QA post-deploy
 
-- `/` muestra cuerpo + meridianos (no pantalla negra).
-- Click ST36 → ficha 足三里.
-- Esc cierra drawer. `/` enfoca search.
-- Play/pause Qi.
-- ES/EN cambia topbar y `document.documentElement.lang`.
-- Primera visita: modal legal. Footer disclaimer siempre visible.
-- iPhone SE: clock y disclaimer legibles.
+Sobre el deploy del atlas 2D, después del merge a `main`:
 
-## CSP y fuentes
+- La página no debe contener un `<canvas>` de WebGL.
+- Debe haber un `<svg>` con la lámina.
+- Vistas Anterior y Posterior.
+- Ficha de ST36.
+- Aviso legal visible.
 
-- Outfit + Cormorant Garamond: **self-host** (`@fontsource/*`).
-- Noto Serif SC (hanzi): **CDN Google Fonts** para no reventar el budget CJK.
-- `Content-Security-Policy-Report-Only` en `vercel.json`. El CDN de Noto viola un CSP estricto `font-src 'self'`; por eso report-only incluye `fonts.gstatic.com` / `fonts.googleapis.com`. Quitar el CDN de Noto es el siguiente paso de hardening, no de este release.
+## Fuentes y CSP
 
-## Qué NO está en prod
+- Outfit + Cormorant Garamond: self-host (`@fontsource/*`).
+- Noto Serif SC (hanzi): CDN Google Fonts.
+- `Content-Security-Policy-Report-Only` en `vercel.json` (incluye `fonts.gstatic.com` / `fonts.googleapis.com`).
 
-- 361 anclas 3D (solo nomenclatura OMS en `pointCodes`).
-- GLB / modelo con licencia.
-- Backend, auth, DB, PWA offline, Sentry.
+## Qué no entra en este atlas
+
+- 361 puntos. Solo el seed (20 estrella) más nomenclatura; lo no anclado no se inventa.
+- Backend, auth, DB, PWA offline.
 - i18n ZH real (`locale === "zh"` cae a EN).
 
 ## URL
 
-- Producción: https://acupuntura3d.vercel.app
+- Hoy, hasta el merge de `feat/atlas-2d`: https://acupuntura3d.vercel.app (MVP 3D).
 - Dashboard: https://vercel.com/datanalytics86s-projects/acupuntura3d
-- Preview: cada PR (repo ya conectado a Vercel).
+- Preview: cada PR.

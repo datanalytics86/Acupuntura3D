@@ -30,17 +30,9 @@ npm run preview
 
 ## Producción
 
-Deploy estático en Vercel (framework Vite, output `dist`, Node 22, **cero env vars**). Runbook y rollback: [`docs/DEPLOY.md`](docs/DEPLOY.md).
+El atlas 2D vive en `feat/atlas-2d`. https://acupuntura3d.vercel.app todavía sirve el MVP 3D hasta que ese PR entre a `main`. Esa URL no es el atlas 2D.
 
-**Producción:** https://acupuntura3d.vercel.app
-
-Si hay que redeployar:
-
-```bash
-npx vercel login
-npx vercel link --yes --project acupuntura3d
-npx vercel deploy --prod --yes
-```
+Runbook y rollback, solo desde `main` ya mergeado: [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 CI: `.github/workflows/ci.yml` (typecheck, test, build, budget `< 8 MB`).
 
