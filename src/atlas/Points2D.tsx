@@ -11,6 +11,56 @@ const LABEL = 12;
 const HEAD = { l: CX - 70, r: CX + 70, t: Y.vertex + 6, b: Y.chin + 2 };
 
 type Anchor = "start" | "middle" | "end";
+type Box = { l: number; t: number; r: number; b: number };
+
+export type CalloutSeed = { key: string; x: number; y: number; anchor: Anchor; text: string };
+
+function labelBox(x: number, y: number, label: string, anchor: Anchor): Box {
+  const w = textWidth(label, LABEL);
+  const l = anchor === "start" ? x : anchor === "end" ? x - w : x - w / 2;
+  const t = y - LABEL * 0.82;
+  return { l, t, r: l + w, b: y + LABEL * 0.22 };
+}
+
+function overlaps(a: Box, b: Box): boolean {
+  const gap = 4;
+  return a.r + gap > b.l && a.l < b.r + gap && a.b + gap > b.t && a.t < b.b + gap;
+}
+
+function coversHead(box: Box): boolean {
+  return box.r > HEAD.l && box.l < HEAD.r && box.b > HEAD.t && box.t < HEAD.b;
+}
+
+export function layoutCallouts(
+  seeds: CalloutSeed[],
+): Map<string, { x: number; y: number; anchor: Anchor; box: Box }> {
+  const occupied: Box[] = [];
+  const placed = new Map<string, { x: number; y: number; anchor: Anchor; box: Box }>();
+  const ordered = [...seeds].sort((a, b) => Math.abs(b.x - CX) - Math.abs(a.x - CX));
+  for (const seed of ordered) {
+    const outward = seed.x < CX - 8 ? -1 : seed.x > CX + 8 ? 1 : 0;
+    const candidates: { x: number; y: number }[] = [];
+    for (let i = 0; i <= 12; i++) {
+      candidates.push({ x: seed.x + outward * i * 8, y: seed.y });
+      candidates.push({ x: seed.x + outward * i * 8, y: seed.y - i * 8 });
+      candidates.push({ x: seed.x, y: seed.y - i * 10 });
+      candidates.push({ x: seed.x + outward * i * 8, y: seed.y + i * 8 });
+    }
+    let chosen = { x: seed.x, y: seed.y };
+    let box = labelBox(seed.x, seed.y, seed.text, seed.anchor);
+    for (const cand of candidates) {
+      const next = labelBox(cand.x, cand.y, seed.text, seed.anchor);
+      if (coversHead(next)) continue;
+      if (occupied.some((o) => overlaps(next, o))) continue;
+      chosen = cand;
+      box = next;
+      break;
+    }
+    occupied.push(box);
+    placed.set(seed.key, { ...chosen, anchor: seed.anchor, box });
+  }
+  return placed;
+}
 
 function textWidth(label: string, size: number): number {
   let w = 0;
@@ -78,6 +128,26 @@ export function Points2D() {
   const focusText = focus ? `${focus.point.code} ${focus.point.names.zh}` : "";
   const focusAt =
     focus && !detail ? placeLabel(focus.position.x, focus.position.y - 16, focusText, "middle", false) : null;
+  const calloutSeeds: CalloutSeed[] = [];
+  if (detail) {
+    for (const it of items) {
+      if (!inFrame(it.position.x, it.position.y)) continue;
+      const midline = Math.abs(it.position.x - CX) < 8;
+      const dir = midline ? 0 : onFace ? (it.position.x < CX ? -1 : 1) : it.position.x <= pan.x ? 1 : -1;
+      const anchor: Anchor = dir === 0 ? "middle" : dir > 0 ? "start" : "end";
+      const text = `${it.point.code} ${it.point.names.zh}`;
+      const at = placeLabel(
+        it.position.x + (dir === 0 ? 0 : dir * (lead + 2)),
+        it.position.y - (dir === 0 ? lead + 4 : lead * 0.45),
+        text,
+        anchor,
+        onFace,
+      );
+      if (!at) continue;
+      calloutSeeds.push({ key: `${it.point.id}-${it.side}`, x: at.x, y: at.y, anchor, text });
+    }
+  }
+  const callouts = layoutCallouts(calloutSeeds);
 
   return (
     <g>
@@ -89,19 +159,10 @@ export function Points2D() {
         const halo = tone === "active" ? 4.35 : tone === "hover" ? 4.05 : 3.7;
         const rim = tone === "active" ? 1.25 : tone === "hover" ? 0.9 : 0.6;
         const mark = tone === "idle" ? INK : CINNABAR;
-        const callout = detail && inFrame(it.position.x, it.position.y);
-        const dir = onFace ? (it.position.x <= CX ? -1 : 1) : it.position.x <= pan.x ? 1 : -1;
-        const anchor: Anchor = dir > 0 ? "start" : "end";
         const text = `${it.point.code} ${it.point.names.zh}`;
-        const at = callout
-          ? placeLabel(
-              it.position.x + dir * (lead + 2),
-              it.position.y - lead * 0.45,
-              text,
-              anchor,
-              onFace,
-            )
-          : null;
+        const settled = callouts.get(`${it.point.id}-${it.side}`);
+        const anchor: Anchor = settled?.anchor ?? "middle";
+        const at = settled ? { x: settled.x, y: settled.y } : null;
         return (
           <g
             key={`${it.point.id}-${it.side}-${i}`}
