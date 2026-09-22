@@ -16,7 +16,7 @@ paper shows between the limbs), crop, alignment to viewBox 800×1600
 (vertex y=40, sole y=1480, midline x=400), and a small inward shift of the
 legs so medial points stay on the skin. The plate composite is SVG, not a
 new painting: `mix-blend-mode: multiply` onto the paper, a warm
-`feColorMatrix` grade, local radial washes, a hairline contour, and an
+`feColorMatrix` grade, local radial washes, and an
 academic pubic plane that covers the source linework. A hair cap was tried
 and removed because it read as a pasted wig. The adapted plates stay CC BY-SA 4.0.
 

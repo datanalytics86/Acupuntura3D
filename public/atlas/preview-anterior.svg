@@ -9,15 +9,6 @@
       <filter id="fig-grade" color-interpolation-filters="sRGB">
         <feColorMatrix type="matrix" values="0.90 0.07 0.02 0 0.02  0.03 0.88 0.04 0 0.012  0.02 0.05 0.76 0 0  0 0 0 1 0"/>
       </filter>
-      <filter id="fig-ink" x="-4%" y="-2%" width="108%" height="104%" color-interpolation-filters="sRGB">
-        <feMorphology in="SourceAlpha" operator="dilate" radius="1.35" result="edge"/>
-        <feComposite in="edge" in2="SourceAlpha" operator="out" result="ring"/>
-        <feFlood flood-color="#4a3224" flood-opacity="0.92" result="ink"/>
-        <feComposite in="ink" in2="ring" operator="in"/>
-      </filter>
-      <filter id="fig-soft" x="-20%" y="-20%" width="140%" height="140%">
-        <feGaussianBlur stdDeviation="1.4"/>
-      </filter>
       <radialGradient id="wash-lo" cx="42%" cy="38%" r="68%">
         <stop offset="0%" stop-color="#8d6248" stop-opacity="0.95"/>
         <stop offset="100%" stop-color="#8d6248" stop-opacity="0"/>
@@ -36,7 +27,6 @@
       </mask>
     </defs>
     <ellipse cx="400" cy="1494" rx="228" ry="15" fill="#2A2118" opacity="0.08" style="mix-blend-mode:multiply"/>
-    <image href="body-anterior.png" x="97.61" y="40" width="604.79" height="1440" filter="url(#fig-ink)" style="mix-blend-mode:multiply"/>
     <image href="body-anterior.png" x="97.61" y="40" width="604.79" height="1440" filter="url(#fig-grade)" style="mix-blend-mode:multiply"/>
     <g mask="url(#fig-skin)" style="mix-blend-mode:multiply">
       <ellipse cx="300" cy="358" rx="26" ry="20" fill="url(#wash-lo)" opacity="0.2"/>
