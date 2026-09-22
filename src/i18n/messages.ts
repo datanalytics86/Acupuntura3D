@@ -8,15 +8,13 @@ const es = {
   stars: "Estrellas",
   layers: "Capas",
   body: "Cuerpo",
-  tubes: "Canales",
   points: "Puntos",
   qi: "Qi",
   centers: "Centros",
   locale: "Idioma",
-  quality: "Calidad",
-  qualityHigh: "Alta",
-  qualityMedium: "Media",
-  qualityLow: "Baja",
+  confidenceHigh: "Alta",
+  confidenceMedium: "Media",
+  confidenceLow: "Baja",
   play: "Reproducir Qi",
   pause: "Pausar Qi",
   speed: "Velocidad",
@@ -59,15 +57,13 @@ const en: typeof es = {
   stars: "Star points",
   layers: "Layers",
   body: "Body",
-  tubes: "Channels",
   points: "Points",
   qi: "Qi",
   centers: "Centers",
   locale: "Language",
-  quality: "Quality",
-  qualityHigh: "High",
-  qualityMedium: "Medium",
-  qualityLow: "Low",
+  confidenceHigh: "High",
+  confidenceMedium: "Medium",
+  confidenceLow: "Low",
   play: "Play Qi",
   pause: "Pause Qi",
   speed: "Speed",
@@ -102,10 +98,8 @@ const en: typeof es = {
   noMatches: "No matching point.",
 };
 
-export const MESSAGES: Record<Exclude<Locale, "zh">, typeof es> = { es, en };
+export const MESSAGES: Record<Locale, typeof es> = { es, en };
 
-/** locale "zh" falls back to EN on purpose; no ZH copy in this release. */
 export function t(locale: Locale, key: keyof typeof es): string {
-  const table = locale === "zh" ? en : MESSAGES[locale];
-  return table[key];
+  return MESSAGES[locale][key];
 }

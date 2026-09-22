@@ -2,7 +2,7 @@ export type Laterality = "L" | "R" | "C";
 export type Confidence = "low" | "medium" | "high";
 export type Polaridad = "yin" | "yang";
 export type Elemento = "wood" | "fire" | "earth" | "metal" | "water";
-export type Locale = "es" | "en" | "zh";
+export type Locale = "es" | "en";
 export type AtlasView = "anterior" | "posterior";
 export type AtlasRegion = "body" | "face" | "hand" | "foot";
 

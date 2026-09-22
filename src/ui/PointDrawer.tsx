@@ -144,10 +144,10 @@ export function PointDrawer() {
             {t(
               locale,
               point.confidence === "high"
-                ? "qualityHigh"
+                ? "confidenceHigh"
                 : point.confidence === "medium"
-                  ? "qualityMedium"
-                  : "qualityLow",
+                  ? "confidenceMedium"
+                  : "confidenceLow",
             )}
           </div>
           <div>

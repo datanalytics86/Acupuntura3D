@@ -102,7 +102,7 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
   setClockHour: (h) => set({ clockHour: ((h % 24) + 24) % 24 }),
   setLocale: (l) => {
     if (typeof document !== "undefined") {
-      document.documentElement.lang = l === "zh" ? "en" : l;
+      document.documentElement.lang = l;
     }
     set({ locale: l });
   },
