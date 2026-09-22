@@ -34,12 +34,12 @@ export function CenterDrawer() {
         focus(null);
       }}
     >
-      <div className="h-px w-full" style={{ background: "#7A3B32" }} />
+      <div className="h-px w-full" style={{ background: "#8B1E1E" }} />
       <div className="flex flex-1 flex-col p-4">
         <div className="mb-3 flex items-start justify-between gap-2">
           <div>
             <div className="text-[11px] tracking-[0.22em] text-brass uppercase">{en ? center.en : center.es}</div>
-            <div className="hanzi display mt-1 text-6xl leading-none text-ink">{center.zh}</div>
+            <h2 className="hanzi display mt-1 text-6xl leading-none font-medium text-ink">{center.zh}</h2>
             <div className="mt-2 text-sm text-ink">{center.pinyin}</div>
           </div>
           <button

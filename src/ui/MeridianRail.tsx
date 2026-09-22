@@ -73,7 +73,7 @@ export function MeridianRail() {
                 onClick={() => setActive(active === m.id ? null : m.id)}
                 className="flex w-full items-baseline gap-2 px-3 py-1.5 text-left"
               >
-                <span className="w-8 font-mono text-[11px] tracking-wide text-ink">{m.id}</span>
+                <span className="w-8 font-sans tabular-nums text-[11px] tracking-wide text-ink">{m.id}</span>
                 <span className="truncate text-[12px] text-brass">{locale === "en" ? m.names.en : m.names.es}</span>
                 <span className="ml-auto text-[10px] text-brass">{m.pointCount}</span>
               </button>
@@ -88,7 +88,7 @@ export function MeridianRail() {
                           selected === p.id ? "bg-paper-inset" : ""
                         }`}
                       >
-                        <span className="w-12 font-mono text-brass">{p.code}</span>
+                        <span className="w-12 font-sans tabular-nums text-brass">{p.code}</span>
                         <span className="text-ink">{p.names.pinyin}</span>
                         <span className="hanzi ml-auto text-brass">{p.names.zh}</span>
                       </button>
@@ -111,7 +111,7 @@ export function MeridianRail() {
                   onClick={() => showPoint(p.id)}
                   className="flex w-full items-baseline gap-2 py-1 text-left text-[12px] text-ink"
                 >
-                  <span className="font-mono text-brass">{p.code}</span>
+                  <span className="font-sans tabular-nums text-brass">{p.code}</span>
                   <span>{p.names.pinyin}</span>
                   <span className="hanzi ml-auto text-brass">{p.names.zh}</span>
                 </button>

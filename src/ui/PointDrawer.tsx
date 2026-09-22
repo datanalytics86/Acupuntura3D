@@ -47,7 +47,7 @@ export function PointDrawer() {
         <div className="mb-3 flex items-start justify-between gap-2">
           <div>
             <div className="text-[11px] tracking-[0.22em] text-brass uppercase">{point.code}</div>
-            <div className="hanzi display mt-1 text-6xl leading-none text-ink">{point.names.zh}</div>
+            <h2 className="hanzi display mt-1 text-6xl leading-none font-medium text-ink">{point.names.zh}</h2>
             <div className="mt-2 text-sm text-ink">
               {point.names.pinyin}
               <span className="mx-1.5 text-brass">·</span>

@@ -60,7 +60,7 @@ export function QiClock() {
             onChange={(e) => setHour(Number(e.target.value))}
             className="w-24"
           />
-          <span className="w-12 font-mono text-brass normal-case">{String(hour).padStart(2, "0")}:00</span>
+          <span className="w-12 font-sans text-ink normal-case tabular-nums">{String(hour).padStart(2, "0")}:00</span>
         </label>
         <label className="flex shrink-0 items-center gap-2 text-[11px] tracking-[0.12em] text-ink uppercase">
           {t(locale, "speed")}
