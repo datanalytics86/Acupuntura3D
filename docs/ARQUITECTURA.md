@@ -1,73 +1,56 @@
 # Arquitectura — Acupuntura3D
 
 ## Principio
-SPA 3D educativa. Cero backend en MVP. Toda la verdad vive en JSON versionado.
+Atlas 2D educativo. Cero backend. La lámina es SVG. Toda la verdad de puntos y meridianos vive en JSON versionado.
 
 ## Stack
 
 - Vite + React + TypeScript (strict)
-- Tailwind + componentes livianos (shadcn opcional)
-- React Three Fiber + drei
-- Zustand (punto seleccionado, capas, meridiano activo, reloj Qi, idioma)
+- Tailwind
+- Zustand (punto seleccionado, capas, meridiano activo, vista, región, reloj Qi, idioma)
+- Vista: SVG inline en `src/atlas/`
 - Deploy: Vercel static (`npm run build` → `dist`)
 
-Por qué no Next.js en MVP: el canvas WebGL no necesita SSR y evita hidratación dolorosa. Se puede migrar después si hace falta SEO.
+SPA estática. La lámina no necesita SSR ni un servidor de aplicación.
 
-## Carpetas objetivo
+## Carpetas
 
 ```
 src/
-  app/                 # shell, providers
-  scene/               # Canvas, lights, camera, body, points, meridians, qi
-  ui/                  # topbar, drawer, search, filters, clock
-  state/               # zustand stores
+  app/                 # shell
+  atlas/               # Viewport SVG, lámina, meridianos, puntos, Qi
+  ui/                  # topbar, drawer, search, rail, reloj, aviso legal
+  state/               # zustand
   data/                # loaders tipados
-  lib/                 # curve, cun, color, i18n
-public/
-  models/body.glb
+  lib/
+  i18n/
+  types/
+public/atlas/          # PNG anterior / posterior y previews
 data/
   meridians.json
-  acupoints.json
-  extras.json
+  acupoints.seed.json
+  unmapped.json
   schema/
 ```
 
-## Sistema de coordenadas
+## Lámina
 
-- Y-up, unidades en metros, origen en pelvis/sacro
-- Puntos: `{ x, y, z }` en espacio del mesh T-pose / A-pose fijo
-- Laterality: L / R / C (línea media Ren/Du)
-- Si el modelo cambia, los puntos se reanclan; no se hardcodean a un GLB accidental
-
-## Capas visuales
-
-1. Body (opacidad 0.35–0.7, x-ray suave)
-2. Meridian tubes
-3. Acupoint instances
-4. Qi particles
-5. Labels HTML/drei sólo para hover/selected (nunca 361 labels a la vez)
+- Un `<svg>` con viewBox. La figura (anterior / posterior) va dentro de ese SVG.
+- Meridianos: trazos. Qi: pulso sobre el trazo (play/pause/velocidad), color Wu Xing.
+- Puntos: marcas 2D del seed. Son 20 puntos estrella, no 361. Click abre la ficha.
+- Misma lámina en regiones: cuerpo, rostro, mano, pie.
+- Pan y zoom mueven el viewBox.
 
 ## Interacción
 
-- Raycast sólo contra instanced points + tubes (no contra 50k triángulos del body si se puede evitar)
-- Hover → halo + tooltip
-- Click → select + fit camera + abrir drawer
-- Filtro → dimmed del resto, no unmount masivo
+- Hover y click sobre los puntos del SVG
+- Click → ficha
+- Anterior / Posterior cambia la lámina
+- Búsqueda y filtro no desmontan la lámina
 
-## Qi
+## Datos
 
-- CatmullRomCurve3 por meridiano (centripetal)
-- Dirección clásica del canal, no física de fluidos
-- Color Wu Xing; boost en hora circadiana del órgano
-- Tiers: high / medium / low según devicePixelRatio y GPU
-
-## Performance budget
-
-- 60 fps desktop, 30 fps mobile sostenible
-- Bundle JS gzip < 3 MB sin GLB
-- GLB maniquí objetivo < 8 MB draco
-- Instancing obligatorio para puntos
-- No bloom caro en low tier
+Anclas 2D solo del seed, `confidence: low`. No hay 361 coordenadas. Lo que no está anclado no se inventa.
 
 ## Fuentes de datos (prioridad)
 
@@ -76,7 +59,4 @@ data/
 3. GB/T 12346 (nombres y localización)
 4. Textos educativos originales en ES, con `source` y `confidence`
 
-Proyectos de referencia técnica (no copiar assets con licencia dudosa):
-- acu-master (Three.js)
-- HBot / modelos Blender + GLTF
-- BodyParts3D / Somakine (anatomía CC-BY, distinta de acupuntura)
+La figura de la lámina es la de Goran (CC BY-SA 4.0), adaptada. Ver `public/atlas/ATTRIBUTION.md`. No copiar láminas de manuales comerciales.

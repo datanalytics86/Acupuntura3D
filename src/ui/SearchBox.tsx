@@ -1,20 +1,56 @@
-import { useId } from "react";
+import { useId, useMemo } from "react";
+import { loadAcupoints } from "@/data";
+import { matchCenter } from "@/atlas/centers";
 import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
+
+function fold(s: string): string {
+  return s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+}
 
 export function SearchBox() {
   const id = useId();
   const locale = useViewerStore((s) => s.locale);
   const query = useViewerStore((s) => s.searchQuery);
   const setSearch = useViewerStore((s) => s.setSearch);
+  const showPoint = useViewerStore((s) => s.showPoint);
+  const focusCenter = useViewerStore((s) => s.focusCenter);
+  const setRailOpen = useViewerStore((s) => s.setRailOpen);
+  const points = useMemo(() => loadAcupoints(), []);
+
   return (
-    <input
-      id={id}
-      type="search"
-      value={query}
-      onChange={(e) => setSearch(e.target.value)}
-      placeholder={t(locale, "search")}
-      className="w-full rounded-full border border-white/10 bg-black/30 px-4 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-amber-300/50 focus:bg-black/45"
-    />
+    <div className="w-full">
+      <label htmlFor={id} className="sr-only">
+        {t(locale, "search")}
+      </label>
+      <input
+        id={id}
+        type="search"
+        value={query}
+        onChange={(e) => {
+          const value = e.target.value;
+          setSearch(value);
+          const raw = value.trim();
+          if (raw) setRailOpen(true);
+          const q = fold(raw);
+          if (!q) return;
+          const center = matchCenter(raw);
+          if (center) {
+            focusCenter(center.id);
+            return;
+          }
+          const exact = points.filter(
+            (p) =>
+              p.names.zh === raw ||
+              fold(p.code) === q ||
+              fold(p.names.pinyin.replace(/\s/g, "")) === q,
+          );
+          if (exact.length !== 1 || !exact[0]) return;
+          showPoint(exact[0].id);
+        }}
+        placeholder={t(locale, "search")}
+        className="archive-field"
+      />
+    </div>
   );
 }

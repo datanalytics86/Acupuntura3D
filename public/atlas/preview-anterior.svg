@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1680" width="800" height="1680">
+  <rect width="800" height="1680" fill="#E7DCC4"/>
+  <rect x="28" y="28" width="744" height="1624" fill="#F3EBD8" stroke="#c4b089" stroke-width="1"/>
+  <rect x="38" y="38" width="724" height="1604" fill="none" stroke="#F7F0E0"/>
+  <text x="400" y="78" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="34" fill="#3a2a1c">Cuerpo humano — vista anterior</text>
+  <line x1="330" y1="92" x2="470" y2="92" stroke="#c4b089" stroke-width="1"/>
+  <g transform="translate(0 70)">
+    <defs>
+      <filter id="fig-grade" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.90 0.07 0.02 0 0.02  0.03 0.88 0.04 0 0.012  0.02 0.05 0.76 0 0  0 0 0 1 0"/>
+      </filter>
+      <radialGradient id="wash-lo" cx="42%" cy="38%" r="68%">
+        <stop offset="0%" stop-color="#8d6248" stop-opacity="0.95"/>
+        <stop offset="100%" stop-color="#8d6248" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="wash-hi" cx="32%" cy="28%" r="62%">
+        <stop offset="0%" stop-color="#f6e3d0" stop-opacity="0.95"/>
+        <stop offset="100%" stop-color="#f6e3d0" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="pubis-skin" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#C89661"/>
+        <stop offset="72%" stop-color="#C89661"/>
+        <stop offset="100%" stop-color="#A67A52"/>
+      </linearGradient>
+      <mask id="fig-skin" maskUnits="userSpaceOnUse">
+        <image href="body-anterior.png" x="97.61" y="40" width="604.79" height="1440"/>
+      </mask>
+    </defs>
+    <ellipse cx="400" cy="1494" rx="228" ry="15" fill="#2A2118" opacity="0.08" style="mix-blend-mode:multiply"/>
+    <image href="body-anterior.png" x="97.61" y="40" width="604.79" height="1440" filter="url(#fig-grade)" style="mix-blend-mode:multiply"/>
+    <g mask="url(#fig-skin)" style="mix-blend-mode:multiply">
+      <ellipse cx="300" cy="358" rx="26" ry="20" fill="url(#wash-lo)" opacity="0.2"/>
+      <ellipse cx="500" cy="358" rx="26" ry="20" fill="url(#wash-lo)" opacity="0.2"/>
+      <ellipse cx="352" cy="448" rx="40" ry="16" fill="url(#wash-lo)" opacity="0.16"/>
+      <ellipse cx="448" cy="448" rx="40" ry="16" fill="url(#wash-lo)" opacity="0.16"/>
+      <ellipse cx="376" cy="560" rx="16" ry="78" fill="url(#wash-lo)" opacity="0.14"/>
+      <ellipse cx="424" cy="560" rx="16" ry="78" fill="url(#wash-lo)" opacity="0.14"/>
+      <ellipse cx="330" cy="748" rx="30" ry="16" fill="url(#wash-lo)" opacity="0.18"/>
+      <ellipse cx="470" cy="748" rx="30" ry="16" fill="url(#wash-lo)" opacity="0.18"/>
+      <ellipse cx="254" cy="508" rx="16" ry="28" fill="url(#wash-lo)" opacity="0.18"/>
+      <ellipse cx="546" cy="508" rx="16" ry="28" fill="url(#wash-lo)" opacity="0.18"/>
+      <ellipse cx="400" cy="234" rx="18" ry="12" fill="url(#wash-lo)" opacity="0.12"/>
+    </g>
+    <g mask="url(#fig-skin)" style="mix-blend-mode:soft-light">
+      <ellipse cx="348" cy="382" rx="34" ry="26" fill="url(#wash-hi)" opacity="0.22"/>
+      <ellipse cx="328" cy="980" rx="32" ry="74" fill="url(#wash-hi)" opacity="0.2"/>
+      <ellipse cx="330" cy="1272" rx="14" ry="50" fill="url(#wash-hi)" opacity="0.16"/>
+      <ellipse cx="372" cy="100" rx="26" ry="12" fill="url(#wash-hi)" opacity="0.2"/>
+    </g>
+    <g mask="url(#fig-skin)">
+      <path d="M358 736C348 776 352 830 366 878C376 902 392 908 400 906C408 908 424 902 434 878C448 830 452 776 442 736C426 718 374 718 358 736Z" fill="url(#pubis-skin)"/>
+    </g>
+  </g>
+  <text x="400" y="1648" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#8A6A3B" letter-spacing="1.5">Goran tek-en · CC BY-SA 4.0 · lámina adaptada</text>
+</svg>

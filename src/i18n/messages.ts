@@ -1,21 +1,20 @@
 import type { Locale } from "@/types";
 
 const es = {
-  title: "Acupuntura3D",
-  subtitle: "Atlas educativo OMS",
+  title: "Enciclopedia del cuerpo",
+  subtitle: "Atlas de meridianos",
   search: "Buscar código o pinyin…",
   meridians: "Meridianos",
   stars: "Estrellas",
   layers: "Capas",
   body: "Cuerpo",
-  tubes: "Canales",
   points: "Puntos",
   qi: "Qi",
+  centers: "Centros",
   locale: "Idioma",
-  quality: "Calidad",
-  qualityHigh: "Alta",
-  qualityMedium: "Media",
-  qualityLow: "Baja",
+  confidenceHigh: "Alta",
+  confidenceMedium: "Media",
+  confidenceLow: "Baja",
   play: "Reproducir Qi",
   pause: "Pausar Qi",
   speed: "Velocidad",
@@ -27,13 +26,13 @@ const es = {
   precautions: "Precauciones",
   location: "Localización",
   sources: "Fuentes",
-  confidence: "Confianza del ancla 3D",
+  confidence: "Confianza del ancla",
   combinations: "Combinaciones didácticas",
   element: "Elemento",
   polarity: "Polaridad",
   laterality: "Lateralidad",
   close: "Cerrar",
-  mapped: "mapeados en 3D",
+  mapped: "mapeados en el atlas",
   omsPoints: "puntos OMS (nomenclatura)",
   disclaimer:
     "Herramienta educativa. No es un dispositivo médico y no sustituye a un profesional de Medicina Tradicional China.",
@@ -44,24 +43,27 @@ const es = {
   water: "Agua",
   yin: "Yin",
   yang: "Yang",
+  anterior: "Anterior",
+  posterior: "Posterior",
+  choosePoint: "Elige un punto o un dantian en la lámina.",
+  noMatches: "Ningún punto coincide.",
 };
 
 const en: typeof es = {
-  title: "Acupuntura3D",
-  subtitle: "WHO educational atlas",
+  title: "Encyclopedia of the body",
+  subtitle: "Meridian atlas",
   search: "Search code or pinyin…",
   meridians: "Meridians",
   stars: "Star points",
   layers: "Layers",
   body: "Body",
-  tubes: "Channels",
   points: "Points",
   qi: "Qi",
+  centers: "Centers",
   locale: "Language",
-  quality: "Quality",
-  qualityHigh: "High",
-  qualityMedium: "Medium",
-  qualityLow: "Low",
+  confidenceHigh: "High",
+  confidenceMedium: "Medium",
+  confidenceLow: "Low",
   play: "Play Qi",
   pause: "Pause Qi",
   speed: "Speed",
@@ -73,13 +75,13 @@ const en: typeof es = {
   precautions: "Precautions",
   location: "Location",
   sources: "Sources",
-  confidence: "3D anchor confidence",
+  confidence: "Anchor confidence",
   combinations: "Teaching combinations",
   element: "Element",
   polarity: "Polarity",
   laterality: "Laterality",
   close: "Close",
-  mapped: "mapped in 3D",
+  mapped: "mapped on the atlas",
   omsPoints: "WHO points (names only)",
   disclaimer:
     "Educational tool. Not a medical device and not a substitute for a Traditional Chinese Medicine professional.",
@@ -90,11 +92,14 @@ const en: typeof es = {
   water: "Water",
   yin: "Yin",
   yang: "Yang",
+  anterior: "Anterior",
+  posterior: "Posterior",
+  choosePoint: "Choose a point or a dantian on the plate.",
+  noMatches: "No matching point.",
 };
 
-export const MESSAGES: Record<Exclude<Locale, "zh">, typeof es> = { es, en };
+export const MESSAGES: Record<Locale, typeof es> = { es, en };
 
 export function t(locale: Locale, key: keyof typeof es): string {
-  const table = locale === "zh" ? en : MESSAGES[locale];
-  return table[key];
+  return MESSAGES[locale][key];
 }

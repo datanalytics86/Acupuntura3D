@@ -4,12 +4,16 @@ import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
 
 const ELEMENTS = ["wood", "fire", "earth", "metal", "water"] as const;
-const ELEMENT_DOT: Record<(typeof ELEMENTS)[number], string> = {
-  wood: "#3D8B40",
-  fire: "#E23B3B",
-  earth: "#C4A35A",
-  metal: "#C0C8D0",
-  water: "#2B6CB0",
+
+const HIT = { minWidth: 44, minHeight: 44 } as const;
+
+const LAYERS = ["body", "meridians", "points", "qi", "centers"] as const;
+const LAYER_LABEL: Record<(typeof LAYERS)[number], "body" | "meridians" | "points" | "qi" | "centers"> = {
+  body: "body",
+  meridians: "meridians",
+  points: "points",
+  qi: "qi",
+  centers: "centers",
 };
 
 export function MeridianRail() {
@@ -19,13 +23,14 @@ export function MeridianRail() {
   const active = useViewerStore((s) => s.activeMeridianId);
   const selected = useViewerStore((s) => s.selectedPointId);
   const setActive = useViewerStore((s) => s.setActiveMeridian);
-  const setSelected = useViewerStore((s) => s.setSelected);
+  const showPoint = useViewerStore((s) => s.showPoint);
   const query = useViewerStore((s) => s.searchQuery);
   const starOnly = useViewerStore((s) => s.filters.starOnly);
   const element = useViewerStore((s) => s.filters.element);
-  const setStarOnly = useViewerStore((s) => s.setStarOnly);
   const setElementFilter = useViewerStore((s) => s.setElementFilter);
   const railOpen = useViewerStore((s) => s.railOpen);
+  const layers = useViewerStore((s) => s.visibleLayers);
+  const toggle = useViewerStore((s) => s.toggleLayer);
 
   const q = query.trim().toLowerCase();
   const filtered = points.filter((p) => {
@@ -42,81 +47,79 @@ export function MeridianRail() {
 
   return (
     <aside
-      className={`panel scroll-thin absolute top-24 bottom-32 left-3 z-20 w-[18.5rem] overflow-y-auto rounded-2xl p-3 transition-transform md:translate-x-0 ${
-        railOpen ? "translate-x-0" : "-translate-x-[120%]"
+      className={`scroll-thin absolute top-28 bottom-[5.5rem] left-3 z-20 w-[18.5rem] overflow-y-auto border border-brass-line bg-paper px-3 py-3 transition-transform duration-200 md:top-[4.25rem] ${
+        railOpen ? "pointer-events-auto translate-x-0" : "pointer-events-none -translate-x-[120%]"
       }`}
+      style={{ borderRadius: "var(--radius-plate)", transitionTimingFunction: "var(--ease-paper)" }}
     >
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-[10px] font-semibold tracking-[0.2em] text-zinc-400 uppercase">
-          {t(locale, "meridians")}
-        </h2>
-        <label className="flex items-center gap-1.5 text-[11px] text-zinc-400">
-          <input
-            type="checkbox"
-            checked={starOnly}
-            onChange={(e) => setStarOnly(e.target.checked)}
-            className="accent-amber-300"
-          />
-          {t(locale, "stars")}
-        </label>
+      <div className="mb-3 border-b border-brass-line pb-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[10px] font-semibold tracking-[0.22em] text-brass uppercase">{t(locale, "meridians")}</h2>
+          <span className="text-[11px] tracking-[0.12em] text-brass uppercase">{t(locale, "stars")}</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-2" role="group" aria-label={t(locale, "layers")}>
+          {LAYERS.map((key) => (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={layers[key]}
+              onClick={() => toggle(key)}
+              className={`file-link shrink-0 ${layers[key] ? "is-on" : ""}`}
+              style={HIT}
+            >
+              {t(locale, LAYER_LABEL[key])}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="mb-3 flex flex-wrap gap-1">
+      <div className="mb-3 flex flex-wrap gap-x-3 gap-y-1">
         {ELEMENTS.map((el) => (
           <button
             key={el}
             type="button"
             onClick={() => setElementFilter(element === el ? undefined : el)}
-            className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] ${
-              element === el ? "bg-white/15 text-zinc-100" : "bg-white/5 text-zinc-500"
-            }`}
+            aria-pressed={element === el}
+            className={`file-link ${element === el ? "is-on" : ""}`}
           >
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: ELEMENT_DOT[el] }} />
             {t(locale, el)}
           </button>
         ))}
       </div>
-      <ul className="space-y-1.5">
+      {filtered.length === 0 ? (
+        <p className="px-2 py-3 text-sm text-brass">{t(locale, "noMatches")}</p>
+      ) : null}
+      <ul>
         {meridians.map((m) => {
           const kids = filtered.filter((p) => p.meridianId === m.id);
           if (starOnly && kids.length === 0) return null;
           if (element && m.element !== element && kids.length === 0) return null;
           const open = active === m.id || Boolean(q);
+          const on = active === m.id;
           return (
-            <li
-              key={m.id}
-              className={`overflow-hidden rounded-xl border ${
-                active === m.id ? "border-amber-200/25 bg-white/5" : "border-white/6 bg-black/20"
-              }`}
-            >
+            <li key={m.id} className={`index-row ${on ? "is-on" : ""}`} style={{ boxShadow: `inset 2px 0 0 ${m.color}` }}>
               <button
                 type="button"
                 onClick={() => setActive(active === m.id ? null : m.id)}
-                className="flex w-full items-center gap-2 px-2.5 py-2 text-left"
+                className="flex w-full items-baseline gap-2 px-3 py-1.5 text-left"
               >
-                <span className="h-2.5 w-2.5 rounded-full shadow-[0_0_10px_currentColor]" style={{ background: m.color, color: m.color }} />
-                <span className="text-xs font-semibold tracking-wide text-zinc-100">{m.id}</span>
-                <span className="truncate text-[11px] text-zinc-400">
-                  {locale === "en" ? m.names.en : m.names.es}
-                </span>
-                <span className="ml-auto text-[10px] text-zinc-500">{m.pointCount}</span>
+                <span className="w-8 font-sans tabular-nums text-[11px] tracking-wide text-ink">{m.id}</span>
+                <span className="truncate text-[12px] text-brass">{locale === "en" ? m.names.en : m.names.es}</span>
+                <span className="ml-auto text-[10px] text-brass">{m.pointCount}</span>
               </button>
               {open && kids.length > 0 ? (
-                <ul className="border-t border-white/5 px-1 py-1">
+                <ul className="border-t border-brass-line pb-1">
                   {kids.map((p) => (
                     <li key={p.id}>
                       <button
                         type="button"
-                        onClick={() => {
-                          setSelected(p.id);
-                          setActive(p.meridianId);
-                        }}
-                        className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[12px] ${
-                          selected === p.id ? "bg-amber-300/12" : "hover:bg-white/5"
+                        onClick={() => showPoint(p.id)}
+                        className={`flex w-full items-baseline gap-2 px-3 py-1 text-left text-[12px] ${
+                          selected === p.id ? "bg-paper-inset" : ""
                         }`}
                       >
-                        <span className="font-mono text-amber-200">{p.code}</span>
-                        <span className="text-zinc-300">{p.names.pinyin}</span>
-                        <span className="hanzi ml-auto truncate text-zinc-500">{p.names.zh}</span>
+                        <span className="w-12 font-sans tabular-nums text-brass">{p.code}</span>
+                        <span className="text-ink">{p.names.pinyin}</span>
+                        <span className="hanzi ml-auto text-brass">{p.names.zh}</span>
                       </button>
                     </li>
                   ))}
@@ -126,20 +129,20 @@ export function MeridianRail() {
           );
         })}
         {filtered.some((p) => p.meridianId.startsWith("EX")) ? (
-          <li className="rounded-xl border border-white/6 bg-black/20 p-2">
-            <div className="mb-1 text-[10px] tracking-widest text-zinc-500 uppercase">Extras</div>
+          <li className="index-row mt-2 px-3 py-2">
+            <div className="mb-1 text-[10px] tracking-[0.18em] text-brass uppercase">Extras</div>
             {filtered
               .filter((p) => p.meridianId.startsWith("EX"))
               .map((p) => (
                 <button
                   key={p.id}
                   type="button"
-                  onClick={() => setSelected(p.id)}
-                  className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[12px] hover:bg-white/5"
+                  onClick={() => showPoint(p.id)}
+                  className="flex w-full items-baseline gap-2 py-1 text-left text-[12px] text-ink"
                 >
-                  <span className="font-mono text-amber-200">{p.code}</span>
+                  <span className="font-sans tabular-nums text-brass">{p.code}</span>
                   <span>{p.names.pinyin}</span>
-                  <span className="hanzi ml-auto text-zinc-500">{p.names.zh}</span>
+                  <span className="hanzi ml-auto text-brass">{p.names.zh}</span>
                 </button>
               ))}
           </li>

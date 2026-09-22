@@ -1,7 +1,14 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { loadAcupoints, loadMeridians } from "@/data";
 import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
+
+function EsBadge({ show }: { show: boolean }) {
+  if (!show) return null;
+  return (
+    <span className="ml-1 px-1 py-px text-[9px] tracking-[0.16em] text-brass uppercase">ES</span>
+  );
+}
 
 export function PointDrawer() {
   const points = useMemo(() => loadAcupoints(), []);
@@ -10,65 +17,79 @@ export function PointDrawer() {
   const setSelected = useViewerStore((s) => s.setSelected);
   const followQi = useViewerStore((s) => s.followQi);
   const locale = useViewerStore((s) => s.locale);
+  const panelRef = useRef<HTMLElement>(null);
   const point = points.find((p) => p.id === selectedId);
+
+  useEffect(() => {
+    if (point) panelRef.current?.focus();
+  }, [point]);
+
   if (!point) return null;
   const mer = meridians.find((m) => m.id === point.meridianId);
   const name = locale === "en" ? point.names.en : point.names.es;
-  const accent = mer?.color ?? "#e8c98a";
+  const esOnly = locale === "en";
 
   return (
-    <aside className="panel scroll-thin absolute right-3 bottom-32 top-24 z-20 flex w-full max-w-md flex-col overflow-y-auto rounded-2xl max-md:right-3 max-md:bottom-32 max-md:top-auto max-md:max-h-[52vh]">
-      <div className="h-1 w-full rounded-t-2xl" style={{ background: accent }} />
+    <aside
+      ref={panelRef}
+      tabIndex={-1}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${point.code} ${point.names.pinyin}`}
+      className="marginalia drawer-in scroll-thin absolute top-28 right-3 bottom-[5.5rem] z-20 flex w-full max-w-md flex-col overflow-y-auto outline-none md:top-[4.25rem]"
+      onKeyDown={(e) => {
+        if (e.key !== "Escape") return;
+        setSelected(null);
+      }}
+    >
+      <div className="h-px w-full" style={{ background: mer?.color ?? "var(--color-brass)" }} />
       <div className="flex flex-1 flex-col p-4">
         <div className="mb-3 flex items-start justify-between gap-2">
           <div>
-            <div className="flex items-baseline gap-2">
-              <span className="font-mono text-sm tracking-wide text-amber-200">{point.code}</span>
-              <span className="hanzi display text-3xl leading-none text-zinc-50">{point.names.zh}</span>
-            </div>
-            <div className="mt-1 text-sm text-zinc-300">
+            <div className="text-[11px] tracking-[0.22em] text-brass uppercase">{point.code}</div>
+            <h2 className="hanzi display mt-1 text-6xl leading-none font-medium text-ink">{point.names.zh}</h2>
+            <div className="mt-2 text-sm text-ink">
               {point.names.pinyin}
-              <span className="mx-1.5 text-white/20">·</span>
+              <span className="mx-1.5 text-brass">·</span>
               {name}
             </div>
           </div>
           <button
             type="button"
-            className="rounded-full border border-white/10 px-2 py-1 text-[10px] tracking-widest text-zinc-400 uppercase"
+            className="file-link"
+            style={{ minWidth: 44, minHeight: 44 }}
             onClick={() => setSelected(null)}
             aria-label={t(locale, "close")}
           >
             Esc
           </button>
         </div>
-        <div className="mb-4 flex flex-wrap gap-1.5 text-[11px]">
-          {mer ? (
-            <span className="rounded-full bg-white/8 px-2 py-1 text-zinc-300">
-              {mer.id} {locale === "en" ? mer.names.en : mer.names.es}
-            </span>
-          ) : null}
-          {point.element ? (
-            <span className="rounded-full bg-white/8 px-2 py-1 text-zinc-300">{t(locale, point.element)}</span>
-          ) : null}
-          {point.polaridad ? (
-            <span className="rounded-full bg-white/8 px-2 py-1 text-zinc-300">{t(locale, point.polaridad)}</span>
-          ) : null}
-          <span className="rounded-full bg-white/8 px-2 py-1 text-zinc-300">
+        <div className="mb-4 flex flex-wrap gap-x-3 gap-y-1 text-[11px] tracking-[0.14em] text-ink uppercase">
+          {mer ? <span>{mer.id} {locale === "en" ? mer.names.en : mer.names.es}</span> : null}
+          {point.element ? <span>{t(locale, point.element)}</span> : null}
+          {point.polaridad ? <span>{t(locale, point.polaridad)}</span> : null}
+          <span>
             {point.laterality}
             {mer?.laterality === "bilateral" ? " · L/R" : ""}
           </span>
         </div>
         <section className="mb-4">
-          <h3 className="mb-1 text-[10px] tracking-[0.18em] text-zinc-500 uppercase">{t(locale, "location")}</h3>
-          <p className="text-sm leading-relaxed text-zinc-200">{point.location.anatomicEs}</p>
-          {point.location.cunNote ? <p className="mt-1 text-xs text-zinc-500">{point.location.cunNote}</p> : null}
+          <h3 className="mb-1 text-[10px] tracking-[0.18em] text-brass uppercase">
+            {t(locale, "location")}
+            <EsBadge show={esOnly} />
+          </h3>
+          <p className="text-sm leading-relaxed text-ink">{point.location.anatomicEs}</p>
+          {point.location.cunNote ? <p className="mt-1 text-xs text-brass">{point.location.cunNote}</p> : null}
         </section>
         {point.functions.length > 0 ? (
           <section className="mb-4">
-            <h3 className="mb-1 text-[10px] tracking-[0.18em] text-zinc-500 uppercase">{t(locale, "functions")}</h3>
-            <ul className="space-y-1 text-sm leading-relaxed text-zinc-200">
+            <h3 className="mb-1 text-[10px] tracking-[0.18em] text-brass uppercase">
+              {t(locale, "functions")}
+              <EsBadge show={esOnly} />
+            </h3>
+            <ul className="space-y-1 text-sm leading-relaxed text-ink">
               {point.functions.map((f) => (
-                <li key={f} className="border-l border-amber-200/30 pl-2">
+                <li key={f} className="border-l border-brass-line pl-2">
                   {f}
                 </li>
               ))}
@@ -77,13 +98,14 @@ export function PointDrawer() {
         ) : null}
         {point.indications.length > 0 ? (
           <section className="mb-4">
-            <h3 className="mb-1 text-[10px] tracking-[0.18em] text-zinc-500 uppercase">{t(locale, "indications")}</h3>
-            <ul className="space-y-2 text-sm leading-relaxed text-zinc-200">
+            <h3 className="mb-1 text-[10px] tracking-[0.18em] text-brass uppercase">
+              {t(locale, "indications")}
+              <EsBadge show={esOnly} />
+            </h3>
+            <ul className="space-y-2 text-sm leading-relaxed text-ink">
               {point.indications.map((f) => (
                 <li key={f}>
-                  <span className="mr-1.5 rounded-full bg-amber-300/12 px-2 py-0.5 text-[9px] tracking-wider text-amber-200 uppercase">
-                    {t(locale, "traditional")}
-                  </span>
+                  <span className="mr-1.5 text-[9px] tracking-[0.16em] text-brass uppercase">{t(locale, "traditional")}</span>
                   {f}
                 </li>
               ))}
@@ -91,9 +113,12 @@ export function PointDrawer() {
           </section>
         ) : null}
         {point.precautions.length > 0 ? (
-          <section className="mb-4 rounded-xl border border-rose-300/20 bg-rose-950/30 p-3">
-            <h3 className="mb-1 text-[10px] tracking-[0.18em] text-rose-200 uppercase">{t(locale, "precautions")}</h3>
-            <ul className="space-y-1 text-sm text-rose-50">
+          <section className="caution mb-4">
+            <h3 className="mb-1 text-[10px] tracking-[0.18em] uppercase">
+              {t(locale, "precautions")}
+              <EsBadge show={esOnly} />
+            </h3>
+            <ul className="space-y-1 text-sm">
               {point.precautions.map((f) => (
                 <li key={f}>{f}</li>
               ))}
@@ -102,28 +127,35 @@ export function PointDrawer() {
         ) : null}
         {point.combinations && point.combinations.length > 0 ? (
           <section className="mb-4">
-            <h3 className="mb-1 text-[10px] tracking-[0.18em] text-zinc-500 uppercase">{t(locale, "combinations")}</h3>
-            <ul className="space-y-1 text-sm text-zinc-200">
+            <h3 className="mb-1 text-[10px] tracking-[0.18em] text-brass uppercase">
+              {t(locale, "combinations")}
+              <EsBadge show={esOnly} />
+            </h3>
+            <ul className="space-y-1 text-sm text-ink">
               {point.combinations.map((f) => (
                 <li key={f}>{f}</li>
               ))}
             </ul>
           </section>
         ) : null}
-        <section className="mb-4 text-[11px] leading-relaxed text-zinc-500">
+        <section className="mb-4 text-[11px] leading-relaxed text-brass">
           <div>
-            {t(locale, "confidence")}: {point.confidence}
+            {t(locale, "confidence")}:{" "}
+            {t(
+              locale,
+              point.confidence === "high"
+                ? "confidenceHigh"
+                : point.confidence === "medium"
+                  ? "confidenceMedium"
+                  : "confidenceLow",
+            )}
           </div>
           <div>
             {t(locale, "sources")}: {point.sources.join(" · ")}
           </div>
         </section>
         {mer ? (
-          <button
-            type="button"
-            onClick={() => followQi(mer.id)}
-            className="mt-auto rounded-full bg-amber-300/18 px-4 py-2.5 text-sm text-amber-100 transition hover:bg-amber-300/28"
-          >
+          <button type="button" onClick={() => followQi(mer.id)} className="stamp-btn mt-auto">
             {t(locale, "followQi")}
           </button>
         ) : null}

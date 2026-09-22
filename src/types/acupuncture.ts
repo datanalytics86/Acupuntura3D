@@ -2,8 +2,14 @@ export type Laterality = "L" | "R" | "C";
 export type Confidence = "low" | "medium" | "high";
 export type Polaridad = "yin" | "yang";
 export type Elemento = "wood" | "fire" | "earth" | "metal" | "water";
-export type QualityTier = "high" | "medium" | "low";
-export type Locale = "es" | "en" | "zh";
+export type Locale = "es" | "en";
+export type AtlasView = "anterior" | "posterior";
+export type AtlasRegion = "body" | "face" | "hand" | "foot";
+
+export interface Point2D {
+  x: number;
+  y: number;
+}
 
 export interface Names {
   zh: string;
@@ -28,6 +34,11 @@ export interface Acupoint {
   laterality: Laterality;
   region: string;
   position?: { x: number; y: number; z: number };
+  position2d?: {
+    anterior?: Point2D;
+    posterior?: Point2D;
+  };
+  views?: AtlasView[];
   sources: string[];
   confidence: Confidence;
 }
@@ -50,6 +61,7 @@ export interface Meridian {
   pointCount: number;
   pointCodes: string[];
   pathAnchors: { x: number; y: number; z: number }[];
+  anchors2d?: { anterior?: Point2D[]; posterior?: Point2D[] };
   flow: MeridianFlow;
   laterality: "bilateral" | "midline";
   color: string;
@@ -64,13 +76,18 @@ export interface ViewerState {
     meridians: boolean;
     points: boolean;
     qi: boolean;
-    labels: boolean;
+    centers: boolean;
   };
   qiPlaying: boolean;
   qiSpeed: number;
   clockHour: number;
   locale: Locale;
-  qualityTier: QualityTier;
   searchQuery: string;
   filters: { element?: Elemento; region?: string; starOnly: boolean };
+  atlasView: AtlasView;
+  atlasRegion: AtlasRegion;
+  selectedCenterId: "lower" | "middle" | "upper" | null;
+  atlasZoom: number;
+  atlasPan: Point2D;
+  bothSides: boolean;
 }

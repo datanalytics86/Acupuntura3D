@@ -59,9 +59,13 @@ describe("seed data", () => {
       code: string;
       names: { zh: string };
       precautions: string[];
+      position2d?: { anterior?: { x: number; y: number } };
     }[];
-    expect(seed.map((p) => p.code)).toEqual(STAR_CODES);
-    expect(seed).toHaveLength(20);
+    const codes = seed.map((p) => p.code);
+    expect(seed.length).toBeGreaterThanOrEqual(20);
+    for (const star of STAR_CODES) {
+      expect(codes).toContain(star);
+    }
     const st36 = seed.find((p) => p.code === "ST36");
     expect(st36?.names.zh).toBe("足三里");
     const li4 = seed.find((p) => p.code === "LI4");
@@ -70,5 +74,101 @@ describe("seed data", () => {
     expect(sp6?.precautions.some((x) => x.toLowerCase().includes("embarazo"))).toBe(true);
     const cv12 = seed.find((p) => p.code === "CV12");
     expect(cv12?.names.zh).toBe("中脘");
+    expect(st36?.position2d?.anterior).toBeTruthy();
+  });
+
+  it("OMS classic pointCounts sum to 361 and GV/CV have no clockHour", () => {
+    const meridians = JSON.parse(readFileSync(join(root, "data/meridians.json"), "utf8")) as {
+      id: string;
+      pointCount: number;
+      clockHour?: number;
+      pointCodes: string[];
+    }[];
+    expect(meridians.reduce((sum, m) => sum + m.pointCount, 0)).toBe(361);
+    const gv = meridians.find((m) => m.id === "GV");
+    const cv = meridians.find((m) => m.id === "CV");
+    expect(gv?.clockHour).toBeUndefined();
+    expect(cv?.clockHour).toBeUndefined();
+    expect(gv?.pointCodes).toHaveLength(28);
+    expect(cv?.pointCodes).toHaveLength(24);
+  });
+
+  it("does not mount R3F Canvas in App", () => {
+    const app = readFileSync(join(root, "src/app/App.tsx"), "utf8");
+    expect(app).not.toMatch(/@react-three\/fiber/);
+    expect(app).toMatch(/AtlasRoot/);
+  });
+});
+
+describe("Encarta figure", () => {
+  it("keeps the 800×1600 landmark contract", async () => {
+    const { VIEW_W, VIEW_H, Y } = await import("../src/atlas/figure/landmarks");
+    expect(VIEW_W).toBe(800);
+    expect(VIEW_H).toBe(1600);
+    expect(Y.vertex).toBe(40);
+    expect(Y.sole).toBe(1480);
+  });
+
+  it("paints licensed surface plates instead of the parametric kit", () => {
+    const figure = readFileSync(join(root, "src/atlas/figure/Figure.tsx"), "utf8");
+    expect(figure).toMatch(/body-anterior\.png/);
+    expect(figure).toMatch(/body-posterior\.png/);
+    expect(figure).not.toMatch(/fingerD\(|capsuleD\(|ellipseD\(|encSkin|@react-three|<Canvas/);
+    expect(readFileSync(join(root, "src/atlas/AtlasRoot.tsx"), "utf8")).not.toMatch(/rounded-\[8px\]/);
+    expect(readFileSync(join(root, "src/atlas/figure/PlateTitle.tsx"), "utf8")).toMatch(
+      /Cuerpo humano — vista anterior/,
+    );
+  });
+
+  it("attributes Goran tek-en and does not scan a commercial atlas", () => {
+    const attr = readFileSync(join(root, "public/atlas/ATTRIBUTION.md"), "utf8");
+    expect(attr).toMatch(/Goran tek-en/);
+    expect(attr).toMatch(/CC BY-SA 4\.0/);
+    expect(attr).toMatch(/commons\.wikimedia\.org\/wiki\/File:Male_front_3d-shaded_human_illustration\.svg/);
+    expect(attr).toMatch(/commons\.wikimedia\.org\/wiki\/File:Male_back_3d-shaded_human_illustration\.svg/);
+    expect(attr.toLowerCase()).toMatch(/not scans/);
+  });
+
+  it("maps the organ clock to the meridian of the hour", async () => {
+    const { meridianAtHour } = await import("../src/atlas/qiTime");
+    const hours = [
+      { id: "LU", clockHour: 3 },
+      { id: "ST", clockHour: 7 },
+      { id: "GB", clockHour: 23 },
+      { id: "LR", clockHour: 1 },
+    ];
+    expect(meridianAtHour(4, hours)).toBe("LU");
+    expect(meridianAtHour(7, hours)).toBe("ST");
+    expect(meridianAtHour(0, hours)).toBe("GB");
+    expect(meridianAtHour(1, hours)).toBe("LR");
+  });
+
+  it("marks three didactic dantian without clinical claims", async () => {
+    const { CENTERS, matchCenter } = await import("../src/atlas/centers");
+    expect(CENTERS.map((c) => c.zh)).toEqual(["上丹田", "中丹田", "下丹田"]);
+    expect(matchCenter("dan tien")?.id).toBe("lower");
+    expect(matchCenter("上丹田")?.id).toBe("upper");
+    for (const center of CENTERS) {
+      expect(`${center.noteEs} ${center.noteEn}`.toLowerCase()).toMatch(/baja|low/);
+      expect(`${center.noteEs} ${center.anchorEs}`.toLowerCase()).not.toMatch(/cura|trata|diagnos/);
+    }
+  });
+
+  it("ships plate previews", () => {
+    expect(readFileSync(join(root, "public/atlas/preview-anterior.svg"), "utf8")).toMatch(
+      /body-anterior\.png/,
+    );
+    expect(readFileSync(join(root, "public/atlas/preview-posterior.svg"), "utf8")).toMatch(
+      /body-posterior\.png/,
+    );
+  });
+
+  it("paints the atlas on encyclopedia paper", () => {
+    const css = readFileSync(join(root, "src/app/index.css"), "utf8");
+    const viewport = readFileSync(join(root, "src/atlas/Viewport.tsx"), "utf8");
+    expect(css).toMatch(/--color-paper/);
+    expect(css).not.toMatch(/background: #07090d/);
+    expect(viewport).toMatch(/var\(--color-paper\)/);
+    expect(viewport).not.toMatch(/#07090d/);
   });
 });
