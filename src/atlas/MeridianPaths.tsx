@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { loadMeridians } from "@/data";
 import { anchorsToPath } from "@/atlas/catmullRom";
 import { MERIDIAN_ANCHORS_2D } from "@/atlas/meridianAnchors";
+import { CINNABAR, INK } from "@/lib/colors";
 import { useViewerStore } from "@/state/viewerStore";
 import type { Point2D } from "@/types";
 
@@ -41,12 +42,11 @@ export function MeridianPaths() {
             key={`${m.id}-${i}`}
             d={anchorsToPath(pts)}
             fill="none"
-            stroke={m.color}
-            strokeWidth={dim ? 1.25 : 1.55}
+            stroke={hot ? CINNABAR : INK}
+            strokeWidth={hot ? 1.6 : 1.1}
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity={dim ? 0.18 : hot ? 0.95 : 0.72}
-            style={{ mixBlendMode: "multiply" }}
+            opacity={dim ? 0.24 : hot ? 1 : 0.55}
             pathLength={1000}
           />
         ));

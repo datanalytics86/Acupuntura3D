@@ -1,8 +1,8 @@
 import { CENTERS, type EnergyCenter } from "@/atlas/centers";
+import { CX, Y } from "@/atlas/figure/landmarks";
+import { CINNABAR, INK } from "@/lib/colors";
 import { useViewerStore } from "@/state/viewerStore";
 import type { Point2D } from "@/types";
-
-const INK = "#7A3B32";
 
 function Seal({
   center,
@@ -15,6 +15,9 @@ function Seal({
   selected: boolean;
   onSelect: (id: EnergyCenter["id"]) => void;
 }) {
+  const onFace = pos.y <= Y.chin + 6 && Math.abs(pos.x - CX) < 76;
+  const lx = onFace ? CX + 74 - pos.x : 28;
+  const ink = selected ? CINNABAR : INK;
   return (
     <g
       data-atlas-hit=""
@@ -28,30 +31,30 @@ function Seal({
       }}
     >
       <circle r={26} fill="transparent" />
-      <circle r={22} fill="var(--color-paper)" fillOpacity={0.92} stroke={INK} strokeWidth={selected ? 1.8 : 1.15} />
-      <circle r={15} fill="none" stroke={INK} strokeWidth={0.7} />
-      <circle r={2.4} fill={INK} />
+      <circle r={22} fill="var(--color-paper)" fillOpacity={0.92} stroke={ink} strokeWidth={selected ? 1.5 : 1.1} />
+      <circle r={15} fill="none" stroke={ink} strokeWidth={0.7} />
+      <circle r={2.4} fill={ink} />
       <text
-        x={30}
+        x={lx}
         y={-2}
         fill={INK}
         fontFamily="Cormorant Garamond, Times New Roman, serif"
-        fontSize={20}
+        fontSize={13}
         stroke="var(--color-paper)"
-        strokeWidth={4}
+        strokeWidth={1.1}
         paintOrder="stroke"
       >
         {center.zh}
       </text>
       <text
-        x={30}
-        y={16}
-        fill="var(--color-brass)"
-        fontFamily="Outfit, Segoe UI, sans-serif"
+        x={lx}
+        y={14}
+        fill={INK}
+        fontFamily="Cormorant Garamond, Times New Roman, serif"
         fontSize={11}
-        letterSpacing={1.2}
+        letterSpacing={0.4}
         stroke="var(--color-paper)"
-        strokeWidth={3}
+        strokeWidth={1.1}
         paintOrder="stroke"
       >
         {center.pinyin}
@@ -87,10 +90,9 @@ export function DantianMarks() {
           x2={400}
           y2={Math.max(...axis.map((p) => p.y))}
           stroke={INK}
-          strokeWidth={0.8}
+          strokeWidth={1.1}
           strokeDasharray="2 6"
-          opacity={0.55}
-          style={{ mixBlendMode: "multiply" }}
+          opacity={0.4}
         />
       ) : null}
       {placed.map(({ center, pos }) => (

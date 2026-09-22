@@ -4,12 +4,12 @@ import { anchorsToPath } from "@/atlas/catmullRom";
 import { MERIDIAN_ANCHORS_2D } from "@/atlas/meridianAnchors";
 import { CENTERS } from "@/atlas/centers";
 import { CLOCK_HOUR_SECONDS, meridianAtHour } from "@/atlas/qiTime";
+import { CINNABAR } from "@/lib/colors";
 import { prefersReducedMotion } from "@/lib/quality";
 import { useViewerStore } from "@/state/viewerStore";
 import type { Meridian, Point2D } from "@/types";
 
 const BEADS = 5;
-const CINNABAR = "#7A3B32";
 
 function pathFor(m: Meridian, view: "anterior" | "posterior"): string {
   const anchors = (m.anchors2d ?? MERIDIAN_ANCHORS_2D[m.id])?.[view];
@@ -82,10 +82,10 @@ function Stream({
           ref={(node) => {
             beads.current[i] = node;
           }}
-          r={i === 0 ? 5.2 : 3.4}
+          r={i === 0 ? 2.6 : 1.7}
           fill={color}
           stroke="var(--color-paper)"
-          strokeWidth={i === 0 ? 1.6 : 1}
+          strokeWidth={0.55}
           opacity={0}
         />
       ))}
@@ -144,12 +144,12 @@ export function QiFlow() {
     const anchors = (m.anchors2d ?? MERIDIAN_ANCHORS_2D[m.id])?.[view];
     const d = pathFor(m, view);
     if (!d || !anchors) return;
-    streams.push({ key: `${m.id}-a`, d, color: m.color, pace, opacity });
+    streams.push({ key: `${m.id}-a`, d, color: CINNABAR, pace, opacity });
     if (both && m.laterality === "bilateral" && anchors.some((p) => Math.abs(p.x - 400) > 6)) {
       streams.push({
         key: `${m.id}-b`,
         d: anchorsToPath(mirror(anchors)),
-        color: m.color,
+        color: CINNABAR,
         pace,
         opacity,
       });
