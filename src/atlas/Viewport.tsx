@@ -99,6 +99,20 @@ export function Viewport({ children }: { children: ReactNode }) {
       aria-label="Atlas corporal de meridianos"
     >
       <rect x={vbX - 40} y={vbY - 40} width={vbW + 80} height={vbH + 80} fill="var(--color-paper)" />
+      <defs>
+        <filter id="page-grain">
+          <feTurbulence type="fractalNoise" baseFrequency="1.15" numOctaves="2" stitchTiles="stitch" />
+        </filter>
+      </defs>
+      <rect
+        x={vbX - 40}
+        y={vbY - 40}
+        width={vbW + 80}
+        height={vbH + 80}
+        filter="url(#page-grain)"
+        opacity={0.04}
+        style={{ mixBlendMode: "multiply", pointerEvents: "none" }}
+      />
       {children}
     </svg>
   );

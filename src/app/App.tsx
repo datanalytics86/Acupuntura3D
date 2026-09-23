@@ -87,6 +87,20 @@ export function App() {
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-desk">
+      <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
+        <filter id="desk-grain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" stitchTiles="stitch" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#desk-grain)" opacity="0.05" className="mix-blend-multiply" />
+      </svg>
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 42%, transparent 48%, rgba(120, 86, 48, 0.18) 100%)",
+        }}
+      />
       <AtlasRoot />
       <Topbar />
       <MeridianRail />

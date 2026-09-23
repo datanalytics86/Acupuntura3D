@@ -12,15 +12,15 @@
   --font-serif: "Cormorant Garamond", "Times New Roman", serif;
   --font-hanzi: "Cormorant Garamond", "Times New Roman", serif;
 
-  --color-desk: #f4efe4;
+  --color-desk: #e7dcc6;
   --color-paper: #fbf7ee;
-  --color-paper-inset: #f4efe4;
+  --color-paper-inset: #f3ebdd;
   --color-ink: #1c1915;
   --color-cinnabar: #8b1e1e;
-  --color-rule: rgba(28, 25, 21, 0.16);
+  --color-rule: rgba(28, 25, 21, 0.18);
   /* Class names in UI stay; the paint is ink and the rule, never a metal. */
   --color-brass: #1c1915;
-  --color-brass-line: rgba(28, 25, 21, 0.16);
+  --color-brass-line: rgba(28, 25, 21, 0.18);
   --color-jade-ink: #1c1915;
 
   --ease-paper: cubic-bezier(0.22, 1, 0.36, 1);
@@ -254,7 +254,7 @@ body {
 
 .atlas-frame {
   border-radius: 2px;
-  box-shadow: 0 10px 28px rgba(28, 25, 21, 0.06);
+  box-shadow: 0 12px 32px rgba(28, 25, 21, 0.10);
   transition:
     left var(--dur-paper) var(--ease-paper),
     right var(--dur-paper) var(--ease-paper);

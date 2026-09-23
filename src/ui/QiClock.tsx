@@ -18,7 +18,7 @@ export function QiClock() {
 
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-8 z-20 flex justify-center px-3">
-      <div className="pointer-events-auto flex w-full max-w-5xl flex-nowrap items-center gap-3 overflow-x-auto border-t border-brass-line bg-paper px-3 py-1">
+      <div className="pointer-events-auto flex w-full max-w-5xl flex-nowrap items-center gap-3 overflow-x-auto border-t border-brass-line px-3 py-1">
         <button
           type="button"
           aria-pressed={playing}

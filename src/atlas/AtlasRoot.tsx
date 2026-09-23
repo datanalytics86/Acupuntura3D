@@ -19,9 +19,9 @@ export function AtlasRoot() {
   return (
     <div className="absolute inset-0 bg-desk">
       <div
-        className={`atlas-frame absolute inset-x-4 bottom-[5.5rem] top-28 flex flex-col overflow-hidden border border-brass-line bg-paper md:top-[4.25rem] ${
-          railOpen ? "md:left-[20.5rem]" : "md:left-5"
-        } ${detailOpen ? "md:right-[30rem]" : "md:right-5"}`}
+        className={`atlas-frame absolute top-28 bottom-[6.25rem] flex flex-col overflow-hidden border border-brass-line bg-paper md:top-[4.25rem] ${
+          railOpen ? "left-5 md:left-[21rem]" : "left-5 md:left-10"
+        } ${detailOpen ? "right-5 md:right-[31rem]" : "right-5 md:right-10"}`}
         style={{ borderRadius: "var(--radius-plate)", viewTransitionName: "atlas-plate" }}
       >
         <PlateTitle />
