@@ -8,7 +8,7 @@ import { useViewerStore } from "@/state/viewerStore";
 const LABEL = 12;
 
 /** Head on the plate. A label here covers the face. */
-const HEAD = { l: CX - 70, r: CX + 70, t: Y.vertex + 6, b: Y.chin + 2 };
+const HEAD = { l: CX - 78, r: CX + 78, t: Y.vertex + 6, b: Y.chin + 12 };
 
 type Anchor = "start" | "middle" | "end";
 type Box = { l: number; t: number; r: number; b: number };
@@ -157,7 +157,7 @@ export function Points2D() {
         const tone = isSel ? "active" : isHov ? "hover" : "idle";
         const core = tone === "active" ? 3.05 : tone === "hover" ? 2.75 : 2.45;
         const halo = tone === "active" ? 4.35 : tone === "hover" ? 4.05 : 3.7;
-        const rim = tone === "active" ? 1.25 : tone === "hover" ? 0.9 : 0.6;
+        const rim = tone === "active" ? 1.4 : tone === "hover" ? 1.05 : 0.85;
         const mark = tone === "idle" ? INK : CINNABAR;
         const text = `${it.point.code} ${it.point.names.zh}`;
         const settled = callouts.get(`${it.point.id}-${it.side}`);

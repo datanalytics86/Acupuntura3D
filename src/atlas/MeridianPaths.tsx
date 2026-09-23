@@ -43,10 +43,10 @@ export function MeridianPaths() {
             d={anchorsToPath(pts)}
             fill="none"
             stroke={hot ? CINNABAR : INK}
-            strokeWidth={hot ? 1.6 : 1.1}
+            strokeWidth={hot ? 1.5 : 1.28}
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity={dim ? 0.24 : hot ? 1 : 0.55}
+            opacity={dim ? 0.34 : hot ? 1 : 0.82}
             pathLength={1000}
           />
         ));

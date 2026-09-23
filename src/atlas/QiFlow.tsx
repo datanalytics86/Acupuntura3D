@@ -85,7 +85,7 @@ function Stream({
           r={i === 0 ? 2.6 : 1.7}
           fill={color}
           stroke="var(--color-paper)"
-          strokeWidth={0.55}
+          strokeWidth={0.7}
           opacity={0}
         />
       ))}
