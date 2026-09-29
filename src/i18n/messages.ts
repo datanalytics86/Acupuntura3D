@@ -118,6 +118,18 @@ const es = {
   cmdRegionHand: "Región Mano",
   cmdRegionFoot: "Región Pie",
   cmdShowLayers: "Mostrar capas",
+  // --- C2 ---
+  meridian: "Meridiano",
+  clockHour: "Hora del reloj",
+  bilateral: "Bilateral",
+  midline: "Línea media",
+  confidenceDidactic: "ancla didáctica 2D, no una medición clínica",
+  pointPrev: "Anterior",
+  pointNext: "Siguiente",
+  followQiBtn: "Seguir el Qi",
+  sheetHandle: "Arrastrar la ficha",
+  traditionalUse: "Uso tradicional",
+  openPoint: "Abrir el punto",
 };
 
 const en: typeof es = {
@@ -238,6 +250,18 @@ const en: typeof es = {
   cmdRegionHand: "Hand region",
   cmdRegionFoot: "Foot region",
   cmdShowLayers: "Show layers",
+  // --- C2 ---
+  meridian: "Meridian",
+  clockHour: "Clock hour",
+  bilateral: "Bilateral",
+  midline: "Midline",
+  confidenceDidactic: "didactic 2D anchor, not a clinical measurement",
+  pointPrev: "Previous",
+  pointNext: "Next",
+  followQiBtn: "Follow the Qi",
+  sheetHandle: "Drag the entry",
+  traditionalUse: "Traditional use",
+  openPoint: "Open the point",
 };
 
 export const MESSAGES: Record<Locale, typeof es> = { es, en };

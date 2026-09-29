@@ -11,18 +11,23 @@ export function PlateThumb({
   label,
 }: {
   view: AtlasView;
-  x: number;
-  y: number;
+  x?: number;
+  y?: number;
   label?: string;
 }) {
   const locale = useViewerStore((s) => s.locale);
   const plate = BODY_PLATE[view];
+  const marked = typeof x === "number" && typeof y === "number";
   return (
     <svg width={72} height={144} viewBox="0 0 800 1600" role="img" aria-label={label ?? t(locale, "plateThumb")}>
       <rect width={800} height={1600} fill="var(--color-paper)" />
       <image href={plate.href} x={plate.x} y={plate.y} width={plate.width} height={plate.height} />
-      <circle cx={x} cy={y} r={78} fill="none" stroke="var(--color-cinnabar)" strokeWidth={22} />
-      <circle cx={x} cy={y} r={30} fill="var(--color-cinnabar)" />
+      {marked ? (
+        <>
+          <circle cx={x} cy={y} r={78} fill="none" stroke="var(--color-cinnabar)" strokeWidth={22} />
+          <circle cx={x} cy={y} r={30} fill="var(--color-cinnabar)" />
+        </>
+      ) : null}
     </svg>
   );
 }
