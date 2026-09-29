@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from "react";
 import { clientToUnits, zoomAbout } from "@/atlas/camera";
 import { VIEW_H, VIEW_W } from "@/atlas/figure/landmarks";
 import { ScreenContext, unitsPerPx, visibleRect, type PlateBox } from "@/atlas/screen";
@@ -37,6 +37,8 @@ export function Viewport({ children }: { children: ReactNode }) {
   const tapStart = useRef<Ptr | null>(null);
 
   const k = unitsPerPx(VIEW_W / zoom, VIEW_H / zoom, box);
+  // k depends on zoom and plate size, not pan. A fresh object would rerender every consumer on drag.
+  const screen = useMemo(() => ({ k, box }), [k, box]);
   const vis = visibleRect(pan, k, box);
   const vbW = VIEW_W / zoom;
   const vbH = VIEW_H / zoom;
@@ -196,7 +198,7 @@ export function Viewport({ children }: { children: ReactNode }) {
     : { x: vbX, y: vbY, w: vbW, h: vbH };
 
   return (
-    <ScreenContext.Provider value={{ k, box }}>
+    <ScreenContext.Provider value={screen}>
       <svg
         ref={svgRef}
         className="absolute inset-0 h-full w-full touch-none select-none"
