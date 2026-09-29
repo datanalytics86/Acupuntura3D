@@ -51,6 +51,9 @@ const es = {
   zoomIn: "Acercar",
   zoomOut: "Alejar",
   zoomReset: "Restablecer encuadre",
+  // --- C4 ---
+  vessels: "Vasos",
+  reducedMotion: "Movimiento reducido activo",
 };
 
 const en: typeof es = {
@@ -104,6 +107,9 @@ const en: typeof es = {
   zoomIn: "Zoom in",
   zoomOut: "Zoom out",
   zoomReset: "Reset framing",
+  // --- C4 ---
+  vessels: "Vessels",
+  reducedMotion: "Reduced motion is on",
 };
 
 export const MESSAGES: Record<Locale, typeof es> = { es, en };
