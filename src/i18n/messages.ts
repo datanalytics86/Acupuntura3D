@@ -51,6 +51,11 @@ const es = {
   zoomIn: "Acercar",
   zoomOut: "Alejar",
   zoomReset: "Restablecer encuadre",
+  // --- B3 ---
+  pointMeridian: "meridiano",
+  extraPoint: "punto extra",
+  clusterPoints: "puntos juntos",
+  clusterZoom: "Acercar",
 };
 
 const en: typeof es = {
@@ -104,6 +109,11 @@ const en: typeof es = {
   zoomIn: "Zoom in",
   zoomOut: "Zoom out",
   zoomReset: "Reset framing",
+  // --- B3 ---
+  pointMeridian: "meridian",
+  extraPoint: "extra point",
+  clusterPoints: "points together",
+  clusterZoom: "Zoom in",
 };
 
 export const MESSAGES: Record<Locale, typeof es> = { es, en };
