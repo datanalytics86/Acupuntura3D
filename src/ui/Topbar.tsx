@@ -1,10 +1,13 @@
+import type { KeyboardEvent } from "react";
 import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
+import type { AtlasRegion, AtlasView } from "@/types";
+import { CommandPalette } from "./CommandPalette";
+import { IconIndex } from "./icons";
 import { SearchBox } from "./SearchBox";
-import type { AtlasRegion, Locale } from "@/types";
+import "./topbar.css";
 
-const HIT = { minWidth: 44, minHeight: 44 } as const;
-
+const VIEWS: readonly AtlasView[] = ["anterior", "posterior"];
 const REGIONS: readonly AtlasRegion[] = ["body", "face", "hand", "foot"];
 
 const REGION_LABEL: Record<"es" | "en", Record<AtlasRegion, string>> = {
@@ -12,11 +15,48 @@ const REGION_LABEL: Record<"es" | "en", Record<AtlasRegion, string>> = {
   en: { body: "Body", face: "Face", hand: "Hand", foot: "Foot" },
 };
 
+function focusTestId(id: string): void {
+  queueMicrotask(() => {
+    document.querySelector<HTMLElement>(`[data-testid="${id}"]`)?.focus();
+  });
+}
+
+function onRadioKey<T extends string>(
+  event: KeyboardEvent<HTMLButtonElement>,
+  values: readonly T[],
+  current: T,
+  pick: (next: T) => void,
+  testId: (value: T) => string,
+): void {
+  const key = event.key;
+  let delta = 0;
+  if (key === "ArrowRight" || key === "ArrowDown") delta = 1;
+  else if (key === "ArrowLeft" || key === "ArrowUp") delta = -1;
+  else if (key === "Home") delta = -2;
+  else if (key === "End") delta = 2;
+  else return;
+  event.preventDefault();
+  event.stopPropagation();
+  const last = values.length - 1;
+  const index = values.indexOf(current);
+  const base = index < 0 ? 0 : index;
+  let nextIndex = base;
+  if (delta === 1) nextIndex = base >= last ? 0 : base + 1;
+  else if (delta === -1) nextIndex = base <= 0 ? last : base - 1;
+  else if (delta < 0) nextIndex = 0;
+  else nextIndex = last;
+  const next = values[nextIndex];
+  if (next === undefined) return;
+  if (next !== current) pick(next);
+  focusTestId(testId(next));
+}
+
 export function Topbar() {
   const locale = useViewerStore((s) => s.locale);
   const setLocale = useViewerStore((s) => s.setLocale);
   const railOpen = useViewerStore((s) => s.railOpen);
   const setRailOpen = useViewerStore((s) => s.setRailOpen);
+  const setHelpOpen = useViewerStore((s) => s.setHelpOpen);
   const atlasView = useViewerStore((s) => s.atlasView);
   const setAtlasView = useViewerStore((s) => s.setAtlasView);
   const atlasRegion = useViewerStore((s) => s.atlasRegion);
@@ -24,71 +64,103 @@ export function Topbar() {
   const regionLang = locale === "es" ? "es" : "en";
 
   return (
-    <header className="running-head pointer-events-auto absolute inset-x-0 top-0 z-20 flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 min-[1100px]:flex-nowrap md:px-5">
-      <button
-        type="button"
-        className={`file-link shrink-0 ${railOpen ? "is-on" : ""}`}
-        style={HIT}
-        aria-pressed={railOpen}
-        onClick={() => setRailOpen(!railOpen)}
-      >
-        {t(locale, "meridians")}
-      </button>
-      <div className="flex shrink-0 items-center gap-2">
-        <span className="hanzi text-xl leading-none text-ink">针</span>
-        <span className="h-6 w-px bg-brass-line" aria-hidden />
-        <div className="whitespace-nowrap">
-          <h1 className="display text-[1.2rem] leading-none font-semibold text-ink">{t(locale, "title")}</h1>
-          <p className="mt-0.5 text-[10px] tracking-[0.2em] text-brass uppercase">{t(locale, "subtitle")}</p>
+    <header className="topbar">
+      <div className="topbar-brand">
+        <span className="topbar-mark" aria-hidden="true">
+          针
+        </span>
+        <h1 className="topbar-title">{t(locale, "title")}</h1>
+      </div>
+      <div className="topbar-tools">
+        <SearchBox />
+        <button
+          type="button"
+          className="topbar-tool topbar-locale"
+          aria-label={`${t(locale, "locale")}: ${locale === "es" ? "ES" : "EN"}`}
+          onClick={() => setLocale(locale === "es" ? "en" : "es")}
+        >
+          <span className={locale === "es" ? "is-on" : "is-off"}>ES</span>
+          <span aria-hidden="true">·</span>
+          <span className={locale === "en" ? "is-on" : "is-off"}>EN</span>
+        </button>
+        <button
+          type="button"
+          className="topbar-tool topbar-help"
+          aria-label={t(locale, "helpOpen")}
+          onClick={() => setHelpOpen(true)}
+        >
+          ?
+        </button>
+        <button
+          type="button"
+          className="topbar-tool"
+          data-testid="index-toggle"
+          aria-pressed={railOpen}
+          aria-label={t(locale, "indexOpen")}
+          onClick={() => setRailOpen(!railOpen)}
+        >
+          <IconIndex />
+        </button>
+      </div>
+      <div className="topbar-plate">
+        <div
+          className="topbar-seg"
+          role="radiogroup"
+          aria-label={t(locale, "viewGroup")}
+          data-view={atlasView}
+        >
+          {VIEWS.map((view) => {
+            const checked = atlasView === view;
+            return (
+              <button
+                key={view}
+                type="button"
+                role="radio"
+                className="topbar-radio"
+                data-testid={`view-${view}`}
+                aria-checked={checked}
+                tabIndex={checked ? 0 : -1}
+                onClick={() => {
+                  if (!checked) setAtlasView(view);
+                }}
+                onKeyDown={(event) =>
+                  onRadioKey(event, VIEWS, atlasView, setAtlasView, (value) => `view-${value}`)
+                }
+              >
+                {t(locale, view)}
+              </button>
+            );
+          })}
+          <span className="topbar-seg-bar" aria-hidden="true" />
+        </div>
+        <div className="topbar-regions">
+          <div className="topbar-regions-scroller" role="radiogroup" aria-label={t(locale, "regionGroup")}>
+            {REGIONS.map((id) => {
+              const checked = atlasRegion === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  role="radio"
+                  className="topbar-radio topbar-region"
+                  data-testid={`region-${id}`}
+                  aria-checked={checked}
+                  tabIndex={checked ? 0 : -1}
+                  onClick={() => {
+                    if (!checked) setAtlasRegion(id);
+                  }}
+                  onKeyDown={(event) =>
+                    onRadioKey(event, REGIONS, atlasRegion, setAtlasRegion, (value) => `region-${value}`)
+                  }
+                >
+                  {REGION_LABEL[regionLang][id]}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
-      <div
-        className="order-last flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-1 min-[1100px]:order-none min-[1100px]:w-auto min-[1100px]:shrink-0 min-[1100px]:flex-nowrap"
-        role="group"
-        aria-label={regionLang === "es" ? "Vista y región" : "View and region"}
-      >
-        {(["anterior", "posterior"] as const).map((v) => (
-          <button
-            key={v}
-            type="button"
-            aria-pressed={atlasView === v}
-            onClick={() => setAtlasView(v)}
-            className={`file-link shrink-0 ${atlasView === v ? "is-on" : ""}`}
-            style={HIT}
-          >
-            {t(locale, v)}
-          </button>
-        ))}
-        {REGIONS.map((id) => (
-          <button
-            key={id}
-            type="button"
-            aria-pressed={atlasRegion === id}
-            onClick={() => setAtlasRegion(id)}
-            className={`file-link shrink-0 ${atlasRegion === id ? "is-on" : ""}`}
-            style={HIT}
-          >
-            {REGION_LABEL[regionLang][id]}
-          </button>
-        ))}
-      </div>
-      <div className="flex shrink-0 items-center gap-2">
-        {(["es", "en"] as Locale[]).map((l) => (
-          <button
-            key={l}
-            type="button"
-            aria-pressed={locale === l}
-            onClick={() => setLocale(l)}
-            className={`file-link shrink-0 ${locale === l ? "is-on" : ""}`}
-            style={HIT}
-          >
-            {l}
-          </button>
-        ))}
-      </div>
-      <div className="ml-auto w-56 max-w-full shrink-0">
-        <SearchBox />
-      </div>
+      <CommandPalette />
     </header>
   );
 }
