@@ -15,4 +15,5 @@ Paleta por `paletteOpen`. Merge B1 → B2 → B3 → C3 → C1 → C2 → C4, ty
 W2 integrada: 66 tests. AtlasRoot se quedó con la lámina de B1. PlateThumb acepta x/y opcionales.
 
 ## W3
-Q1 presupuesto y CI, Q2 i18n y a11y, Q3 e2e y capturas, Q4 memo. Luego H1 y H2.
+Q1, Q2 y Q4 en PASS e integrados en feat/t1-2909 (bb0a957, luego firmas). 68 tests.
+Q3 no llegó a escribir archivos: el worktree quedó limpio en 1f48b1c. Sigue e2e, axe y las 48 capturas after.

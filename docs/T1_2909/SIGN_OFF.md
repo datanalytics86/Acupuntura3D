@@ -12,10 +12,10 @@
 | C2 | PASS | D19 D21 D22 | typecheck=0 test=0 (51) build=0 | 409a57d. Sheet peek/half/full. |
 | C3 | PASS | D21 D23 D25 | typecheck=0 test=0 (43) build=0 | 8b9003c. Grilla y portada. AtlasRoot final es el de B1. |
 | C4 | PASS | D23 D24 D26 | typecheck=0 test=0 (45) build=0 | 0a66f2b. sectorAngle 45 y 105. |
-| Q1 | | | | |
-| Q2 | | | | |
+| Q1 | PASS | T10 | typecheck=0 test=0 (66 en su rama) build=0 budget=0 | f56f090. Job e2e después de build. JS gzip 98050, CSS gzip 10140, dist 4437325. El spec lo escribe Q3. |
+| Q2 | PASS | | typecheck=0 test=0 (68) | 6f0ea19. Paridad es/en, aria-live «ST36 Zúsānlǐ seleccionado», alias CSS borrados. Axe lo corre Q3. |
 | Q3 | | | | |
-| Q4 | | | | |
+| Q4 | PASS | D28 | typecheck=0 test=0 (66 en su rama) build=0 | 45f7fe3. Figure y MeridianPaths en memo; no leen atlasPan. |
 | H1 | | | | |
 | H2 | | | | |
 
