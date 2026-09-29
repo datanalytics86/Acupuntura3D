@@ -1,0 +1,232 @@
+@layer components {
+  .app {
+    --index-w: 0px;
+    --folio-w: 0px;
+    display: grid;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    background-color: var(--color-desk);
+    color: var(--color-ink);
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: var(--index-w, 0px) minmax(0, 1fr) var(--folio-w, 0px);
+    grid-template-areas: "head head head" "index plate folio" "foot foot foot";
+    transition: grid-template-columns var(--dur-2, 200ms) var(--ease-paper, cubic-bezier(0.22, 1, 0.36, 1));
+  }
+
+  .app-head {
+    grid-area: head;
+    position: relative;
+    z-index: 40;
+    min-width: 0;
+  }
+
+  /* Current Topbar is Tailwind-absolute; pull the root into the head row so it cannot cover the plate. */
+  .app-head > * {
+    position: relative !important;
+    inset: auto !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  .app-index,
+  .app-folio {
+    position: static;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .app-index {
+    grid-area: index;
+  }
+
+  .app-plate {
+    grid-area: plate;
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .app-folio {
+    grid-area: folio;
+  }
+
+  .app-foot {
+    grid-area: foot;
+    position: relative;
+    z-index: 35;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-width: 0;
+    border-top: 1px solid var(--color-rule);
+  }
+
+  /* 44px hole so the mobile clock chip (C4) can share this row. */
+  .foot-chip {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    margin-bottom: env(safe-area-inset-bottom);
+  }
+
+  .disclaimer {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0.35rem 0.65rem max(0.35rem, env(safe-area-inset-bottom));
+    color: var(--color-ink-2);
+    font-size: 11px;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .legal-gate,
+  .help-layer {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(42, 33, 24, 0.45);
+  }
+
+  .legal-gate {
+    z-index: 80;
+  }
+
+  .help-layer {
+    z-index: 70;
+  }
+
+  .legal-card,
+  .help-card {
+    width: min(40rem, 100%);
+    max-height: min(92dvh, 44rem);
+    overflow: auto;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: 1px solid var(--color-rule);
+    border-radius: 2px;
+    box-shadow: var(--shadow-pop);
+    padding: 1.75rem 1.75rem max(1.25rem, env(safe-area-inset-bottom));
+    outline: none;
+  }
+
+  .help-card {
+    width: min(32rem, 100%);
+  }
+
+  .legal-kicker {
+    margin: 0 0 0.35rem;
+    color: var(--color-ink-3);
+  }
+
+  .legal-card h1,
+  .help-card h2 {
+    margin: 0;
+  }
+
+  .legal-lede {
+    margin: 0.85rem 0 0;
+    max-width: 38em;
+  }
+
+  .legal-list,
+  .help-list {
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .legal-list li,
+  .help-list li {
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .legal-list h2 {
+    margin: 0 0 0.3rem;
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .legal-list p,
+  .help-list li {
+    margin: 0;
+  }
+
+  .legal-list p {
+    color: var(--color-ink-2);
+  }
+
+  .legal-card .btn,
+  .help-card .btn {
+    margin-top: 1.15rem;
+    width: 100%;
+  }
+
+  .error-screen {
+    display: flex;
+    height: 100dvh;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .error-screen p {
+    margin: 0;
+    max-width: 16em;
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  @media (min-width: 1024px) {
+    .app[data-rail="open"] {
+      --index-w: 288px;
+    }
+
+    .app[data-folio="open"] {
+      --folio-w: 400px;
+    }
+
+    .foot-chip {
+      display: none;
+    }
+
+    .app-index,
+    .app-folio {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Desktop column chrome fills its cell. Under 1024 the owners overlay (rail drawer, sheet). */
+    .app-index > *,
+    .app-folio > * {
+      position: absolute !important;
+      inset: 0 !important;
+      width: auto !important;
+      max-width: none !important;
+      height: auto !important;
+      transform: none !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .app {
+      transition: none;
+    }
+  }
+}

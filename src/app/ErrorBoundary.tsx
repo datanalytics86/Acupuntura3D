@@ -22,13 +22,9 @@ export class ErrorBoundary extends Component<Props, State> {
   render(): ReactNode {
     if (!this.state.error) return this.props.children;
     return (
-      <div className="flex h-dvh w-full flex-col items-center justify-center gap-4 bg-desk px-6 text-center text-ink">
-        <p className="display text-2xl">El atlas falló al cargar. Recargá la página.</p>
-        <button
-          type="button"
-          className="stamp-btn"
-          onClick={() => window.location.reload()}
-        >
+      <div className="error-screen">
+        <p>El atlas falló al cargar. Recargá la página.</p>
+        <button type="button" className="btn btn-primary" onClick={() => window.location.reload()}>
           Recargar
         </button>
       </div>
