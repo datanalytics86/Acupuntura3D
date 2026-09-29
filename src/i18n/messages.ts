@@ -130,6 +130,9 @@ const es = {
   sheetHandle: "Arrastrar la ficha",
   traditionalUse: "Uso tradicional",
   openPoint: "Abrir el punto",
+  // --- C4 ---
+  vessels: "Vasos",
+  reducedMotion: "Movimiento reducido activo",
 };
 
 const en: typeof es = {
@@ -262,6 +265,9 @@ const en: typeof es = {
   sheetHandle: "Drag the entry",
   traditionalUse: "Traditional use",
   openPoint: "Open the point",
+  // --- C4 ---
+  vessels: "Vessels",
+  reducedMotion: "Reduced motion is on",
 };
 
 export const MESSAGES: Record<Locale, typeof es> = { es, en };
