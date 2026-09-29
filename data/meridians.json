@@ -54,7 +54,7 @@
     ],
     "flow": "chest-to-hand",
     "laterality": "bilateral",
-    "color": "#C0C8D0"
+    "color": "#3D4A54"
   },
   {
     "id": "LI",
@@ -125,7 +125,7 @@
     ],
     "flow": "hand-to-head",
     "laterality": "bilateral",
-    "color": "#C0C8D0"
+    "color": "#3D4A54"
   },
   {
     "id": "ST",
@@ -236,7 +236,7 @@
     ],
     "flow": "head-to-foot",
     "laterality": "bilateral",
-    "color": "#C4A35A"
+    "color": "#5F3D0C"
   },
   {
     "id": "SP",
@@ -308,7 +308,7 @@
     ],
     "flow": "foot-to-chest",
     "laterality": "bilateral",
-    "color": "#C4A35A"
+    "color": "#5F3D0C"
   },
   {
     "id": "HT",
@@ -353,7 +353,7 @@
     ],
     "flow": "chest-to-hand",
     "laterality": "bilateral",
-    "color": "#E23B3B"
+    "color": "#8A231D"
   },
   {
     "id": "SI",
@@ -418,7 +418,7 @@
     ],
     "flow": "hand-to-head",
     "laterality": "bilateral",
-    "color": "#E23B3B"
+    "color": "#8A231D"
   },
   {
     "id": "BL",
@@ -541,7 +541,7 @@
     ],
     "flow": "head-to-foot",
     "laterality": "bilateral",
-    "color": "#2B6CB0"
+    "color": "#1F3F6E"
   },
   {
     "id": "KI",
@@ -614,7 +614,7 @@
     ],
     "flow": "foot-to-chest",
     "laterality": "bilateral",
-    "color": "#2B6CB0"
+    "color": "#1F3F6E"
   },
   {
     "id": "PC",
@@ -664,7 +664,7 @@
     ],
     "flow": "chest-to-hand",
     "laterality": "bilateral",
-    "color": "#E23B3B"
+    "color": "#8A231D"
   },
   {
     "id": "TE",
@@ -733,7 +733,7 @@
     ],
     "flow": "hand-to-head",
     "laterality": "bilateral",
-    "color": "#C45C26"
+    "color": "#8A231D"
   },
   {
     "id": "GB",
@@ -833,7 +833,7 @@
     ],
     "flow": "head-to-foot",
     "laterality": "bilateral",
-    "color": "#3D8B40"
+    "color": "#1B5139"
   },
   {
     "id": "LR",
@@ -893,7 +893,7 @@
     ],
     "flow": "foot-to-chest",
     "laterality": "bilateral",
-    "color": "#3D8B40"
+    "color": "#1B5139"
   },
   {
     "id": "GV",
@@ -965,7 +965,7 @@
     ],
     "flow": "ascending-back",
     "laterality": "midline",
-    "color": "#3F3428"
+    "color": "#1C1915"
   },
   {
     "id": "CV",
@@ -1028,6 +1028,6 @@
     ],
     "flow": "ascending-front",
     "laterality": "midline",
-    "color": "#F59E0B"
+    "color": "#1C1915"
   }
 ]
