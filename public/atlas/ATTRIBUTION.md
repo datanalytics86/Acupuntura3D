@@ -19,6 +19,9 @@ new painting: `mix-blend-mode: multiply` onto the paper, a warm
 `feColorMatrix` grade, local radial washes, and an
 academic pubic plane that covers the source linework. A hair cap was tried
 and removed because it read as a pasted wig. The adapted plates stay CC BY-SA 4.0.
+- Regional focus: mask `#region-focus` feathers face, hand and foot (white at the centre, 12% outside) so the rest of the body stays a ghost.
+- Grade: `fig-grade` was cooled (less orange from red into green) and the constant offsets were raised so midtones sit higher.
+- Grain: the SVG `plate-grain` filter was removed; paper tooth is the CSS class `.paper-grain`.
 
 They are not scans, traces, or copies of Microsoft Encarta, Netter, Deadman,
 DK, Kenhub, Visible Body, Complete Anatomy, or any other commercial atlas.

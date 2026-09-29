@@ -1,52 +1,55 @@
-import { Viewport } from "./Viewport";
-import { Figure } from "./figure/Figure";
-import { PlateTitle } from "./figure/PlateTitle";
-import { MeridianPaths } from "./MeridianPaths";
-import { QiFlow } from "./QiFlow";
-import { Points2D } from "./Points2D";
-import { DantianMarks } from "./DantianMarks";
-import { t } from "@/i18n";
+import { useEffect, useState, type ReactNode } from "react";
 import { useViewerStore } from "@/state/viewerStore";
+import { Viewport } from "./Viewport";
+import { DantianMarks } from "./DantianMarks";
+import { Figure } from "./figure/Figure";
+import { Minimap } from "./figure/Minimap";
+import { PlateDefs } from "./figure/PlateDefs";
+import { PlateFurniture } from "./figure/PlateFurniture";
+import { MeridianPaths } from "./MeridianPaths";
+import { Points2D } from "./Points2D";
+import { QiFlow } from "./QiFlow";
 
-export function AtlasRoot() {
-  const region = useViewerStore((s) => s.atlasRegion);
-  const selected = useViewerStore((s) => s.selectedPointId);
-  const center = useViewerStore((s) => s.selectedCenterId);
-  const railOpen = useViewerStore((s) => s.railOpen);
-  const locale = useViewerStore((s) => s.locale);
-  const detailOpen = Boolean(selected || center);
+let sparePlate: HTMLImageElement | null = null;
+let spareSrc = "";
+
+function preloadOtherPlate(src: string): void {
+  if (spareSrc === src && sparePlate) return;
+  const img = new Image();
+  img.decoding = "async";
+  img.src = src;
+  sparePlate = img;
+  spareSrc = src;
+}
+
+export function AtlasRoot({ clock }: { clock?: ReactNode }) {
+  const view = useViewerStore((s) => s.atlasView);
+  const [minimapHost, setMinimapHost] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const src = view === "anterior" ? "/atlas/body-posterior.png" : "/atlas/body-anterior.png";
+    const run = () => preloadOtherPlate(src);
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(run);
+      return () => window.cancelIdleCallback(id);
+    }
+    const id = window.setTimeout(run, 1);
+    return () => window.clearTimeout(id);
+  }, [view]);
 
   return (
-    <div className="absolute inset-0 bg-desk">
-      <div
-        className={`atlas-frame absolute top-28 bottom-[6.25rem] flex flex-col overflow-hidden border border-brass-line bg-paper md:top-[4.25rem] ${
-          railOpen ? "left-5 md:left-[21rem]" : "left-5 md:left-10"
-        } ${detailOpen ? "right-5 md:right-[31rem]" : "right-5 md:right-10"}`}
-        style={{ borderRadius: "var(--radius-plate)", viewTransitionName: "atlas-plate" }}
-      >
-        <PlateTitle />
-        <div className="relative min-h-0 flex-1">
-          <Viewport>
-            <Figure />
-            <MeridianPaths />
-            <QiFlow />
-            <Points2D />
-            <DantianMarks />
-          </Viewport>
-        </div>
-        {!selected && !center ? (
-          <p className="display pointer-events-none absolute right-6 bottom-8 text-[1.05rem] text-ink">
-            {t(locale, "choosePoint")}
-          </p>
-        ) : null}
-        <p className="px-5 pt-0.5 pb-2 text-[10px] tracking-[0.14em] text-ink">
-          {region === "body"
-            ? "Goran tek-en · CC BY-SA 4.0 · lámina adaptada"
-            : "Detalle de la misma lámina · Goran tek-en · CC BY-SA 4.0"}
-          <span className="mx-2 text-ink">·</span>
-          A/P · 1–4 región · C centros · / buscar
-        </p>
-      </div>
-    </div>
+    <main id="plate" data-testid="plate" className="paper-grain relative h-full min-h-0 w-full bg-paper">
+      <Viewport>
+        <PlateDefs />
+        <Figure />
+        <MeridianPaths />
+        <QiFlow />
+        <Points2D />
+        <DantianMarks />
+        <Minimap host={minimapHost} />
+      </Viewport>
+      <div className="paper-grain pointer-events-none absolute inset-0" aria-hidden="true" />
+      <PlateFurniture clock={clock} onMinimapHost={setMinimapHost} />
+    </main>
   );
 }

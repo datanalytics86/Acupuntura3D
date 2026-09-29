@@ -51,6 +51,23 @@ const es = {
   zoomIn: "Acercar",
   zoomOut: "Alejar",
   zoomReset: "Restablecer encuadre",
+  // --- B1 ---
+  plateAnterior: "Cuerpo humano — vista anterior",
+  platePosterior: "Cuerpo humano — vista posterior",
+  plateFace: "LÁM. III — Rostro y cabeza",
+  plateHand: "LÁM. IV — Mano y muñeca",
+  plateFoot: "LÁM. V — Tobillo y pie",
+  plateSubtitle: "Catorce meridianos · veinte puntos estrella · toca un punto para abrir su ficha",
+  plateColophon: "Figura: Goran tek-en · CC BY-SA 4.0 · adaptada · Nomenclatura OMS",
+  plateKey: "Clave",
+  plateVessel: "Vasos",
+  platePoint: "Punto",
+  plateDantian: "Dantian",
+  plateQiPulse: "Pulso de Qi",
+  plateSideRight: "Derecha del sujeto",
+  plateSideLeft: "Izquierda del sujeto",
+  plateThumb: "Miniatura de la lámina",
+  minimap: "Minimapa: restablecer encuadre",
 };
 
 const en: typeof es = {
@@ -104,6 +121,23 @@ const en: typeof es = {
   zoomIn: "Zoom in",
   zoomOut: "Zoom out",
   zoomReset: "Reset framing",
+  // --- B1 ---
+  plateAnterior: "Human body — anterior view",
+  platePosterior: "Human body — posterior view",
+  plateFace: "PL. III — Face and head",
+  plateHand: "PL. IV — Hand and wrist",
+  plateFoot: "PL. V — Ankle and foot",
+  plateSubtitle: "Fourteen meridians · twenty star points · tap a point to open its card",
+  plateColophon: "Figure: Goran tek-en · CC BY-SA 4.0 · adapted · WHO nomenclature",
+  plateKey: "Key",
+  plateVessel: "Vessels",
+  platePoint: "Point",
+  plateDantian: "Dantian",
+  plateQiPulse: "Qi pulse",
+  plateSideRight: "Subject's right",
+  plateSideLeft: "Subject's left",
+  plateThumb: "Plate thumbnail",
+  minimap: "Minimap: reset framing",
 };
 
 export const MESSAGES: Record<Locale, typeof es> = { es, en };
