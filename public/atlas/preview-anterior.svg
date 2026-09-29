@@ -7,8 +7,12 @@
   <g transform="translate(0 70)">
     <defs>
       <filter id="fig-grade" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="0.90 0.07 0.02 0 0.02  0.03 0.88 0.04 0 0.012  0.02 0.05 0.76 0 0  0 0 0 1 0"/>
+        <feColorMatrix type="matrix" values="0.86 0.04 0.02 0 0.06  0.05 0.78 0.03 0 0.08  0.02 0.06 0.70 0 0.08  0 0 0 1 0"/>
       </filter>
+      <radialGradient id="contact-shadow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#1C1915"/>
+        <stop offset="100%" stop-color="#1C1915" stop-opacity="0"/>
+      </radialGradient>
       <radialGradient id="wash-lo" cx="42%" cy="38%" r="68%">
         <stop offset="0%" stop-color="#8d6248" stop-opacity="0.95"/>
         <stop offset="100%" stop-color="#8d6248" stop-opacity="0"/>
@@ -26,7 +30,7 @@
         <image href="body-anterior.png" x="97.61" y="40" width="604.79" height="1440"/>
       </mask>
     </defs>
-    <ellipse cx="400" cy="1494" rx="228" ry="15" fill="#2A2118" opacity="0.08" style="mix-blend-mode:multiply"/>
+    <ellipse cx="400" cy="1492" rx="240" ry="12" fill="url(#contact-shadow)" opacity="0.14"/>
     <image href="body-anterior.png" x="97.61" y="40" width="604.79" height="1440" filter="url(#fig-grade)" style="mix-blend-mode:multiply"/>
     <g mask="url(#fig-skin)" style="mix-blend-mode:multiply">
       <ellipse cx="300" cy="358" rx="26" ry="20" fill="url(#wash-lo)" opacity="0.2"/>
