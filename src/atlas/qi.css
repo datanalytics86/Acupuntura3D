@@ -1,0 +1,19 @@
+@layer components {
+  .qi-comet {
+    fill: none;
+    stroke-linecap: round;
+    animation-duration: var(--qi-dur, 6s);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  .qi-comet.is-paused { animation-play-state: paused; }
+  .qi-head { stroke-dasharray: 0.04 0.96; animation-name: qi-head; }
+  .qi-mid  { stroke-dasharray: 0.08 0.92; animation-name: qi-mid;  stroke-opacity: 0.5; }
+  .qi-tail { stroke-dasharray: 0.16 0.84; animation-name: qi-tail; stroke-opacity: 0.22; }
+}
+/* Offsets literales: Chromium ignora var() dentro de @keyframes para stroke-dashoffset. */
+/* lag = largo de la capa − largo de la cabeza, así las tres cabezas coinciden. */
+@keyframes qi-head { from { stroke-dashoffset: 1; }    to { stroke-dashoffset: 0; } }
+@keyframes qi-mid  { from { stroke-dashoffset: 1.04; } to { stroke-dashoffset: 0.04; } }
+@keyframes qi-tail { from { stroke-dashoffset: 1.12; } to { stroke-dashoffset: 0.12; } }
+@media (prefers-reduced-motion: reduce) { .qi-comet { display: none; } }
