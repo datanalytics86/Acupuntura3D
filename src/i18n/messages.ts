@@ -133,6 +133,11 @@ const es = {
   // --- C4 ---
   vessels: "Vasos",
   reducedMotion: "Movimiento reducido activo",
+  // --- Q2 ---
+  regionFace: "Rostro",
+  regionHand: "Mano",
+  regionFoot: "Pie",
+  selected: "seleccionado",
 };
 
 const en: typeof es = {
@@ -268,6 +273,11 @@ const en: typeof es = {
   // --- C4 ---
   vessels: "Vessels",
   reducedMotion: "Reduced motion is on",
+  // --- Q2 ---
+  regionFace: "Face",
+  regionHand: "Hand",
+  regionFoot: "Foot",
+  selected: "selected",
 };
 
 export const MESSAGES: Record<Locale, typeof es> = { es, en };

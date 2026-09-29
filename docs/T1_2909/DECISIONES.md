@@ -6,3 +6,5 @@
 - OX: en W2 nadie edita `src/app/index.css`. El CSS de cada feature va en un archivo propio, dentro de `@layer components`.
 - OX: `/` y Ctrl/Meta+K abren la paleta con `setPaletteOpen(true)` (C3). C1 no depende de `input[type="search"]`.
 - OX: W1 integrada en `feat/t1-2909` con 43 tests en verde (A1→A2→A3).
+- Q2: aria-live="polite" anuncia «ST36 Zúsānlǐ seleccionado» desde un nodo persistente en el pie de App; PointDrawer se desmonta al cerrar y no anunciaría el cambio.
+- Q2: se borran --color-brass, --color-brass-line y --color-jade-ink; no había usos en src. Los botones de src/ui ya tenían min-height ≥ 44px.

@@ -3,6 +3,7 @@ import { AtlasRoot } from "@/atlas/AtlasRoot";
 import { handleCameraKey } from "@/atlas/cameraKeys";
 import { CENTERS } from "@/atlas/centers";
 import { loadAcupoints } from "@/data";
+import { t } from "@/i18n";
 import { Disclaimer } from "@/ui/Disclaimer";
 import { Topbar } from "@/ui/Topbar";
 import { MeridianRail } from "@/ui/MeridianRail";
@@ -42,6 +43,10 @@ export function App() {
   const railOpen = useViewerStore((s) => s.railOpen);
   const locale = useViewerStore((s) => s.locale);
   const folioOpen = Boolean(selected || selectedCenter);
+  const selectedPoint = points.find((pt) => pt.id === selected) ?? null;
+  const selectionLive = selectedPoint
+    ? `${selectedPoint.code} ${selectedPoint.names.pinyin} ${t(locale, "selected")}`
+    : "";
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -160,6 +165,9 @@ export function App() {
         <CenterDrawer />
       </div>
       <footer className="app-foot">
+        <p className="a11y-live" aria-live="polite" aria-atomic="true">
+          {selectionLive}
+        </p>
         <div className="foot-chip" data-slot="clock-chip" aria-hidden="true" />
         <Disclaimer />
       </footer>
