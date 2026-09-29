@@ -12,3 +12,7 @@ A1, A2 y A3 en PASS. Merge A1 → A2 → A3. 43 tests. Offskin a 0 muestras >4 u
 ## W2
 Siete hijos desde la integración. Índice lo abre C1. CSS de feature fuera de index.css.
 Paleta por `paletteOpen`. Merge B1 → B2 → B3 → C3 → C1 → C2 → C4, typecheck entre medias.
+W2 integrada: 66 tests. AtlasRoot se quedó con la lámina de B1. PlateThumb acepta x/y opcionales.
+
+## W3
+Q1 presupuesto y CI, Q2 i18n y a11y, Q3 e2e y capturas, Q4 memo. Luego H1 y H2.
