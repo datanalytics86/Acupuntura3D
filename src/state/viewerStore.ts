@@ -6,13 +6,24 @@ import { CENTERS, positionOnView, type CenterId } from "@/atlas/centers";
 import { regionFrame } from "@/atlas/regionFrames";
 import { prefersReducedMotion } from "@/lib/quality";
 import { withPaperTransition } from "@/lib/paperTransition";
+import { clampZoom, lerpCamera, zoomAbout, type Camera } from "@/atlas/camera";
+import { unitsPerPx, type PlateBox } from "@/atlas/screen";
+import { VIEW_H, VIEW_W } from "@/atlas/figure/landmarks";
 
 function initialRail(): boolean {
   return false;
 }
 
+export type SheetSnap = "closed" | "peek" | "half" | "full";
+export type LabelsMode = "auto" | "all" | "none";
+
 interface ViewerActions {
   railOpen: boolean;
+  plateBox: PlateBox;
+  paletteOpen: boolean;
+  helpOpen: boolean;
+  sheetSnap: SheetSnap;
+  labelsMode: LabelsMode;
   setSelected: (id: string | null) => void;
   showPoint: (id: string) => void;
   setHovered: (id: string | null) => void;
@@ -31,7 +42,45 @@ interface ViewerActions {
   focusCenter: (id: CenterId | null) => void;
   setAtlasZoom: (z: number) => void;
   setAtlasPan: (p: Point2D) => void;
+  setPlateBox: (b: PlateBox) => void;
+  setPaletteOpen: (v: boolean) => void;
+  setHelpOpen: (v: boolean) => void;
+  setSheetSnap: (s: SheetSnap) => void;
+  setLabelsMode: (m: LabelsMode) => void;
+  flyTo: (target: Camera, opts?: { duration?: number }) => void;
+  zoomBy: (factor: number, anchor?: Point2D) => void;
+  stopFlight: () => void;
   resetAtlasCamera: () => void;
+}
+
+/** Keep 0..800 × 0..1600 intersecting the visible plate. Interior centres stay put. */
+function clampPan(pan: Point2D, zoom: number, box: PlateBox): Point2D {
+  const z = zoom > 0 ? zoom : 1;
+  const vbW = VIEW_W / z;
+  const vbH = VIEW_H / z;
+  let visW = vbW;
+  let visH = vbH;
+  if (box.w > 0 && box.h > 0) {
+    const k = unitsPerPx(vbW, vbH, box);
+    visW = box.w * k;
+    visH = box.h * k;
+  }
+  return {
+    x: Math.min(VIEW_W + visW / 2, Math.max(-visW / 2, pan.x)),
+    y: Math.min(VIEW_H + visH / 2, Math.max(-visH / 2, pan.y)),
+  };
+}
+
+function insideFrame(pos: Point2D, frame: { pan: Point2D; zoom: number }): boolean {
+  const hw = VIEW_W / frame.zoom / 2;
+  const hh = VIEW_H / frame.zoom / 2;
+  return Math.abs(pos.x - frame.pan.x) <= hw && Math.abs(pos.y - frame.pan.y) <= hh;
+}
+
+let flight = 0;
+
+function stopFlight(): void {
+  if (typeof cancelAnimationFrame === "function") cancelAnimationFrame(flight);
 }
 
 const initialHour = new Date().getHours();
@@ -39,7 +88,7 @@ const initialHour = new Date().getHours();
 export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => ({
   selectedPointId: null,
   hoveredPointId: null,
-  activeMeridianId: "ST",
+  activeMeridianId: null,
   visibleLayers: {
     body: true,
     meridians: true,
@@ -60,6 +109,11 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
   atlasPan: { x: 400, y: 800 },
   bothSides: true,
   railOpen: initialRail(),
+  plateBox: { w: 0, h: 0 },
+  paletteOpen: false,
+  helpOpen: false,
+  sheetSnap: "closed",
+  labelsMode: "auto",
   setSelected: (id) => set({ selectedPointId: id, ...(id ? { selectedCenterId: null } : {}) }),
   showPoint: (id) => {
     const pt = loadAcupoints().find((p) => p.id === id);
@@ -70,24 +124,21 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     const pos = here ?? pointOnView(pt, other);
     const view = here ? s.atlasView : other;
     const frame = s.atlasRegion === "body" ? null : regionFrame(s.atlasRegion, view);
-    const inDetail =
-      Boolean(pos && frame) &&
-      Math.abs(pos!.x - frame!.pan.x) < (400 / frame!.zoom) * 0.9 &&
-      Math.abs(pos!.y - frame!.pan.y) < (800 / frame!.zoom) * 0.86;
-    const apply = () =>
+    const inDetail = Boolean(pos && frame && insideFrame(pos, frame));
+    const apply = () => {
       set({
         selectedPointId: id,
         selectedCenterId: null,
         activeMeridianId: pt.meridianId,
         atlasView: view,
-        ...(inDetail
-          ? { atlasPan: frame!.pan, atlasZoom: frame!.zoom }
-          : {
-              atlasRegion: "body" as const,
-              atlasPan: pos ?? { x: 400, y: 800 },
-              atlasZoom: pos ? 2.4 : 1,
-            }),
+        ...(inDetail ? {} : { atlasRegion: "body" as const }),
       });
+      if (inDetail && frame) {
+        get().flyTo({ pan: frame.pan, zoom: frame.zoom });
+        return;
+      }
+      get().flyTo({ pan: pos ?? { x: 400, y: 800 }, zoom: pos ? 2.4 : 1 });
+    };
     if (view !== s.atlasView) withPaperTransition(apply);
     else apply();
   },
@@ -124,17 +175,16 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
   setAtlasView: (v) =>
     withPaperTransition(() => {
       const region = get().atlasRegion;
-      if (region === "body") {
-        set({ atlasView: v });
-        return;
-      }
+      set({ atlasView: v });
+      if (region === "body") return;
       const frame = regionFrame(region, v);
-      set({ atlasView: v, atlasPan: frame.pan, atlasZoom: frame.zoom });
+      get().flyTo(frame);
     }),
   setAtlasRegion: (r) =>
     withPaperTransition(() => {
       const frame = regionFrame(r, get().atlasView);
-      set({ atlasRegion: r, atlasPan: frame.pan, atlasZoom: frame.zoom });
+      set({ atlasRegion: r });
+      get().flyTo(frame);
     }),
   focusCenter: (id) => {
     if (!id) {
@@ -149,20 +199,65 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     const view = onFace ? s.atlasView : here ? s.atlasView : "anterior";
     const framed = onFace ? regionFrame("face", view) : null;
     const pos = framed ? framed.pan : (positionOnView(center, view) ?? center.anterior);
-    const apply = () =>
+    const apply = () => {
       set({
         selectedCenterId: id,
         selectedPointId: null,
         atlasView: view,
         atlasRegion: onFace ? "face" : "body",
-        atlasPan: pos ?? s.atlasPan,
-        atlasZoom: framed ? framed.zoom : 2.15,
-        visibleLayers: { ...s.visibleLayers, centers: true },
+        visibleLayers: { ...get().visibleLayers, centers: true },
       });
+      get().flyTo({
+        pan: pos ?? get().atlasPan,
+        zoom: framed ? framed.zoom : 2.15,
+      });
+    };
     if (view !== s.atlasView) withPaperTransition(apply);
     else apply();
   },
-  setAtlasZoom: (z) => set({ atlasZoom: Math.min(6, Math.max(1, z)) }),
-  setAtlasPan: (p) => set({ atlasPan: p }),
-  resetAtlasCamera: () => set({ atlasRegion: "body", atlasZoom: 1, atlasPan: { x: 400, y: 800 } }),
+  setAtlasZoom: (z) => {
+    const zoom = clampZoom(z);
+    const s = get();
+    set({ atlasZoom: zoom, atlasPan: clampPan(s.atlasPan, zoom, s.plateBox) });
+  },
+  setAtlasPan: (p) => {
+    const s = get();
+    set({ atlasPan: clampPan(p, s.atlasZoom, s.plateBox) });
+  },
+  setPlateBox: (b) => set({ plateBox: b }),
+  setPaletteOpen: (v) => set({ paletteOpen: v }),
+  setHelpOpen: (v) => set({ helpOpen: v }),
+  setSheetSnap: (s) => set({ sheetSnap: s }),
+  setLabelsMode: (m) => set({ labelsMode: m }),
+  resetAtlasCamera: () => {
+    set({ atlasRegion: "body" });
+    get().flyTo({ pan: { x: 400, y: 800 }, zoom: 1 });
+  },
+  flyTo: (target, opts) => {
+    const zoom = clampZoom(target.zoom);
+    const box = get().plateBox;
+    const to: Camera = { pan: clampPan(target.pan, zoom, box), zoom };
+    const duration = opts?.duration ?? 420;
+    stopFlight();
+    if (duration <= 0 || prefersReducedMotion() || typeof requestAnimationFrame !== "function") {
+      set({ atlasPan: to.pan, atlasZoom: to.zoom });
+      return;
+    }
+    const from: Camera = { pan: get().atlasPan, zoom: get().atlasZoom };
+    const t0 = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - t0) / duration);
+      const cam = lerpCamera(from, to, t);
+      set({ atlasPan: clampPan(cam.pan, cam.zoom, get().plateBox), atlasZoom: cam.zoom });
+      if (t < 1) flight = requestAnimationFrame(step);
+    };
+    flight = requestAnimationFrame(step);
+  },
+  zoomBy: (factor, anchor) => {
+    const s = get();
+    get().flyTo(zoomAbout({ pan: s.atlasPan, zoom: s.atlasZoom }, factor, anchor ?? s.atlasPan), {
+      duration: 160,
+    });
+  },
+  stopFlight,
 }));
