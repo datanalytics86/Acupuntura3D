@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useViewerStore } from "@/state/viewerStore";
 import { ANTERIOR_WASHES, POSTERIOR_WASHES, PUBIS_PLANE, type Wash } from "./interiorShading";
 
@@ -44,9 +45,10 @@ function WashLayer({ items, blend }: { items: Wash[]; blend: "multiply" | "soft-
   );
 }
 
-export function Figure() {
+export const Figure = memo(function Figure() {
   const view = useViewerStore((s) => s.atlasView);
-  const zoom = useViewerStore((s) => s.atlasZoom);
+  // Contact shadow only toggles at this threshold. A continuous zoom (or pan) must not repaint the plate.
+  const showShadow = useViewerStore((s) => s.atlasZoom <= 1.3);
   const showBody = useViewerStore((s) => s.visibleLayers.body);
   if (!showBody) return null;
 
@@ -100,7 +102,7 @@ export function Figure() {
       </defs>
 
       <g mask="url(#region-focus)">
-        {zoom <= 1.3 ? (
+        {showShadow ? (
           <ellipse cx={400} cy={1492} rx={240} ry={12} fill="url(#contact-shadow)" opacity={0.14} />
         ) : null}
 
@@ -163,4 +165,4 @@ export function Figure() {
       </g>
     </g>
   );
-}
+});

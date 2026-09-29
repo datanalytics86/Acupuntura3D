@@ -129,7 +129,8 @@ describe("tokens", () => {
     expect(css).toMatch(/baseFrequency='1\.15'/);
     expect(css).toMatch(/baseFrequency='0\.75'/);
     expect(css).toMatch(/--font-hanzi:\s*"Noto Serif SC"/);
-    expect(css).toContain("/* deprecated */");
+    expect(css).not.toContain("--color-brass");
+    expect(css).not.toContain("--color-jade-ink");
     const sizes = [...css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/g)].map((match) => Number(match[1]));
     expect(sizes.length).toBeGreaterThan(0);
     for (const size of sizes) {

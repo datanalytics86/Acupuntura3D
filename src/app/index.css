@@ -23,9 +23,6 @@
   --color-rule: rgba(28, 25, 21, 0.18);
   --color-rule-strong: rgba(28, 25, 21, 0.32);
   --color-cinnabar: #8B1E1E;
-  --color-brass: var(--color-ink); /* deprecated */
-  --color-brass-line: var(--color-rule); /* deprecated */
-  --color-jade-ink: var(--color-ink); /* deprecated */
 
   --ease-paper: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-paper: 220ms;

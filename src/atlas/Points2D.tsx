@@ -269,12 +269,17 @@ export function Points2D() {
   const allowColumns =
     labelsMode === "all" || (labelsMode !== "none" && (region !== "body" || zoom <= 1.6));
   const zoomKey = Math.round(zoom * 20) / 20;
+  // Column layout reads visibleRect, so pan is part of the key, but snapped so a drag does not redo it per pixel.
+  const panX = Math.round(pan.x / 4) * 4;
+  const panY = Math.round(pan.y / 4) * 4;
+  const pointIds = items.map((it) => `${it.point.id}:${it.side}`).join("|");
 
   const margin = useMemo(() => {
     if (!allowColumns || box.w <= 0 || box.h <= 0) return null;
     const z = zoomKey > 0 ? zoomKey : 1;
-    const kLay = unitsPerPx(VIEW_W / z, VIEW_H / z, box);
-    const viewRect = visibleRect(pan, kLay, box);
+    const plate = { w: box.w, h: box.h };
+    const kLay = unitsPerPx(VIEW_W / z, VIEW_H / z, plate);
+    const viewRect = visibleRect({ x: panX, y: panY }, kLay, plate);
     const focus = REGION_FOCUS[region];
     const figure = focus ? { l: focus.cx - focus.rx, r: focus.cx + focus.rx } : BODY_FIGURE;
     const byId = new Map<string, CalloutInput>();
@@ -292,7 +297,7 @@ export function Points2D() {
     }
     if (byId.size === 0) return null;
     return layoutMarginCallouts([...byId.values()], { view: viewRect, figure, k: kLay });
-  }, [allowColumns, box.w, box.h, zoomKey, pan, items, region]);
+  }, [allowColumns, view, region, zoomKey, box.w, box.h, pointIds, panX, panY, items]);
 
   if (!visible) return null;
 

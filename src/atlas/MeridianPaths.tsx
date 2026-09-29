@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { loadMeridians } from "@/data";
 import { anchorsToPath, samplePath, type PathSample } from "@/atlas/catmullRom";
 import { MERIDIAN_ANCHORS_2D } from "@/atlas/meridianAnchors";
@@ -72,7 +72,7 @@ interface Trace {
   yang: boolean;
 }
 
-export function MeridianPaths() {
+export const MeridianPaths = memo(function MeridianPaths() {
   const k = useUnitsPerPx();
   const view = useViewerStore((s) => s.atlasView);
   const visible = useViewerStore((s) => s.visibleLayers.meridians);
@@ -180,4 +180,4 @@ export function MeridianPaths() {
       })}
     </g>
   );
-}
+});

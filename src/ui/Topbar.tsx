@@ -10,10 +10,12 @@ import "./topbar.css";
 const VIEWS: readonly AtlasView[] = ["anterior", "posterior"];
 const REGIONS: readonly AtlasRegion[] = ["body", "face", "hand", "foot"];
 
-const REGION_LABEL: Record<"es" | "en", Record<AtlasRegion, string>> = {
-  es: { body: "Cuerpo", face: "Rostro", hand: "Mano", foot: "Pie" },
-  en: { body: "Body", face: "Face", hand: "Hand", foot: "Foot" },
-};
+const REGION_KEY = {
+  body: "body",
+  face: "regionFace",
+  hand: "regionHand",
+  foot: "regionFoot",
+} as const;
 
 function focusTestId(id: string): void {
   queueMicrotask(() => {
@@ -61,7 +63,6 @@ export function Topbar() {
   const setAtlasView = useViewerStore((s) => s.setAtlasView);
   const atlasRegion = useViewerStore((s) => s.atlasRegion);
   const setAtlasRegion = useViewerStore((s) => s.setAtlasRegion);
-  const regionLang = locale === "es" ? "es" : "en";
 
   return (
     <header className="topbar">
@@ -153,7 +154,7 @@ export function Topbar() {
                     onRadioKey(event, REGIONS, atlasRegion, setAtlasRegion, (value) => `region-${value}`)
                   }
                 >
-                  {REGION_LABEL[regionLang][id]}
+                  {t(locale, REGION_KEY[id])}
                 </button>
               );
             })}
