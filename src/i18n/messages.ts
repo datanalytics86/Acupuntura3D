@@ -51,6 +51,28 @@ const es = {
   zoomIn: "Acercar",
   zoomOut: "Alejar",
   zoomReset: "Restablecer encuadre",
+  // --- C3 ---
+  legalIntro:
+    "Una lámina de archivo para recorrer el cuerpo, los meridianos y los puntos estrella. Sirve para estudiar con calma, como un atlas impreso. No sustituye el criterio de un profesional.",
+  legalWhatTitle: "Qué es",
+  legalWhatBody:
+    "Un atlas educativo: catorce meridianos, veinte puntos estrella y tres centros didácticos. Las marcas son anclas de estudio en dos dimensiones, no medidas sobre una persona.",
+  legalNotTitle: "Qué no es",
+  legalNotBody:
+    "No es un dispositivo médico ni un consejo de salud. No reemplaza a un profesional de Medicina Tradicional China.",
+  legalSourcesTitle: "Fuentes",
+  legalSourcesBody:
+    "Nomenclatura de la OMS (WHO Standard Acupuncture Point Locations, 2008). La figura es de Goran tek-en, CC BY-SA 4.0. Los textos del archivo son didácticos y de confianza baja.",
+  legalAccept: "Entiendo, entrar al atlas",
+  helpTitle: "Atajos de teclado",
+  helpSearch: "/ o Ctrl+K — buscar",
+  helpView: "A / P — vista anterior o posterior",
+  helpRegion: "1–4 — cuerpo, rostro, mano, pie",
+  helpCenters: "C — mostrar u ocultar centros",
+  helpZoom: "+ / − / 0 — acercar, alejar, encuadre",
+  helpPoint: "← / → — punto anterior o siguiente",
+  helpDismiss: "Esc — cerrar",
+  helpAgain: "? — abrir esta ayuda",
 };
 
 const en: typeof es = {
@@ -104,6 +126,28 @@ const en: typeof es = {
   zoomIn: "Zoom in",
   zoomOut: "Zoom out",
   zoomReset: "Reset framing",
+  // --- C3 ---
+  legalIntro:
+    "An archive plate for walking the body, the meridians, and the star points. Read it slowly, as a printed atlas. It does not replace a professional's judgment.",
+  legalWhatTitle: "What it is",
+  legalWhatBody:
+    "An educational atlas: fourteen meridians, twenty star points, and three didactic centers. The marks are study anchors in two dimensions, not measurements on a person.",
+  legalNotTitle: "What it is not",
+  legalNotBody:
+    "It is not a medical device and it is not health advice. It does not replace a Traditional Chinese Medicine professional.",
+  legalSourcesTitle: "Sources",
+  legalSourcesBody:
+    "Point names follow the WHO Standard Acupuncture Point Locations (2008). The figure is by Goran tek-en, CC BY-SA 4.0. Seed texts are didactic and low confidence.",
+  legalAccept: "I understand, enter the atlas",
+  helpTitle: "Keyboard shortcuts",
+  helpSearch: "/ or Ctrl+K — search",
+  helpView: "A / P — anterior or posterior view",
+  helpRegion: "1–4 — body, face, hand, foot",
+  helpCenters: "C — show or hide centers",
+  helpZoom: "+ / − / 0 — zoom in, zoom out, framing",
+  helpPoint: "← / → — previous or next point",
+  helpDismiss: "Esc — close",
+  helpAgain: "? — open this help",
 };
 
 export const MESSAGES: Record<Locale, typeof es> = { es, en };

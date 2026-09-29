@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Viewport } from "./Viewport";
 import { Figure } from "./figure/Figure";
 import { PlateTitle } from "./figure/PlateTitle";
@@ -8,7 +9,7 @@ import { DantianMarks } from "./DantianMarks";
 import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
 
-export function AtlasRoot() {
+export function AtlasRoot({ clock }: { clock?: ReactNode }) {
   const region = useViewerStore((s) => s.atlasRegion);
   const selected = useViewerStore((s) => s.selectedPointId);
   const center = useViewerStore((s) => s.selectedCenterId);
@@ -47,6 +48,7 @@ export function AtlasRoot() {
           A/P · 1–4 región · C centros · / buscar
         </p>
       </div>
+      {clock}
     </div>
   );
 }

@@ -4,10 +4,11 @@ import { useViewerStore } from "@/state/viewerStore";
 
 const FLAG = "acu3d.disclaimer.v1";
 
-const COPY = {
-  es: "Herramienta educativa. No es un dispositivo médico y no sustituye el criterio de un profesional de Medicina Tradicional China.",
-  en: "Educational tool. Not a medical device and not a substitute for a Traditional Chinese Medicine professional.",
-} as const;
+const ITEMS = [
+  ["legalWhatTitle", "legalWhatBody"],
+  ["legalNotTitle", "legalNotBody"],
+  ["legalSourcesTitle", "legalSourcesBody"],
+] as const;
 
 function disclaimerAccepted(): boolean {
   if (typeof window === "undefined") return false;
@@ -27,7 +28,7 @@ export function LegalModal() {
     try {
       window.localStorage.setItem(FLAG, "1");
     } catch {
-      /* ignore */
+      /* ignore quota */
     }
     setOpen(false);
   }
@@ -48,29 +49,38 @@ export function LegalModal() {
 
   if (!open) return null;
 
-  const text = locale === "en" ? COPY.en : COPY.es;
-
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
-      style={{ background: "rgba(42,33,24,0.45)", pointerEvents: "auto" }}
+      className="legal-gate"
       id="legal-gate"
       role="dialog"
       aria-modal="true"
+      aria-labelledby="legal-title"
       onPointerDown={(e) => e.stopPropagation()}
     >
-      <div className="marginalia max-w-lg p-6 text-ink" onPointerDown={(e) => e.stopPropagation()}>
-        <p className="display mb-2 text-2xl">{t(locale, "title")}</p>
-        <p className="text-sm leading-relaxed">{text}</p>
+      <div className="legal-card" onPointerDown={(e) => e.stopPropagation()}>
+        <p className="t-meta legal-kicker">{t(locale, "subtitle")}</p>
+        <h1 id="legal-title" className="t-title">
+          {t(locale, "title")}
+        </h1>
+        <p className="legal-lede t-body">{t(locale, "legalIntro")}</p>
+        <ul className="legal-list">
+          {ITEMS.map(([titleKey, bodyKey]) => (
+            <li key={titleKey}>
+              <h2>{t(locale, titleKey)}</h2>
+              <p className="t-body">{t(locale, bodyKey)}</p>
+            </li>
+          ))}
+        </ul>
         <button
           ref={acceptRef}
           type="button"
-          className="stamp-btn mt-5 w-full"
-          style={{ minWidth: 44, minHeight: 44 }}
+          className="btn btn-primary"
+          data-testid="legal-accept"
           onPointerDown={(e) => e.stopPropagation()}
           onClick={accept}
         >
-          {locale === "en" ? "I understand, enter the atlas" : "Entiendo, entrar al atlas"}
+          {t(locale, "legalAccept")}
         </button>
       </div>
     </div>
