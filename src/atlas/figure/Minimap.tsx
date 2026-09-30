@@ -24,6 +24,7 @@ export function Minimap({ host }: { host: HTMLElement | null }) {
     <button
       type="button"
       className="plate-minimap pointer-events-auto"
+      data-testid="minimap"
       aria-label={t(locale, "minimap")}
       onClick={() => resetAtlasCamera()}
     >
