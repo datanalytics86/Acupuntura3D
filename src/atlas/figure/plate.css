@@ -1,4 +1,20 @@
 @layer components {
+  /* The caption sits on the plate. The drawing starts under it, as in the museum grid. */
+  .atlas-stage {
+    position: absolute;
+    top: 4.5rem;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 4.5rem);
+  }
+
+  @media (max-width: 1023px) {
+    .atlas-stage {
+      top: 8rem;
+      height: calc(100% - 8rem);
+    }
+  }
+
   .plate-folio {
     font-variant-caps: all-small-caps;
   }

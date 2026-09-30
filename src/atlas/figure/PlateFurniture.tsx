@@ -32,7 +32,7 @@ function PlateKey() {
   }, []);
 
   return (
-    <details className="plate-key pointer-events-auto" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
+    <details className="plate-key pointer-events-auto" open={open} tabIndex={0} onToggle={(e) => setOpen(e.currentTarget.open)}>
       <summary className="t-label">{t(locale, "plateKey")}</summary>
       {ELEMENTS.map((el) => (
         <p key={el} className="plate-key-row t-label">

@@ -12,7 +12,8 @@
     color: var(--color-ink);
     border-top: 1px solid var(--color-rule);
     box-shadow: var(--shadow-sheet);
-    padding-bottom: env(safe-area-inset-bottom);
+    /* --foot-cover matches .app-foot so folio actions clear the clock row. */
+    padding-bottom: var(--foot-cover, env(safe-area-inset-bottom));
     outline: none;
     overflow: hidden;
   }

@@ -8,3 +8,9 @@
 - OX: W1 integrada en `feat/t1-2909` con 43 tests en verde (A1→A2→A3).
 - Q2: aria-live="polite" anuncia «ST36 Zúsānlǐ seleccionado» desde un nodo persistente en el pie de App; PointDrawer se desmonta al cerrar y no anunciaría el cambio.
 - Q2: se borran --color-brass, --color-brass-line y --color-jade-ink; no había usos en src. Los botones de src/ui ya tenían min-height ≥ 44px.
+- Q3: Esc en la ficha devuelve el foco al control que la abrió. PointDrawer se desmonta y, sin este retorno, el foco caía en el body.
+- Q3: cada trazo de MeridianPaths lleva `data-meridian` y `data-hour` para comprobar que el reloj resalta LR en la lámina.
+- Q3: el svg de la lámina es `role="group"` porque contiene botones. `role="img"` hacía que axe marcara nested-interactive. La clave, el scroller de regiones y el cuerpo de la ficha reciben tabIndex 0 para poder desplazarse con teclado.
+- Q3: el sheet reserva la altura de `.app-foot` en `--foot-cover`. El pie sigue encima para el chip del reloj, y el botón de la ficha queda por encima de ese pie.
+- Q3: `.atlas-stage` empieza bajo el título (4.5 rem en desktop, 8 rem en móvil) para que GV20 no se siente sobre «Cuerpo humano».
+- Q3: el proyecto Playwright `reduced` solo corre `reduced.spec.ts`. Un `test.skip` en el otro proyecto marcaba el cometa como skipped en la suite completa.

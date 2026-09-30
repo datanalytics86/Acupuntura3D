@@ -47,7 +47,7 @@ export function CenterDrawer() {
 
   const ficha = (
     <>
-      <div className="folio-body">
+      <div className="folio-body" tabIndex={0}>
         <header>
           <div className="folio-kicker">
             <span className="t-meta">{t(locale, "centers")}</span>

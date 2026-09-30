@@ -74,9 +74,14 @@ export function PointDrawer() {
   const point = points.find((p) => p.id === selectedId) ?? null;
 
   useEffect(() => {
-    if (!point) return;
+    if (!selectedId) return;
+    const active = document.activeElement;
+    const back = active instanceof HTMLElement || active instanceof SVGElement ? active : null;
     titleRef.current?.focus({ preventScroll: true });
-  }, [point, narrow]);
+    return () => {
+      if (back?.isConnected) back.focus({ preventScroll: true });
+    };
+  }, [selectedId, narrow]);
 
   if (!point) return null;
 
@@ -112,7 +117,7 @@ export function PointDrawer() {
 
   const ficha = (
     <>
-      <div className="folio-body">
+      <div className="folio-body" tabIndex={0}>
         <header>
           <div className="folio-kicker">
             <span className="code">{point.code}</span>

@@ -135,7 +135,7 @@ export function Topbar() {
           <span className="topbar-seg-bar" aria-hidden="true" />
         </div>
         <div className="topbar-regions">
-          <div className="topbar-regions-scroller" role="radiogroup" aria-label={t(locale, "regionGroup")}>
+          <div className="topbar-regions-scroller" role="radiogroup" aria-label={t(locale, "regionGroup")} tabIndex={0}>
             {REGIONS.map((id) => {
               const checked = atlasRegion === id;
               return (

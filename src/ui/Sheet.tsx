@@ -105,6 +105,19 @@ export function Sheet({
   }, [setSheetSnap]);
 
   useLayoutEffect(() => {
+    const foot = document.querySelector(".app-foot");
+    const root = rootRef.current;
+    if (!foot || !root) return;
+    const apply = () => {
+      root.style.setProperty("--foot-cover", `${Math.ceil(foot.getBoundingClientRect().height)}px`);
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(foot);
+    return () => observer.disconnect();
+  }, []);
+
+  useLayoutEffect(() => {
     if (!anchor) return;
     if (snap !== "peek" && snap !== "half") return;
     if (plateW <= 0 || plateH <= 0) return;

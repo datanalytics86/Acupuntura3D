@@ -201,7 +201,7 @@ export function Viewport({ children }: { children: ReactNode }) {
     <ScreenContext.Provider value={screen}>
       <svg
         ref={svgRef}
-        className="absolute inset-0 h-full w-full touch-none select-none"
+        className="atlas-stage touch-none select-none"
         viewBox={`${vbX} ${vbY} ${vbW} ${vbH}`}
         preserveAspectRatio="xMidYMid meet"
         overflow="visible"
@@ -210,7 +210,7 @@ export function Viewport({ children }: { children: ReactNode }) {
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         onDoubleClick={onDoubleClick}
-        role="img"
+        role="group"
         aria-label="Atlas corporal de meridianos"
       >
         <rect x={paper.x} y={paper.y} width={paper.w} height={paper.h} fill="var(--color-paper)" />

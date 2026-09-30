@@ -16,4 +16,4 @@ W2 integrada: 66 tests. AtlasRoot se quedó con la lámina de B1. PlateThumb ace
 
 ## W3
 Q1, Q2 y Q4 en PASS e integrados en feat/t1-2909 (bb0a957, luego firmas). 68 tests.
-Q3 no llegó a escribir archivos: el worktree quedó limpio en 1f48b1c. Sigue e2e, axe y las 48 capturas after.
+Q3 en PASS. E2E tres veces en verde (10 passed, 1 skipped: franjas solo en 1440). Axe 0 serious/critical. 48 JPG en shots/after. El dibujo empieza bajo el título.

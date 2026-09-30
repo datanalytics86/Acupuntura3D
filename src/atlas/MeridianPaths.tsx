@@ -127,7 +127,7 @@ export const MeridianPaths = memo(function MeridianPaths() {
         const place = labelAt(t.pts, k);
         const samples = ticks.get(t.key) ?? [];
         return (
-          <g key={t.key} opacity={opacity}>
+          <g key={t.key} opacity={opacity} data-meridian={t.id} data-hour={hourId === t.id ? "on" : "off"}>
             <path
               d={t.d}
               fill="none"
