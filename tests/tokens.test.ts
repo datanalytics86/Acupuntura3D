@@ -7,7 +7,7 @@ import { INK, INK_2, INK_3, PAPER, PAPER_INSET, PIGMENT, meridianPigment } from 
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-const SKIN = ["#CFA27A", "#C7926F", "#B8977A"] as const;
+const SKIN = ["#E2C8A9", "#D5BC9E", "#D3B08D"] as const;
 
 function channel(value: number): number {
   const s = value / 255;
