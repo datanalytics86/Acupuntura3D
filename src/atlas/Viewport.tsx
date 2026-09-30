@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type MouseEvent, type PointerEven
 import { clientToUnits, zoomAbout } from "@/atlas/camera";
 import { VIEW_H, VIEW_W } from "@/atlas/figure/landmarks";
 import { ScreenContext, unitsPerPx, visibleRect, type PlateBox } from "@/atlas/screen";
+import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
 import type { Point2D } from "@/types";
 
@@ -29,6 +30,7 @@ export function Viewport({ children }: { children: ReactNode }) {
   const setPlateBox = useViewerStore((s) => s.setPlateBox);
   const reset = useViewerStore((s) => s.resetAtlasCamera);
   const stopFlight = useViewerStore((s) => s.stopFlight);
+  const locale = useViewerStore((s) => s.locale);
   const svgRef = useRef<SVGSVGElement>(null);
   const [box, setBox] = useState<PlateBox>({ w: 0, h: 0 });
   const ptrs = useRef(new Map<number, Ptr>());
@@ -211,7 +213,7 @@ export function Viewport({ children }: { children: ReactNode }) {
         onPointerCancel={onPointerUp}
         onDoubleClick={onDoubleClick}
         role="group"
-        aria-label="Atlas corporal de meridianos"
+        aria-label={t(locale, "atlasLabel")}
       >
         <rect x={paper.x} y={paper.y} width={paper.w} height={paper.h} fill="var(--color-paper)" />
         {children}

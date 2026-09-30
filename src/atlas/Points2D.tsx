@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { nearestMarkAtClient, pointWinsOverSeal, svgUserToClient } from "@/atlas/coarseHit";
 import { loadAcupoints, loadMeridians } from "@/data";
 import { instancesOnView } from "@/atlas/mapCoords";
 import { CX, VIEW_H, VIEW_W, Y } from "@/atlas/figure/landmarks";
@@ -320,7 +321,7 @@ function PlateSideMarks({
         aria-label={t(locale, anterior ? "plateSideRight" : "plateSideLeft")}
         {...ink}
       >
-        {anterior ? "D" : "I"}
+        {anterior ? (locale === "en" ? "R" : "D") : locale === "en" ? "L" : "I"}
       </text>
       <text
         data-testid="plate-side-right"
@@ -329,7 +330,7 @@ function PlateSideMarks({
         aria-label={t(locale, anterior ? "plateSideLeft" : "plateSideRight")}
         {...ink}
       >
-        {anterior ? "I" : "D"}
+        {anterior ? (locale === "en" ? "L" : "I") : locale === "en" ? "R" : "D"}
       </text>
     </g>
   );
@@ -429,8 +430,40 @@ export function Points2D() {
   const box = usePlateBox();
   const coarse = useCoarsePointer();
   const rootRef = useRef<SVGGElement>(null);
+  const marksRef = useRef<{ id: string; meridianId: string; x: number; y: number }[]>([]);
   const [focusKey, setFocusKey] = useState<string | null>(null);
   const [tip, setTip] = useState<{ id: string; at: Point2D } | null>(null);
+
+  useEffect(() => {
+    const svg = rootRef.current?.ownerSVGElement;
+    if (!svg) return;
+    const onClick = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element) || !svg.contains(target)) return;
+      if (target.closest("[data-cluster]")) return;
+      const picked = nearestMarkAtClient(svg, event.clientX, event.clientY, marksRef.current, 22);
+      if (!picked) return;
+      const seal = target.closest("[data-testid^='dantian-']");
+      if (seal instanceof SVGGraphicsElement) {
+        const at = svgUserToClient(svg, picked.x, picked.y);
+        const origin = svg.createSVGPoint();
+        origin.x = 0;
+        origin.y = 0;
+        const ctm = seal.getScreenCTM();
+        const sealAt = ctm ? origin.matrixTransform(ctm) : null;
+        const pointD = at ? Math.hypot(at.x - event.clientX, at.y - event.clientY) : Number.POSITIVE_INFINITY;
+        const sealD = sealAt ? Math.hypot(sealAt.x - event.clientX, sealAt.y - event.clientY) : 0;
+        if (!pointWinsOverSeal(pointD, sealD, 22)) return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      const store = useViewerStore.getState();
+      store.setSelected(picked.id);
+      store.setActiveMeridian(picked.meridianId);
+    };
+    svg.addEventListener("click", onClick, true);
+    return () => svg.removeEventListener("click", onClick, true);
+  }, [visible]);
 
   const meridianById = useMemo(() => new Map(meridians.map((m) => [m.id, m])), [meridians]);
   const pointById = useMemo(() => new Map(points.map((p) => [p.id, p])), [points]);
@@ -478,15 +511,17 @@ export function Points2D() {
       <PlateSideMarks view={view} k={k} rect={viewRect} locale={locale} />
     ) : null;
 
-  if (!visible) return <g ref={rootRef}>{sideMarks}</g>;
+  if (!visible) {
+    marksRef.current = [];
+    return <g ref={rootRef}>{sideMarks}</g>;
+  }
 
   const shown = (viewRect ? items.filter((it) => inView(it.position, viewRect, 48 * k)) : items).filter((it) =>
     inRegionFrame(region, view, it.position),
   );
-  const marginFailed = wantMargin && measured && margin === null;
-  const cluster = marginFailed && coarse;
-  const groups = clusterItems(shown, cluster ? 14 * k : 0);
-  const rear = cluster ? new Set<string>() : rearMarkKeys(shown, k);
+  const groups = clusterItems(shown, coarse ? 24 * k : 0);
+  const clustered = groups.some((members) => members.length > 1);
+  const rear = clustered ? new Set<string>() : rearMarkKeys(shown, k);
   const proximity = wantProximity && viewRect ? proximityLabels(shown, hovered, selected, viewRect, k) : [];
   const calloutById = new Map<string, Callout>((margin ?? []).map((c) => [c.key, c]));
   const hidden = new Set<string>();
@@ -503,6 +538,11 @@ export function Points2D() {
     setSelected(point.id);
     setActive(point.meridianId);
   };
+  marksRef.current = groups.flatMap((members) =>
+    members.length === 1
+      ? [{ id: members[0]!.point.id, meridianId: members[0]!.point.meridianId, x: members[0]!.position.x, y: members[0]!.position.y }]
+      : [],
+  );
   const clearTip = (id: string) => {
     setTip((cur) => (cur?.id === id ? null : cur));
   };
@@ -536,6 +576,7 @@ export function Points2D() {
             <g key={key} transform={`translate(${at.x} ${at.y})`}>
               <g
                 data-atlas-hit=""
+                data-cluster=""
                 role="button"
                 tabIndex={0}
                 aria-label={`${members.length} ${t(locale, "clusterPoints")}. ${t(locale, "clusterZoom")}`}
@@ -549,7 +590,7 @@ export function Points2D() {
                 onFocus={() => setFocusKey(key)}
                 onBlur={() => setFocusKey((cur) => (cur === key ? null : cur))}
               >
-                <circle r={hit} fill="transparent" />
+                <circle r={hit} fill="transparent" pointerEvents="none" />
                 <Registration
                   k={k}
                   halo={halo}
@@ -584,6 +625,7 @@ export function Points2D() {
           <g key={key} transform={`translate(${it.position.x} ${it.position.y})`}>
             <g
               data-atlas-hit=""
+              data-point-hit=""
               role={primary ? "button" : undefined}
               tabIndex={primary ? 0 : -1}
               aria-hidden={primary ? undefined : true}
@@ -613,7 +655,7 @@ export function Points2D() {
               }}
               onKeyDown={(e) => onActivateKey(e, () => select(it.point))}
             >
-              <circle r={hit} fill="transparent" />
+              <circle r={hit} fill="transparent" pointerEvents="none" />
               <Registration
                 k={k}
                 halo={halo}

@@ -81,6 +81,15 @@ describe("viewer store", () => {
     expect(useViewerStore.getState().atlasPan.y).toBe(600);
   });
 
+  it("drops the stacked zoom aim after a pan", () => {
+    useViewerStore.getState().resetAtlasCamera();
+    useViewerStore.getState().zoomBy(2, { x: 400, y: 400 });
+    useViewerStore.getState().setAtlasPan({ x: 420, y: 820 });
+    useViewerStore.getState().zoomBy(2, { x: 420, y: 820 });
+    expect(useViewerStore.getState().atlasZoom).toBe(4);
+    expect(useViewerStore.getState().atlasPan).toEqual({ x: 420, y: 820 });
+  });
+
   it("showPoint(\"ST36\") deja selectedPointId síncrono", () => {
     useViewerStore.getState().showPoint("ST36");
     expect(useViewerStore.getState().selectedPointId).toBe("ST36");

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from "react";
 import { loadAcupoints, loadMeridians, STAR_CODES } from "@/data";
 import { t } from "@/i18n";
+import { mediaMatches, watchMedia } from "@/lib/quality";
 import { PIGMENT, meridianPigment } from "@/lib/tokens";
 import { useViewerStore } from "@/state/viewerStore";
 import type { Acupoint, Elemento, Meridian } from "@/types";
@@ -20,16 +21,8 @@ const GROUPS = [
 ] as const;
 
 function useNarrow(): boolean {
-  const [narrow, setNarrow] = useState(
-    () => typeof window !== "undefined" && window.matchMedia(NARROW).matches,
-  );
-  useEffect(() => {
-    const media = window.matchMedia(NARROW);
-    const onChange = () => setNarrow(media.matches);
-    onChange();
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
-  }, []);
+  const [narrow, setNarrow] = useState(() => mediaMatches(NARROW));
+  useEffect(() => watchMedia(NARROW, setNarrow), []);
   return narrow;
 }
 
@@ -293,7 +286,7 @@ function MeridianRow({
 function trapTab(e: KeyboardEvent<HTMLDivElement>, root: HTMLElement | null, heading: HTMLElement | null) {
   if (e.key !== "Tab" || !root) return;
   const items = [...root.querySelectorAll<HTMLElement>("button, [href], input, select, textarea")].filter(
-    (el) => !el.hasAttribute("disabled"),
+    (el) => !el.hasAttribute("disabled") && el.tabIndex !== -1 && el.getAttribute("aria-hidden") !== "true",
   );
   const first = items[0];
   const last = items[items.length - 1];
@@ -311,7 +304,6 @@ function trapTab(e: KeyboardEvent<HTMLDivElement>, root: HTMLElement | null, hea
 export function MeridianRail() {
   const railOpen = useViewerStore((s) => s.railOpen);
   const setRailOpen = useViewerStore((s) => s.setRailOpen);
-  const locale = useViewerStore((s) => s.locale);
   const narrow = useNarrow();
   const titleRef = useRef<HTMLHeadingElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -322,6 +314,11 @@ export function MeridianRail() {
     titleRef.current?.focus();
     const onKey = (e: globalThis.KeyboardEvent) => {
       if (e.key !== "Escape") return;
+      if (document.getElementById("legal-gate")) return;
+      if (document.getElementById("command-palette")) return;
+      if (document.querySelector("[data-testid='help-dialog']")) return;
+      const s = useViewerStore.getState();
+      if (s.paletteOpen || s.helpOpen || s.selectedPointId || s.selectedCenterId) return;
       e.preventDefault();
       e.stopImmediatePropagation();
       setRailOpen(false);
@@ -348,7 +345,7 @@ export function MeridianRail() {
         <aside className="meridian-rail meridian-rail-drawer scroll-thin">
           <RailBody titleRef={titleRef} />
         </aside>
-        <button type="button" className="rail-scrim" aria-label={t(locale, "close")} onClick={() => setRailOpen(false)} />
+        <button type="button" className="rail-scrim" tabIndex={-1} aria-hidden="true" onClick={() => setRailOpen(false)} />
       </div>
     );
   }

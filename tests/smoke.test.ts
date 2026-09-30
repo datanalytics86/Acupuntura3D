@@ -115,7 +115,7 @@ describe("Encarta figure", () => {
     expect(figure).toMatch(/body-posterior\.png/);
     expect(figure).not.toMatch(/fingerD\(|capsuleD\(|ellipseD\(|encSkin|@react-three|<Canvas/);
     expect(readFileSync(join(root, "src/atlas/AtlasRoot.tsx"), "utf8")).not.toMatch(/rounded-\[8px\]/);
-    expect(readFileSync(join(root, "src/atlas/figure/PlateTitle.tsx"), "utf8")).toMatch(
+    expect(readFileSync(join(root, "src/i18n/messages.ts"), "utf8")).toMatch(
       /Cuerpo humano — vista anterior/,
     );
   });

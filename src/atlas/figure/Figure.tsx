@@ -1,5 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import { useUnitsPerPx } from "@/atlas/screen";
+import { t } from "@/i18n";
+import { INK } from "@/lib/colors";
 import { useViewerStore } from "@/state/viewerStore";
 import { PUBIS_PLANE } from "./interiorShading";
 
@@ -47,8 +49,14 @@ export const Figure = memo(function Figure() {
   // Contact shadow only toggles at this threshold. A continuous zoom (or pan) must not repaint the plate.
   const showShadow = useViewerStore((s) => s.atlasZoom <= 1.3);
   const showBody = useViewerStore((s) => s.visibleLayers.body);
+  const locale = useViewerStore((s) => s.locale);
   const k = useUnitsPerPx();
   const silhouette = useSilhouette();
+  const [failed, setFailed] = useState(false);
+  const [retry, setRetry] = useState(0);
+  useEffect(() => {
+    setFailed(false);
+  }, [view]);
   if (!showBody) return null;
 
   const plate = BODY_PLATE[view];
@@ -88,6 +96,7 @@ export const Figure = memo(function Figure() {
         ) : null}
 
         <image
+          key={retry}
           href={plate.href}
           x={plate.x}
           y={plate.y}
@@ -95,7 +104,20 @@ export const Figure = memo(function Figure() {
           height={plate.height}
           preserveAspectRatio="xMidYMid meet"
           filter="url(#fig-duo)"
+          onError={() => setFailed(true)}
         />
+        {failed ? (
+          <g>
+            <text x={400} y={760} textAnchor="middle" fill={INK} fontSize={16 * k}>
+              {t(locale, "plateFailed")}
+            </text>
+            <foreignObject x={300} y={790} width={200} height={48}>
+              <button type="button" className="btn" onClick={() => { setFailed(false); setRetry((n) => n + 1); }}>
+                {t(locale, "plateRetry")}
+              </button>
+            </foreignObject>
+          </g>
+        ) : null}
 
         {contour ? (
           <path

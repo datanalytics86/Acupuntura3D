@@ -25,6 +25,14 @@ const CONTEXTS = {
   posterior: [keys("p")],
   hand: [keys("3")],
   english: [async (p) => p.locator('button:has-text("EN")').first().click(), find("ST36")],
+  face: [keys("2")],
+  foot: [keys("4")],
+  "sheet-half": [find("ST36")],
+  "clock-popover": [async (p) => { const c = p.locator(".qi-chip").first(); if ((await c.count()) && (await c.isVisible())) await c.click(); }],
+  "key-open": [async (p) => { const b = p.locator(".plate-key-button").first(); if ((await b.count()) && (await b.isVisible())) await b.click(); }],
+  "palette-miss": [keys("/"), async (p) => p.keyboard.type("zzzz")],
+  "lower-dantian": [find("dantian inferior")],
+  "max-zoom": [keys("+", "+", "+", "+", "+", "+")],
 };
 const VIEWPORTS = {
   desktop: { viewport: { width: 1440, height: 900 } },

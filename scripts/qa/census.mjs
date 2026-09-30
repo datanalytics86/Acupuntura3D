@@ -48,7 +48,38 @@ const CONTEXTS = {
   posterior: { steps: [press("p")] },
   hand: { steps: [press("3")] },
   zoom: { steps: [press("+", "+", "+")] },
+  face: { steps: [press("2")] },
+  foot: { steps: [press("4")] },
+  english: { steps: [async (p) => p.getByRole("button", { name: /Idioma/ }).click()] },
+  "sheet-half": { steps: [find("ST36"), (p) => dragHandle(p, -90)] },
+  "sheet-full": { steps: [find("ST36"), (p) => dragHandle(p, -240)] },
+  "clock-popover": { steps: [async (p) => clickIfVisible(p, ".qi-chip")] },
+  "key-open": { steps: [async (p) => clickIfVisible(p, ".plate-key-button")] },
+  "key-closed": { steps: [] },
+  "palette-hit": { steps: [async (p) => { await p.keyboard.press("/"); await p.keyboard.type("zu", { delay: 15 }); }] },
+  "palette-miss": { steps: [async (p) => { await p.keyboard.press("/"); await p.keyboard.type("zzzz", { delay: 15 }); }] },
+  "lower-dantian": { steps: [find("dantian inferior")] },
+  "max-zoom": { steps: [press("+", "+", "+", "+", "+", "+", "+", "+")] },
+  reduced: { steps: [] },
 };
+
+async function clickIfVisible(p, selector) {
+  const el = p.locator(selector).first();
+  if ((await el.count()) && (await el.isVisible())) await el.click();
+}
+
+async function dragHandle(p, dy) {
+  const handle = p.getByTestId("sheet-handle");
+  if (!(await handle.count()) || !(await handle.isVisible())) return;
+  const box = await handle.boundingBox();
+  if (!box) return;
+  const x = box.x + box.width / 2;
+  const y = box.y + Math.min(20, box.height / 2);
+  await p.mouse.move(x, y);
+  await p.mouse.down();
+  await p.mouse.move(x, y + dy, { steps: 8 });
+  await p.mouse.up();
+}
 
 async function openPage(browser, vp, ctxName) {
   const { viewport, isMobile, hasTouch } = VIEWPORTS[vp];

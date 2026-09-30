@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react"
 import { loadMeridians } from "@/data";
 import { meridianAtHour } from "@/atlas/qiTime";
 import { t } from "@/i18n";
-import { prefersReducedMotion } from "@/lib/quality";
+import { mediaMatches, prefersReducedMotion, watchMedia } from "@/lib/quality";
 import { meridianPigment } from "@/lib/tokens";
 import { useViewerStore } from "@/state/viewerStore";
 import type { Meridian } from "@/types";
@@ -24,16 +24,8 @@ export function sectorAngle(hour: number): number {
 }
 
 function useNarrow(): boolean {
-  const [narrow, setNarrow] = useState(
-    () => typeof window !== "undefined" && window.matchMedia(NARROW).matches,
-  );
-  useEffect(() => {
-    const media = window.matchMedia(NARROW);
-    const onChange = () => setNarrow(media.matches);
-    onChange();
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
-  }, []);
+  const [narrow, setNarrow] = useState(() => mediaMatches(NARROW));
+  useEffect(() => watchMedia(NARROW, setNarrow), []);
   return narrow;
 }
 
@@ -273,6 +265,12 @@ export function QiClock({ variant = "dial" }: { variant?: "dial" | "chip" }) {
     checked?.focus();
     const onKey = (e: globalThis.KeyboardEvent) => {
       if (e.key !== "Escape") return;
+      if (document.getElementById("legal-gate")) return;
+      if (document.getElementById("command-palette")) return;
+      if (document.querySelector("[data-testid='help-dialog']")) return;
+      if (document.querySelector(".rail-overlay")) return;
+      const s = useViewerStore.getState();
+      if (s.paletteOpen || s.helpOpen || s.selectedPointId || s.selectedCenterId) return;
       e.preventDefault();
       e.stopImmediatePropagation();
       setOpen(false);

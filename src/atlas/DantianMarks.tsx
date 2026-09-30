@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useCoarsePointer } from "@/atlas/PointTooltip";
 import {
   CENTERS,
   dantianProbeRadiusPx,
@@ -62,6 +63,7 @@ function Seal({
   spots,
   k,
   zoom,
+  coarse,
   name,
   onSelect,
 }: {
@@ -71,6 +73,7 @@ function Seal({
   spots: Point2D[];
   k: number;
   zoom: number;
+  coarse: boolean;
   name: string;
   onSelect: (id: EnergyCenter["id"]) => void;
 }) {
@@ -125,6 +128,7 @@ function Seal({
           pointerEvents="none"
         />
       ) : null}
+      <circle r={Math.max(r, (coarse ? 22 : 12) * k)} fill="transparent" pointerEvents="none" />
       <circle
         r={r}
         fill="var(--color-paper)"
@@ -136,6 +140,8 @@ function Seal({
       {focused ? (
         <circle r={r + 3 * k} fill="none" stroke={CINNABAR} strokeWidth={2 * k} pointerEvents="none" />
       ) : null}
+      {showLabel ? (
+      <>
       <text
         className="hanzi"
         x={label.x}
@@ -168,6 +174,8 @@ function Seal({
       >
         {center.pinyin}
       </text>
+      </>
+      ) : null}
     </g>
   );
 }
@@ -181,6 +189,7 @@ export function DantianMarks() {
   const focus = useViewerStore((s) => s.focusCenter);
   const zoom = useViewerStore((s) => s.atlasZoom);
   const k = useUnitsPerPx();
+  const coarse = useCoarsePointer();
   const points = useMemo(() => loadAcupoints(), []);
   const spots = useMemo(() => {
     const out: Point2D[] = [];
@@ -215,6 +224,7 @@ export function DantianMarks() {
           strokeWidth={k}
           strokeDasharray={`${2 * k} ${6 * k}`}
           opacity={0.4}
+          pointerEvents="none"
         />
       ) : null}
       {placed.map(({ center, pos }) => (
@@ -226,6 +236,7 @@ export function DantianMarks() {
           spots={spots}
           k={k}
           zoom={zoom}
+          coarse={coarse}
           name={locale === "en" ? center.en : center.es}
           onSelect={focus}
         />

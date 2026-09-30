@@ -89,8 +89,14 @@ function insideFrame(pos: Point2D, frame: { pan: Point2D; zoom: number }): boole
 let flight = 0;
 let aim: Camera | null = null;
 
-function stopFlight(): void {
+function cancelFlight(): void {
   if (typeof cancelAnimationFrame === "function") cancelAnimationFrame(flight);
+}
+
+/** User gesture: drop the stacked zoom target so the next zoom uses the camera after the drag. */
+function stopFlight(): void {
+  aim = null;
+  cancelFlight();
 }
 
 const initialHour = new Date().getHours();
@@ -231,11 +237,13 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     else apply();
   },
   setAtlasZoom: (z) => {
+    aim = null;
     const zoom = clampZoom(z);
     const s = get();
     set({ atlasZoom: zoom, atlasPan: clampPan(s.atlasPan, zoom, s.plateBox) });
   },
   setAtlasPan: (p) => {
+    aim = null;
     const s = get();
     set({ atlasPan: clampPan(p, s.atlasZoom, s.plateBox) });
   },
@@ -258,7 +266,7 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     if (opts?.keepAim) aim = to;
     else aim = null;
     const duration = opts?.duration ?? 420;
-    stopFlight();
+    cancelFlight();
     if (duration <= 0 || prefersReducedMotion() || typeof requestAnimationFrame !== "function") {
       set({ atlasPan: to.pan, atlasZoom: to.zoom });
       return;

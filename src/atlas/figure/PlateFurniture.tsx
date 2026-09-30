@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { ZoomControls } from "@/atlas/ZoomControls";
 import { t } from "@/i18n";
+import { mediaMatches, watchMedia } from "@/lib/quality";
 import { ELEMENT_HANZI, PIGMENT } from "@/lib/tokens";
 import { useViewerStore } from "@/state/viewerStore";
 import type { AtlasRegion, AtlasView, Elemento, Locale } from "@/types";
@@ -18,15 +19,10 @@ function folioRoman(view: AtlasView, region: AtlasRegion): string {
 
 function useMinWidth(px: number): boolean {
   const query = `(min-width: ${px}px)`;
-  const [matches, setMatches] = useState(() =>
-    typeof window !== "undefined" && typeof window.matchMedia === "function" ? window.matchMedia(query).matches : true,
-  );
+  const [matches, setMatches] = useState(() => (typeof window === "undefined" ? true : mediaMatches(query)));
   useEffect(() => {
-    const media = window.matchMedia(query);
-    const onChange = () => setMatches(media.matches);
-    onChange();
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+    return watchMedia(query, setMatches);
   }, [query]);
   return matches;
 }
@@ -93,6 +89,25 @@ function PlateKey() {
   useEffect(() => {
     if (wide) setOpen(false);
   }, [wide]);
+
+  useEffect(() => {
+    if (wide || !open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (document.getElementById("legal-gate")) return;
+      if (document.getElementById("command-palette")) return;
+      if (document.querySelector("[data-testid='help-dialog']")) return;
+      if (document.querySelector(".rail-overlay")) return;
+      if (document.querySelector(".qi-pop")) return;
+      const store = useViewerStore.getState();
+      if (store.paletteOpen || store.helpOpen || store.selectedPointId || store.selectedCenterId) return;
+      event.preventDefault();
+      event.stopPropagation();
+      setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [wide, open]);
 
   if (wide) {
     return (

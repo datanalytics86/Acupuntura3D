@@ -1,4 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { t } from "@/i18n";
+import { useViewerStore } from "@/state/viewerStore";
+import { Disclaimer } from "@/ui/Disclaimer";
 
 interface Props {
   children: ReactNode;
@@ -21,11 +24,13 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render(): ReactNode {
     if (!this.state.error) return this.props.children;
+    const locale = useViewerStore.getState().locale;
     return (
       <div className="error-screen">
-        <p>El atlas falló al cargar. Recargá la página.</p>
+        <p>{t(locale, "errorBody")}</p>
+        <Disclaimer />
         <button type="button" className="btn btn-primary" onClick={() => window.location.reload()}>
-          Recargar
+          {t(locale, "errorRetry")}
         </button>
       </div>
     );

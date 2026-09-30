@@ -242,6 +242,36 @@ export function searchAll(query: string, sources: SearchSources): SearchHit[] {
   return hits;
 }
 
+/** Classic Levenshtein. Short labels only (codes and pinyin). */
+export function editDistance(a: string, b: string): number {
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i += 1) {
+    const next = [i];
+    for (let j = 1; j <= b.length; j += 1) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      next[j] = Math.min((prev[j] ?? 0) + 1, (next[j - 1] ?? 0) + 1, (prev[j - 1] ?? 0) + cost);
+    }
+    prev = next;
+  }
+  return prev[b.length] ?? 0;
+}
+
+/** Three nearest points by edit distance on the code and the pinyin, for an empty search. */
+export function suggestPoints(query: string, points: readonly SearchPoint[], limit = 3): SearchHit[] {
+  const q = fold(query.trim()).replace(/\s+/g, "");
+  if (!q) return [];
+  const ranked = points.map((point) => {
+    const code = fold(point.code);
+    const pinyin = fold(point.names.pinyin).replace(/\s+/g, "");
+    return { point, d: Math.min(editDistance(q, code), editDistance(q, pinyin)) };
+  });
+  ranked.sort((a, b) => a.d - b.d || a.point.code.localeCompare(b.point.code));
+  return ranked.slice(0, limit).map((row) => pointHit(row.point, 0));
+}
+
 export function listCorpus(sources: SearchSources): SearchHit[] {
   return [
     ...sources.points.map((point) => pointHit(point, 0)),
