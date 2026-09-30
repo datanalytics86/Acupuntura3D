@@ -83,6 +83,7 @@ export function HelpDialog() {
             <li key={key}>{t(locale, key)}</li>
           ))}
         </ul>
+        <p className="help-colophon">{t(locale, "plateColophon")}</p>
         <button type="button" className="btn" onClick={() => setHelpOpen(false)}>
           {t(locale, "close")}
         </button>
