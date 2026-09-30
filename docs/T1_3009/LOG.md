@@ -24,3 +24,7 @@
 ## W4
 - H1 PASS, promedio 9.08, cero vetos. H2 PASS, 16 × 2.
 - Un bucle antes de la firma: el primer zoom móvil cortaba 合谷 y 后溪. T2 los devolvió a la ventana. Probe y e2e ×3 repetidos.
+
+## W5
+- PR #12 mergeada en `2c8604a`. Producción https://acupuntura3d.vercel.app sirve `assets/index-DycVfQG7.js`, el mismo hash que `dist/`.
+- `probe-prod.json`: 18/18 PASS. Sin revert.

@@ -142,3 +142,14 @@ METRIC: 16×2 OK
 BROKEN: none
 NOTE: La tarea 5 en 390 mantiene el contrato de columna estrecha.
 ```
+
+```
+ID: W5
+STATUS: PASS
+CLOSES: producción
+CHANGED: docs/T1_3009/probe-prod.json
+CHECKS: hash=index-DycVfQG7.js probe-prod=18/18
+METRIC: merge 2c8604a
+BROKEN: none
+NOTE: https://acupuntura3d.vercel.app. Sin revert.
+```
