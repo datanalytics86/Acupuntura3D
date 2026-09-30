@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CENTERS } from "@/atlas/centers";
 import { loadAcupoints, loadMeridians } from "@/data";
-import { searchAll, type SearchCommand } from "@/lib/search";
+import { searchAll, suggestPoints, type SearchCommand } from "@/lib/search";
 
 const commands: readonly SearchCommand[] = [
   {
@@ -75,5 +75,14 @@ describe("searchAll", () => {
 
   it("una query vacía no devuelve filas", () => {
     expect(searchAll("   ", sources)).toEqual([]);
+  });
+
+  it("una búsqueda sin coincidencia ofrece tres puntos cercanos", () => {
+    expect(searchAll("zzzz", sources)).toEqual([]);
+    const near = suggestPoints("zzzz", sources.points, 3);
+    expect(near).toHaveLength(3);
+    expect(near.every((hit) => hit.kind === "point")).toBe(true);
+    const typo = suggestPoints("zusanl", sources.points, 3);
+    expect(typo[0]?.code).toBe("ST36");
   });
 });

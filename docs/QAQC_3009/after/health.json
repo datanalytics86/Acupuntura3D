@@ -1,0 +1,65 @@
+{
+  "base": "http://127.0.0.1:4173/",
+  "metrics": {
+    "lcpMs": 192,
+    "clsLoad": 0,
+    "clsSession": 0,
+    "longTasks": 1,
+    "longestTaskMs": 71,
+    "longTaskSteps": [
+      "71ms @ load"
+    ],
+    "domNodes": 808,
+    "consoleErrors": [],
+    "consoleWarnings": [],
+    "requestFailed": [],
+    "http4xx5xx": [],
+    "thirdPartyHosts": [],
+    "heapGrowth": -0.008,
+    "domGrowth": 0,
+    "focusLeakLegal": 0,
+    "focusLeakPalette": 0,
+    "focusLeakHelp": 0,
+    "reflow320": {
+      "overflowX": false,
+      "controlsOffscreen": 0,
+      "which": []
+    },
+    "zoom200": {
+      "overflowX": false,
+      "controlsOffscreen": 0,
+      "which": []
+    },
+    "langAfterEn": "en",
+    "spanishLeaksInEn": [],
+    "tapPoints": 10,
+    "tapWrong": [],
+    "storageDenied": {
+      "pageErrors": [],
+      "gateStillOpen": false,
+      "plate": true
+    }
+  },
+  "gates": {
+    "consoleErrors": true,
+    "requestFailed": true,
+    "http4xx5xx": true,
+    "thirdPartyHosts": true,
+    "clsLoad": true,
+    "lcpMs": true,
+    "longestTaskMs": true,
+    "heapGrowth": true,
+    "domGrowth": true,
+    "focusLeakLegal": true,
+    "focusLeakPalette": true,
+    "focusLeakHelp": true,
+    "reflow320": true,
+    "zoom200": true,
+    "langAfterEn": true,
+    "spanishLeaksInEn": true,
+    "tapAccuracy": true,
+    "storageDenied": true
+  },
+  "failed": [],
+  "pass": true
+}

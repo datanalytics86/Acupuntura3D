@@ -11,7 +11,7 @@ import "./folio.css";
 export function CenterDrawer() {
   const id = useViewerStore((s) => s.selectedCenterId);
   const focus = useViewerStore((s) => s.focusCenter);
-  const setSelected = useViewerStore((s) => s.setSelected);
+  const showPoint = useViewerStore((s) => s.showPoint);
   const setSheetSnap = useViewerStore((s) => s.setSheetSnap);
   const locale = useViewerStore((s) => s.locale);
   const atlasView = useViewerStore((s) => s.atlasView);
@@ -82,10 +82,7 @@ export function CenterDrawer() {
           <button
             type="button"
             className="btn"
-            onClick={() => {
-              focus(null);
-              setSelected(related.id);
-            }}
+            onClick={() => showPoint(related.id)}
           >
             {t(locale, "openPoint")} {related.code} <span className="hanzi">{related.names.zh}</span>
           </button>

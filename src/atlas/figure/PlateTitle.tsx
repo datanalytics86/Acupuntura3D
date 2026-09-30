@@ -94,9 +94,7 @@ export function PlateTitle() {
         : region === "foot"
           ? t(locale, "plateTitleFoot")
           : view === "anterior"
-            ? locale === "es"
-              ? "Cuerpo humano — vista anterior"
-              : t(locale, "plateAnterior")
+            ? t(locale, "plateAnterior")
             : t(locale, "platePosterior");
 
   return (

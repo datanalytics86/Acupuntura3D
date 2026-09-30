@@ -1,0 +1,35 @@
+name: qa
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: preview
+        run: |
+          npx vite preview --port 4173 --host 127.0.0.1 &
+          for i in $(seq 1 40); do
+            curl -sf http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+      - name: health, axe, census
+        run: |
+          mkdir -p docs/QAQC_3009/ci
+          npm run qa:health -- http://127.0.0.1:4173/ docs/QAQC_3009/ci/health.json
+          npm run qa:axe -- http://127.0.0.1:4173/ docs/QAQC_3009/ci/axe.json
+          npm run qa:census -- http://127.0.0.1:4173/ docs/QAQC_3009/ci/census.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qaqc-json
+          path: docs/QAQC_3009/ci/*.json

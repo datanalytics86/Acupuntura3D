@@ -4,6 +4,7 @@ import { MERIDIAN_ANCHORS_2D } from "@/atlas/meridianAnchors";
 import { MERIDIAN_IDS, seriesCodes } from "./ids";
 
 export function loadMeridians(): Meridian[] {
+  if (!Array.isArray(meridiansJson)) throw new Error("meridians.json must be an array");
   const rows = meridiansJson as Meridian[];
   if (rows.length !== 14) {
     throw new Error(`meridians.json must have 14 rows, got ${rows.length}`);
@@ -12,6 +13,10 @@ export function loadMeridians(): Meridian[] {
   for (let i = 0; i < MERIDIAN_IDS.length; i += 1) {
     if (ids[i] !== MERIDIAN_IDS[i]) {
       throw new Error(`meridian id mismatch at ${i}: expected ${MERIDIAN_IDS[i]}, got ${ids[i]}`);
+    }
+    const row = rows[i];
+    if (!row?.names || typeof row.names.zh !== "string") {
+      throw new Error(`meridian ${ids[i]} is missing names`);
     }
   }
   return rows.map((m) => ({

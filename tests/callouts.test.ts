@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { loadAcupoints } from "@/data";
 import { instancesOnView } from "@/atlas/mapCoords";
-import { estimateLabelPx, layoutMarginCallouts, type Callout, type CalloutInput } from "@/atlas/callouts";
+import { calloutHitPx, calloutHitSize, estimateLabelPx, layoutMarginCallouts, type Callout, type CalloutInput } from "@/atlas/callouts";
 import { CENTERS, dantianProbeGapPx, dantianProbeRadiusPx, placeDantianSeal } from "@/atlas/centers";
 import { unitsPerPx, visibleRect } from "@/atlas/screen";
 import type { AtlasView, Point2D } from "@/types";
@@ -69,6 +69,18 @@ describe("margin callouts", () => {
 
   it("falls back to hover labels when the margin is too narrow (phone 350×500)", () => {
     expect(layoutMarginCallouts(inputs("anterior"), frame(350, 500))).toBeNull();
+  });
+});
+
+describe("callout hit box", () => {
+  it("stays above the census 24px floor on a fine pointer and 44px on a coarse one", () => {
+    expect(calloutHitPx(false)).toBeGreaterThanOrEqual(28);
+    expect(calloutHitPx(true)).toBeGreaterThanOrEqual(44);
+    const fine = calloutHitSize({ l: 0, t: 0, r: 40, b: 12 }, 1.2, false);
+    const coarse = calloutHitSize({ l: 0, t: 0, r: 40, b: 12 }, 1.2, true);
+    expect(fine.h).toBeGreaterThanOrEqual(28 * 1.2);
+    expect(coarse.h).toBeGreaterThanOrEqual(44 * 1.2);
+    expect(fine.h / 2).toBeLessThan(22 * 1.2);
   });
 });
 

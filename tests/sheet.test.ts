@@ -43,7 +43,7 @@ describe("nextSnap", () => {
 describe("ficha chrome", () => {
   it("keeps the three sheet heights and a 40px Noto peek hanzi", () => {
     const sheet = readFileSync(join(root, "src/ui/sheet.css"), "utf8");
-    expect(sheet).toContain("height: 168px");
+    expect(sheet).toContain("height: 190px");
     expect(sheet).toContain("height: 52dvh");
     expect(sheet).toContain("height: calc(100dvh - 48px)");
     expect(sheet).toContain('font-family: "Noto Serif SC"');

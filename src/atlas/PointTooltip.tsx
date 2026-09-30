@@ -2,18 +2,13 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { unitsToClient } from "@/atlas/camera";
 import { useUnitsPerPx } from "@/atlas/screen";
+import { watchMedia } from "@/lib/quality";
 import { useViewerStore } from "@/state/viewerStore";
 import type { Point2D } from "@/types";
 
 export function useCoarsePointer(): boolean {
   const [coarse, setCoarse] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(pointer: coarse)");
-    const apply = () => setCoarse(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, []);
+  useEffect(() => watchMedia("(pointer: coarse)", setCoarse), []);
   return coarse;
 }
 

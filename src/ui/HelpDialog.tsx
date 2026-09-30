@@ -1,5 +1,6 @@
 import { useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { t } from "@/i18n";
+import { useInertSiblings } from "@/lib/inert";
 import { useViewerStore } from "@/state/viewerStore";
 
 const HELP_KEYS = [
@@ -23,7 +24,9 @@ export function HelpDialog() {
   const setHelpOpen = useViewerStore((s) => s.setHelpOpen);
   const locale = useViewerStore((s) => s.locale);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const layerRef = useRef<HTMLDivElement>(null);
   const returnTo = useRef<HTMLElement | null>(null);
+  useInertSiblings(open, layerRef);
 
   useEffect(() => {
     if (!open) return;
@@ -66,7 +69,7 @@ export function HelpDialog() {
   }
 
   return (
-    <div className="help-layer">
+    <div className="help-layer" ref={layerRef}>
       <div
         role="dialog"
         aria-modal="true"
@@ -82,6 +85,13 @@ export function HelpDialog() {
           {HELP_KEYS.map((key) => (
             <li key={key}>{t(locale, key)}</li>
           ))}
+        </ul>
+        <h3 className="t-meta">{t(locale, "glossaryTitle")}</h3>
+        <ul className="help-list t-body">
+          <li>{t(locale, "glossaryCun")}</li>
+          <li>{t(locale, "glossaryDantian")}</li>
+          <li>{t(locale, "glossaryYinYang")}</li>
+          <li>{t(locale, "glossaryWuXing")}</li>
         </ul>
         <p className="help-colophon">{t(locale, "plateColophon")}</p>
         <button type="button" className="btn" onClick={() => setHelpOpen(false)}>

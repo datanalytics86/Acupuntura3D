@@ -24,7 +24,7 @@
   }
 
   .sheet[data-snap="peek"] {
-    height: 168px;
+    height: 190px;
     bottom: var(--foot-cover, env(safe-area-inset-bottom, 0px));
     padding-bottom: 0;
   }
@@ -67,7 +67,7 @@
   }
 
   .sheet[data-snap="peek"] .sheet-handle {
-    height: 22px;
+    height: 44px;
   }
 
   .sheet-handle:active {

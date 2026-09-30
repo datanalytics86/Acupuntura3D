@@ -42,6 +42,7 @@
     padding: 8px 12px 12px;
     overflow: hidden;
     box-sizing: border-box;
+    pointer-events: none;
   }
 
   .plate-title-block {
@@ -195,6 +196,7 @@
     min-width: 0;
     padding: 0 12px;
     overflow: hidden;
+    pointer-events: none;
   }
 
   .plate-colophon {
@@ -391,7 +393,6 @@
       width: auto;
       max-width: none;
       transform: none;
-      pointer-events: auto;
     }
 
     .plate-heading {
@@ -410,9 +411,25 @@
       order: 0;
     }
 
+    .plate-minimap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      box-sizing: border-box;
+    }
+
     .plate-minimap svg {
       width: 20px;
       height: 40px;
+    }
+
+    .app[data-folio="open"] .plate-slot-clock,
+    .app[data-folio="open"] .plate-slot-right {
+      position: fixed;
+      z-index: 26;
+      bottom: calc(100dvh - var(--sheet-top, 100dvh));
     }
 
     .plate-slot-clock,
@@ -461,6 +478,11 @@
     .plate-zoom [data-testid="zoom-in"],
     .plate-zoom [data-testid="zoom-out"] {
       display: none;
+    }
+
+    .plate-zoom button {
+      width: 44px;
+      height: 44px;
     }
 
     .plate-zoom button + button {

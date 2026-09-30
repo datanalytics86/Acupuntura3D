@@ -70,6 +70,24 @@ describe("viewer store", () => {
     expect(useViewerStore.getState().locale).toBe("es");
   });
 
+  it("lands the camera in the same turn, so a tap cannot hit the neighbor mid-glide", () => {
+    const frames: FrameRequestCallback[] = [];
+    const prev = globalThis.requestAnimationFrame;
+    globalThis.requestAnimationFrame = (cb) => {
+      frames.push(cb);
+      return 1;
+    };
+    try {
+      useViewerStore.getState().resetAtlasCamera();
+      useViewerStore.getState().flyTo({ pan: { x: 172, y: 800 }, zoom: 4.5 });
+      expect(useViewerStore.getState().atlasZoom).toBe(4.5);
+      expect(frames).toHaveLength(0);
+    } finally {
+      if (prev) globalThis.requestAnimationFrame = prev;
+      else Reflect.deleteProperty(globalThis, "requestAnimationFrame");
+    }
+  });
+
   it("flyTo applies at once without rAF (node) and clamps", () => {
     useViewerStore.getState().flyTo({ pan: { x: 338, y: 1185 }, zoom: 9 });
     expect(useViewerStore.getState().atlasZoom).toBe(6);
@@ -79,6 +97,24 @@ describe("viewer store", () => {
     useViewerStore.getState().zoomBy(2, { x: 400, y: 400 });
     expect(useViewerStore.getState().atlasZoom).toBe(2);
     expect(useViewerStore.getState().atlasPan.y).toBe(600);
+  });
+
+  it("drops the stacked zoom aim after a pan", () => {
+    useViewerStore.getState().resetAtlasCamera();
+    useViewerStore.getState().zoomBy(2, { x: 400, y: 400 });
+    useViewerStore.getState().setAtlasPan({ x: 420, y: 820 });
+    useViewerStore.getState().zoomBy(2, { x: 420, y: 820 });
+    expect(useViewerStore.getState().atlasZoom).toBe(4);
+    expect(useViewerStore.getState().atlasPan).toEqual({ x: 420, y: 820 });
+  });
+
+  it("restores the camera when the ficha closes", () => {
+    useViewerStore.getState().resetAtlasCamera();
+    useViewerStore.getState().showPoint("ST36");
+    expect(useViewerStore.getState().atlasZoom).toBe(2.4);
+    useViewerStore.getState().setSelected(null);
+    expect(useViewerStore.getState().atlasZoom).toBe(1);
+    expect(useViewerStore.getState().atlasPan).toEqual({ x: 400, y: 800 });
   });
 
   it("showPoint(\"ST36\") deja selectedPointId síncrono", () => {

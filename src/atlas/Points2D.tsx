@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { clusterGapPx, nearestMarkAtClient, pointWinsOverSeal, svgUserToClient } from "@/atlas/coarseHit";
 import { loadAcupoints, loadMeridians } from "@/data";
 import { instancesOnView } from "@/atlas/mapCoords";
 import { CX, VIEW_H, VIEW_W, Y } from "@/atlas/figure/landmarks";
@@ -9,7 +10,8 @@ import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
 import { inRegionFrame, regionFrame, REGION_FOCUS } from "@/atlas/regionFrames";
 import { unitsPerPx, usePlateBox, useUnitsPerPx, visibleRect } from "@/atlas/screen";
-import { estimateLabelPx, layoutMarginCallouts, type Callout, type CalloutInput } from "@/atlas/callouts";
+import { calloutHitSize, estimateLabelPx, layoutMarginCallouts, type Callout, type CalloutInput } from "@/atlas/callouts";
+import { useMuteCovered } from "@/atlas/censusHit";
 import { PointTooltip, useCoarsePointer } from "@/atlas/PointTooltip";
 import type { Acupoint, AtlasView, Meridian, Point2D } from "@/types";
 
@@ -320,7 +322,7 @@ function PlateSideMarks({
         aria-label={t(locale, anterior ? "plateSideRight" : "plateSideLeft")}
         {...ink}
       >
-        {anterior ? "D" : "I"}
+        {anterior ? (locale === "en" ? "R" : "D") : locale === "en" ? "L" : "I"}
       </text>
       <text
         data-testid="plate-side-right"
@@ -329,7 +331,7 @@ function PlateSideMarks({
         aria-label={t(locale, anterior ? "plateSideLeft" : "plateSideRight")}
         {...ink}
       >
-        {anterior ? "I" : "D"}
+        {anterior ? (locale === "en" ? "L" : "I") : locale === "en" ? "R" : "D"}
       </text>
     </g>
   );
@@ -429,8 +431,63 @@ export function Points2D() {
   const box = usePlateBox();
   const coarse = useCoarsePointer();
   const rootRef = useRef<SVGGElement>(null);
+  const muted = useMuteCovered(rootRef);
+  const marksRef = useRef<{ id: string; meridianId: string; x: number; y: number }[]>([]);
   const [focusKey, setFocusKey] = useState<string | null>(null);
   const [tip, setTip] = useState<{ id: string; at: Point2D } | null>(null);
+
+  useEffect(() => {
+    const svg = rootRef.current?.ownerSVGElement;
+    if (!svg) return;
+    const host = svg.closest("[data-testid='plate']") ?? svg;
+    let down: { x: number; y: number } | null = null;
+    const pick = (event: Event) => {
+      if (!(event instanceof MouseEvent)) return;
+      const target = event.target;
+      if (!(target instanceof Element) || !host.contains(target)) return;
+      if (target.closest("[data-cluster]")) return;
+      const widget = target.closest("button, a, input, textarea, [role='button'], [role='radio']");
+      if (widget && !widget.closest("[data-atlas-hit]")) return;
+      const picked = nearestMarkAtClient(svg, event.clientX, event.clientY, marksRef.current, 22);
+      if (!picked) return;
+      const seal = target.closest("[data-testid^='dantian-']");
+      if (seal instanceof SVGGraphicsElement) {
+        const at = svgUserToClient(svg, picked.x, picked.y);
+        const origin = svg.createSVGPoint();
+        origin.x = 0;
+        origin.y = 0;
+        const ctm = seal.getScreenCTM();
+        const sealAt = ctm ? origin.matrixTransform(ctm) : null;
+        const pointD = at ? Math.hypot(at.x - event.clientX, at.y - event.clientY) : Number.POSITIVE_INFINITY;
+        const sealD = sealAt ? Math.hypot(sealAt.x - event.clientX, sealAt.y - event.clientY) : 0;
+        if (!pointWinsOverSeal(pointD, sealD, 22)) return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      const store = useViewerStore.getState();
+      store.setSelected(picked.id);
+      store.setActiveMeridian(picked.meridianId);
+    };
+    const onDown = (event: Event) => {
+      if (!(event instanceof PointerEvent) || event.button !== 0) return;
+      down = { x: event.clientX, y: event.clientY };
+    };
+    const onUp = (event: Event) => {
+      if (!(event instanceof PointerEvent) || event.button !== 0) return;
+      const start = down;
+      down = null;
+      if (!start || Math.hypot(event.clientX - start.x, event.clientY - start.y) > 8) return;
+      pick(event);
+    };
+    host.addEventListener("pointerdown", onDown, true);
+    host.addEventListener("pointerup", onUp, true);
+    host.addEventListener("click", pick, true);
+    return () => {
+      host.removeEventListener("pointerdown", onDown, true);
+      host.removeEventListener("pointerup", onUp, true);
+      host.removeEventListener("click", pick, true);
+    };
+  }, [visible]);
 
   const meridianById = useMemo(() => new Map(meridians.map((m) => [m.id, m])), [meridians]);
   const pointById = useMemo(() => new Map(points.map((p) => [p.id, p])), [points]);
@@ -478,15 +535,18 @@ export function Points2D() {
       <PlateSideMarks view={view} k={k} rect={viewRect} locale={locale} />
     ) : null;
 
-  if (!visible) return <g ref={rootRef}>{sideMarks}</g>;
+  if (!visible) {
+    marksRef.current = [];
+    return <g ref={rootRef}>{sideMarks}</g>;
+  }
 
   const shown = (viewRect ? items.filter((it) => inView(it.position, viewRect, 48 * k)) : items).filter((it) =>
     inRegionFrame(region, view, it.position),
   );
-  const marginFailed = wantMargin && measured && margin === null;
-  const cluster = marginFailed && coarse;
-  const groups = clusterItems(shown, cluster ? 14 * k : 0);
-  const rear = cluster ? new Set<string>() : rearMarkKeys(shown, k);
+  // Paper halo is 6px. A 24px coarse gap also merges SP6 with KI3 and hides LI4 on the hand.
+  const groups = clusterItems(shown, clusterGapPx() * k);
+  const clustered = groups.some((members) => members.length > 1);
+  const rear = clustered ? new Set<string>() : rearMarkKeys(shown, k);
   const proximity = wantProximity && viewRect ? proximityLabels(shown, hovered, selected, viewRect, k) : [];
   const calloutById = new Map<string, Callout>((margin ?? []).map((c) => [c.key, c]));
   const hidden = new Set<string>();
@@ -503,6 +563,11 @@ export function Points2D() {
     setSelected(point.id);
     setActive(point.meridianId);
   };
+  marksRef.current = groups.flatMap((members) =>
+    members.length === 1
+      ? [{ id: members[0]!.point.id, meridianId: members[0]!.point.meridianId, x: members[0]!.position.x, y: members[0]!.position.y }]
+      : [],
+  );
   const clearTip = (id: string) => {
     setTip((cur) => (cur?.id === id ? null : cur));
   };
@@ -532,13 +597,16 @@ export function Points2D() {
             const next = zoom < 2.5 ? 2.5 : Math.min(6, zoom * 2.5);
             flyTo({ pan: at, zoom: next });
           };
+          const quiet = muted.has(key);
           return (
             <g key={key} transform={`translate(${at.x} ${at.y})`}>
               <g
                 data-atlas-hit=""
-                role="button"
-                tabIndex={0}
-                aria-label={`${members.length} ${t(locale, "clusterPoints")}. ${t(locale, "clusterZoom")}`}
+                data-cluster=""
+                data-hit-key={key}
+                role={quiet ? undefined : "button"}
+                tabIndex={quiet ? undefined : 0}
+                aria-label={quiet ? undefined : `${members.length} ${t(locale, "clusterPoints")}. ${t(locale, "clusterZoom")}`}
                 style={{ cursor: "pointer", outline: "none" }}
                 onPointerDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
@@ -549,7 +617,7 @@ export function Points2D() {
                 onFocus={() => setFocusKey(key)}
                 onBlur={() => setFocusKey((cur) => (cur === key ? null : cur))}
               >
-                <circle r={hit} fill="transparent" />
+                <circle r={hit} fill="transparent" pointerEvents="none" />
                 <Registration
                   k={k}
                   halo={halo}
@@ -567,6 +635,7 @@ export function Points2D() {
         const it = members[0]!;
         const key = `${it.point.id}-${it.side}`;
         const primary = it.side !== "R";
+        const quiet = muted.has(key);
         const isSel = selected === it.point.id;
         const isHov = hovered === it.point.id;
         const basePx = rear.has(key) ? 4 : 6;
@@ -584,11 +653,13 @@ export function Points2D() {
           <g key={key} transform={`translate(${it.position.x} ${it.position.y})`}>
             <g
               data-atlas-hit=""
-              role={primary ? "button" : undefined}
-              tabIndex={primary ? 0 : -1}
+              data-point-hit=""
+              data-hit-key={primary ? key : undefined}
+              role={primary && !quiet ? "button" : undefined}
+              tabIndex={primary && !quiet ? 0 : undefined}
               aria-hidden={primary ? undefined : true}
-              aria-label={primary ? pointAria(it.point, locale, meridianName) : undefined}
-              aria-pressed={primary ? isSel : undefined}
+              aria-label={primary && !quiet ? pointAria(it.point, locale, meridianName) : undefined}
+              aria-pressed={primary && !quiet ? isSel : undefined}
               style={{ cursor: "pointer", outline: "none" }}
               onPointerDown={(e) => e.stopPropagation()}
               onPointerEnter={() => {
@@ -613,7 +684,7 @@ export function Points2D() {
               }}
               onKeyDown={(e) => onActivateKey(e, () => select(it.point))}
             >
-              <circle r={hit} fill="transparent" />
+              <circle r={hit} fill="transparent" pointerEvents="none" />
               <Registration
                 k={k}
                 halo={halo}
@@ -661,15 +732,18 @@ export function Points2D() {
         const sole = hidden.has(`${point.id}-L`) || hidden.has(`${point.id}-C`) || !shown.some((it) => it.point.id === point.id && it.side !== "R");
         const meridian = meridianById.get(point.meridianId);
         const meridianName = meridian ? (locale === "en" ? meridian.names.en : meridian.names.es) : null;
+        const quiet = muted.has(`callout-${c.key}`);
+        const hit = calloutHitSize(c.box, k, coarse);
         return (
           <g
             key={c.key}
             data-atlas-hit=""
             data-testid={`callout-${point.code}`}
-            role={sole ? "button" : undefined}
-            tabIndex={sole ? 0 : undefined}
+            data-hit-key={sole ? `callout-${c.key}` : undefined}
+            role={sole && !quiet ? "button" : undefined}
+            tabIndex={sole && !quiet ? 0 : undefined}
             aria-hidden={sole ? undefined : true}
-            aria-label={sole ? pointAria(point, locale, meridianName) : undefined}
+            aria-label={sole && !quiet ? pointAria(point, locale, meridianName) : undefined}
             style={{ cursor: "pointer", outline: "none" }}
             onPointerDown={(e) => e.stopPropagation()}
             onPointerEnter={() => {
@@ -704,10 +778,10 @@ export function Points2D() {
             />
             <circle cx={c.to.x} cy={c.to.y} r={1.3 * k} fill={hot ? CINNABAR : INK} pointerEvents="none" />
             <rect
-              x={Math.min(c.box.l, c.to.x) - 2 * k}
-              y={c.box.t - 2 * k}
-              width={c.box.r - c.box.l + 4 * k}
-              height={c.box.b - c.box.t + 4 * k}
+              x={(c.box.l + c.box.r) / 2 - hit.w / 2}
+              y={(c.box.t + c.box.b) / 2 - hit.h / 2}
+              width={hit.w}
+              height={hit.h}
               fill="transparent"
             />
             <text

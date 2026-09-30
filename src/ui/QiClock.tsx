@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react"
 import { loadMeridians } from "@/data";
 import { meridianAtHour } from "@/atlas/qiTime";
 import { t } from "@/i18n";
-import { prefersReducedMotion } from "@/lib/quality";
+import { mediaMatches, prefersReducedMotion, watchMedia } from "@/lib/quality";
 import { meridianPigment } from "@/lib/tokens";
 import { useViewerStore } from "@/state/viewerStore";
 import type { Meridian } from "@/types";
@@ -24,16 +24,8 @@ export function sectorAngle(hour: number): number {
 }
 
 function useNarrow(): boolean {
-  const [narrow, setNarrow] = useState(
-    () => typeof window !== "undefined" && window.matchMedia(NARROW).matches,
-  );
-  useEffect(() => {
-    const media = window.matchMedia(NARROW);
-    const onChange = () => setNarrow(media.matches);
-    onChange();
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
-  }, []);
+  const [narrow, setNarrow] = useState(() => mediaMatches(NARROW));
+  useEffect(() => watchMedia(NARROW, setNarrow), []);
   return narrow;
 }
 
@@ -161,24 +153,29 @@ function OrganDial() {
             const sectorName = `${m.code} ${pad2(m.clockHour)}\u2013${pad2((m.clockHour + 2) % 24)} ${
               locale === "en" ? m.names.en : m.names.es
             }`;
+            const [hx, hy] = polar((R_IN + R_OUT) / 2, sectorAngle(m.clockHour + 1));
             return (
-              <path
+              <g
                 key={m.id}
                 id={`clock-sector-${m.id}`}
-                className="qi-sector"
                 role="radio"
                 aria-checked={sector.on}
                 aria-label={sectorName}
                 tabIndex={sector.on ? 0 : -1}
-                data-sector={m.id}
-                data-on={sector.on ? "true" : "false"}
-                d={sectorPath(m.clockHour)}
-                fill={sector.fill}
-                fillOpacity={sector.fillOpacity}
-                stroke="none"
-                pointerEvents="visibleFill"
                 onClick={() => setHour(m.clockHour)}
-              />
+              >
+                <circle cx={hx} cy={hy} r={22} fill="transparent" pointerEvents="none" />
+                <path
+                  className="qi-sector"
+                  data-sector={m.id}
+                  data-on={sector.on ? "true" : "false"}
+                  d={sectorPath(m.clockHour)}
+                  fill={sector.fill}
+                  fillOpacity={sector.fillOpacity}
+                  stroke="none"
+                  pointerEvents="visibleFill"
+                />
+              </g>
             );
           })}
           <circle className="qi-ring" cx={CX} cy={CY} r={R_RING} />
@@ -273,6 +270,12 @@ export function QiClock({ variant = "dial" }: { variant?: "dial" | "chip" }) {
     checked?.focus();
     const onKey = (e: globalThis.KeyboardEvent) => {
       if (e.key !== "Escape") return;
+      if (document.getElementById("legal-gate")) return;
+      if (document.getElementById("command-palette")) return;
+      if (document.querySelector("[data-testid='help-dialog']")) return;
+      if (document.querySelector(".rail-overlay")) return;
+      const s = useViewerStore.getState();
+      if (s.paletteOpen || s.helpOpen || s.selectedPointId || s.selectedCenterId) return;
       e.preventDefault();
       e.stopImmediatePropagation();
       setOpen(false);

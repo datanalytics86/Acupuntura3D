@@ -1,8 +1,9 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AtlasRoot } from "@/atlas/AtlasRoot";
 import { handleCameraKey } from "@/atlas/cameraKeys";
 import { CENTERS } from "@/atlas/centers";
 import { loadAcupoints } from "@/data";
+import { stepPoint } from "@/lib/pointStep";
 import { t } from "@/i18n";
 import { Disclaimer } from "@/ui/Disclaimer";
 import { Topbar } from "@/ui/Topbar";
@@ -12,6 +13,7 @@ import { CenterDrawer } from "@/ui/CenterDrawer";
 import { QiClock } from "@/ui/QiClock";
 import { LegalModal } from "@/ui/LegalModal";
 import { HelpDialog } from "@/ui/HelpDialog";
+import { mediaMatches } from "@/lib/quality";
 import { useViewerStore } from "@/state/viewerStore";
 
 function isTextField(target: EventTarget | null): target is HTMLInputElement | HTMLTextAreaElement {
@@ -36,17 +38,126 @@ function inRadioGroup(target: EventTarget | null): boolean {
   return target instanceof Element && Boolean(target.closest("[role='radiogroup']"));
 }
 
+function useSheetHistory(): void {
+  useEffect(() => {
+    let pushed = false;
+    const narrow = () => mediaMatches("(max-width: 1023px)");
+    const closeSheet = () => {
+      const store = useViewerStore.getState();
+      if (store.selectedPointId) store.setSelected(null);
+      if (store.selectedCenterId) store.focusCenter(null);
+    };
+    const onPop = () => {
+      pushed = false;
+      closeSheet();
+    };
+    window.addEventListener("popstate", onPop);
+    const unsubscribe = useViewerStore.subscribe((state, prev) => {
+      if (!narrow()) return;
+      const now = Boolean(state.selectedPointId || state.selectedCenterId);
+      const was = Boolean(prev.selectedPointId || prev.selectedCenterId);
+      if (now && !was) {
+        history.pushState({ acu3dSheet: 1 }, "");
+        pushed = true;
+      } else if (!now && was && pushed) {
+        pushed = false;
+        history.back();
+      }
+    });
+    return () => {
+      window.removeEventListener("popstate", onPop);
+      unsubscribe();
+    };
+  }, []);
+}
+
+function FirstHint() {
+  const locale = useViewerStore((s) => s.locale);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem("acu3d.hint.v1") === "1") return;
+    } catch {
+      return;
+    }
+    let alive = true;
+    let id = 0;
+    const reveal = () => {
+      if (!alive || document.getElementById("legal-gate")) return;
+      try {
+        if (window.localStorage.getItem("acu3d.hint.v1") === "1") {
+          window.clearInterval(id);
+          return;
+        }
+      } catch {
+        window.clearInterval(id);
+        return;
+      }
+      setShow(true);
+      window.clearInterval(id);
+    };
+    id = window.setInterval(reveal, 200);
+    reveal();
+    return () => {
+      alive = false;
+      window.clearInterval(id);
+    };
+  }, []);
+  useEffect(() => {
+    if (!show) return;
+    const dismiss = () => {
+      try {
+        window.localStorage.setItem("acu3d.hint.v1", "1");
+      } catch {
+        /* quota or private mode */
+      }
+      setShow(false);
+    };
+    window.addEventListener("pointerdown", dismiss, true);
+    window.addEventListener("keydown", dismiss, true);
+    return () => {
+      window.removeEventListener("pointerdown", dismiss, true);
+      window.removeEventListener("keydown", dismiss, true);
+    };
+  }, [show]);
+  if (!show) return null;
+  return (
+    <p className="first-hint" role="status" data-testid="first-hint">
+      {t(locale, "firstHint")}
+    </p>
+  );
+}
+
 export function App() {
   const points = useMemo(() => loadAcupoints(), []);
   const selected = useViewerStore((s) => s.selectedPointId);
   const selectedCenter = useViewerStore((s) => s.selectedCenterId);
   const railOpen = useViewerStore((s) => s.railOpen);
   const locale = useViewerStore((s) => s.locale);
+  const atlasView = useViewerStore((s) => s.atlasView);
+  const atlasRegion = useViewerStore((s) => s.atlasRegion);
   const folioOpen = Boolean(selected || selectedCenter);
   const selectedPoint = points.find((pt) => pt.id === selected) ?? null;
   const selectionLive = selectedPoint
     ? `${selectedPoint.code} ${selectedPoint.names.pinyin} ${t(locale, "selected")}`
     : "";
+  const spoken = [
+    t(locale, atlasView === "anterior" ? "liveViewAnterior" : "liveViewPosterior"),
+    t(
+      locale,
+      atlasRegion === "face"
+        ? "liveRegionFace"
+        : atlasRegion === "hand"
+          ? "liveRegionHand"
+          : atlasRegion === "foot"
+            ? "liveRegionFoot"
+            : "liveRegionBody",
+    ),
+    selectionLive,
+  ]
+    .filter(Boolean)
+    .join(". ");
+  useSheetHistory();
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -57,6 +168,14 @@ export function App() {
       if (document.getElementById("legal-gate")) return;
       const store = useViewerStore.getState();
       const target = e.target;
+
+      if (store.paletteOpen) {
+        if (e.key === "Escape" && !isPaletteField(target) && !inPalette(target)) {
+          e.preventDefault();
+          store.setPaletteOpen(false);
+        }
+        return;
+      }
 
       if (store.helpOpen) {
         if (e.key === "Escape") {
@@ -70,17 +189,8 @@ export function App() {
         if (e.key === "Escape") target.blur();
         return;
       }
-      if (isPaletteField(target) || inPalette(target)) return;
 
       if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && inRadioGroup(target)) return;
-
-      if (store.paletteOpen) {
-        if (e.key === "Escape") {
-          e.preventDefault();
-          store.setPaletteOpen(false);
-        }
-        return;
-      }
 
       const chordK = e.key === "k" || e.key === "K";
       if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.repeat && chordK) {
@@ -104,8 +214,15 @@ export function App() {
       if (e.repeat) return;
 
       if (e.key === "Escape") {
-        store.setSelected(null);
-        store.focusCenter(null);
+        if (store.selectedPointId || store.selectedCenterId) {
+          store.setSelected(null);
+          store.focusCenter(null);
+          return;
+        }
+        if (store.railOpen) {
+          store.setRailOpen(false);
+          return;
+        }
         store.setSearch("");
         return;
       }
@@ -137,12 +254,7 @@ export function App() {
       }
       const selectedId = store.selectedPointId;
       if (!selectedId) return;
-      const merId = points.find((pt) => pt.id === selectedId)?.meridianId;
-      const group = points.filter((pt) => pt.meridianId === merId);
-      const idx = group.findIndex((pt) => pt.id === selectedId);
-      if (idx < 0 || group.length === 0) return;
-      const next =
-        e.key === "ArrowRight" ? group[(idx + 1) % group.length] : group[(idx - 1 + group.length) % group.length];
+      const next = stepPoint(points, selectedId, e.key === "ArrowRight" ? 1 : -1);
       if (next) store.showPoint(next.id);
     };
     window.addEventListener("keydown", onKey);
@@ -159,6 +271,7 @@ export function App() {
       </div>
       <div className="app-plate">
         <AtlasRoot clock={<QiClock />} />
+        <FirstHint />
       </div>
       <div className="app-folio">
         <PointDrawer />
@@ -166,7 +279,7 @@ export function App() {
       </div>
       <footer className="app-foot">
         <p className="a11y-live" aria-live="polite" aria-atomic="true">
-          {selectionLive}
+          {spoken}
         </p>
         <div className="foot-chip" data-slot="clock-chip" aria-hidden="true" />
         <Disclaimer />

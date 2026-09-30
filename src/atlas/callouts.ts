@@ -154,3 +154,23 @@ export function layoutMarginCallouts(items: CalloutInput[], frame: ColumnFrame):
   }
   return out;
 }
+
+/**
+ * Callout hit box in CSS px. Row pitch is 22, so half of the fine size stays off the next label.
+ * A 24px box measures under 24 after the SVG transform, and the census then keeps the text height.
+ */
+export function calloutHitPx(coarse: boolean): number {
+  return coarse ? 44 : 28;
+}
+
+export function calloutHitSize(
+  box: { l: number; t: number; r: number; b: number },
+  k: number,
+  coarse: boolean,
+): { w: number; h: number } {
+  const hit = calloutHitPx(coarse) * k;
+  return {
+    w: Math.max(box.r - box.l + 4 * k, hit),
+    h: Math.max(box.b - box.t + 4 * k, hit),
+  };
+}

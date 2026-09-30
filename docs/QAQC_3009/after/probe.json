@@ -1,0 +1,62 @@
+{
+  "metrics": {
+    "hanziFontPlate": [
+      "Outfit Thin SemiBold",
+      "Noto Serif SC Medium"
+    ],
+    "seamDelta": 0,
+    "headFootDelta": 0,
+    "overlapBody": {
+      "area": 0,
+      "hits": []
+    },
+    "figureShareDesktop": 0.71,
+    "idleRouteLabels": 1,
+    "orientationGapPx": 32,
+    "headerAccentText": 0,
+    "smallText": 0,
+    "dantianGapPx": 9,
+    "overlapZoom4": {
+      "area": 0,
+      "hits": []
+    },
+    "zoomLabelCoverage": 1,
+    "overlapST36": {
+      "area": 0,
+      "hits": []
+    },
+    "hanziFontFolio": [
+      "Cormorant Garamond Light Medium",
+      "Noto Serif SC Medium"
+    ],
+    "overlapDantian": {
+      "area": 0,
+      "hits": []
+    },
+    "figureShareMobile": 0.65,
+    "mobileBrandTruncated": false,
+    "sheetPeekShowsHanzi": true
+  },
+  "gates": {
+    "hanziFontPlate": true,
+    "hanziFontFolio": true,
+    "seamDelta": true,
+    "overlapBody": true,
+    "overlapZoom4": true,
+    "overlapST36": true,
+    "overlapDantian": true,
+    "figureShareDesktop": true,
+    "figureShareMobile": true,
+    "idleRouteLabels": true,
+    "zoomLabelCoverage": true,
+    "orientationGapPx": true,
+    "headerAccentText": true,
+    "headFootDelta": true,
+    "smallText": true,
+    "dantianGapPx": true,
+    "mobileBrandTruncated": true,
+    "sheetPeekShowsHanzi": true
+  },
+  "failed": [],
+  "pass": true
+}

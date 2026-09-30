@@ -9,6 +9,7 @@ import {
 } from "react";
 import { VIEW_H, VIEW_W } from "@/atlas/figure/landmarks";
 import { unitsPerPx } from "@/atlas/screen";
+import { mediaMatches, watchMedia } from "@/lib/quality";
 import { t } from "@/i18n";
 import { useViewerStore, type SheetSnap } from "@/state/viewerStore";
 import type { Point2D } from "@/types";
@@ -47,25 +48,17 @@ export function nextSnap(current: SheetSnap, dyPx: number, vyPxPerMs: number): S
 
 export function useNarrowSheet(): boolean {
   const query = "(max-width: 1023px)";
-  const [narrow, setNarrow] = useState(() =>
-    typeof window !== "undefined" ? window.matchMedia(query).matches : false,
-  );
-  useEffect(() => {
-    const media = window.matchMedia(query);
-    const onChange = () => setNarrow(media.matches);
-    onChange();
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
-  }, []);
+  const [narrow, setNarrow] = useState(() => mediaMatches(query));
+  useEffect(() => watchMedia(query, setNarrow), []);
   return narrow;
 }
 
 function snapHeight(snap: SheetSnap): number {
   if (snap === "closed") return 0;
-  if (snap === "peek") return 168;
+  if (snap === "peek") return 190;
   const height = typeof window === "undefined" ? 800 : window.innerHeight;
   if (snap === "half") return height * 0.52;
-  return Math.max(168, height - 48);
+  return Math.max(190, height - 48);
 }
 
 function tabbables(root: HTMLElement): HTMLElement[] {
@@ -105,6 +98,22 @@ export function Sheet({
   }, [setSheetSnap]);
 
   useLayoutEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const apply = () => {
+      const top = Math.floor(el.getBoundingClientRect().top);
+      document.documentElement.style.setProperty("--sheet-top", `${top}px`);
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty("--sheet-top");
+    };
+  }, [snap]);
+
+  useLayoutEffect(() => {
     const foot = document.querySelector(".app-foot");
     const root = rootRef.current;
     if (!foot || !root) return;
@@ -121,6 +130,7 @@ export function Sheet({
     if (!anchor) return;
     if (snap !== "peek" && snap !== "half") return;
     if (plateW <= 0 || plateH <= 0) return;
+    if (framed.current === anchorKey) return;
     const sheetPx = rootRef.current?.getBoundingClientRect().height ?? 0;
     if (sheetPx <= 0) return;
     const zoom = framed.current === anchorKey ? useViewerStore.getState().atlasZoom : zoomHint;

@@ -5,7 +5,8 @@ import { CENTERS, type CenterId } from "@/atlas/centers";
 import { loadAcupoints, loadMeridians } from "@/data";
 import { MESSAGES, t } from "@/i18n";
 import { getMeridianColor } from "@/lib/colors";
-import { listCorpus, searchAll, type SearchCommand, type SearchHit, type SearchKind } from "@/lib/search";
+import { useInertSiblings } from "@/lib/inert";
+import { listCorpus, searchAll, suggestPoints, type SearchCommand, type SearchHit, type SearchKind } from "@/lib/search";
 import { useViewerStore } from "@/state/viewerStore";
 import type { AtlasRegion, AtlasView } from "@/types";
 import { IconClose } from "./icons";
@@ -177,7 +178,9 @@ function PaletteDialog() {
   const setRailOpen = useViewerStore((s) => s.setRailOpen);
   const setPaletteOpen = useViewerStore((s) => s.setPaletteOpen);
   const inputRef = useRef<HTMLInputElement>(null);
+  const layerRef = useRef<HTMLDivElement>(null);
   const seenKey = useRef(-1);
+  useInertSiblings(true, layerRef);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const [recent] = useState(readRecent);
@@ -192,8 +195,12 @@ function PaletteDialog() {
   const recentHits = useMemo(() => resolveRecent(recent, corpus), [recent, corpus]);
   const trimmed = query.trim();
   const results = useMemo(() => (trimmed ? searchAll(query, sources) : []), [query, sources, trimmed]);
+  const suggestions = useMemo(
+    () => (trimmed && results.length === 0 ? suggestPoints(trimmed, points, 3) : []),
+    [trimmed, results.length, points],
+  );
   const showingRecent = trimmed.length === 0;
-  const shown = showingRecent ? recentHits : results;
+  const shown = showingRecent ? recentHits : results.length > 0 ? results : suggestions;
   const safeActive = shown.length === 0 ? -1 : Math.min(active, shown.length - 1);
   const activeId = safeActive >= 0 ? `palette-opt-${safeActive}` : undefined;
   const nameOf = locale === "en" ? "nameEn" : "nameEs";
@@ -297,6 +304,7 @@ function PaletteDialog() {
   return (
     <div
       className="palette-scrim"
+      ref={layerRef}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) setPaletteOpen(false);
       }}
@@ -344,9 +352,14 @@ function PaletteDialog() {
           }}
           onKeyDown={onKeyDown}
         />
+        {trimmed && results.length === 0 ? (
+          <p className="palette-status" role="status">
+            {t(locale, "noMatches")}
+          </p>
+        ) : null}
         {shown.length === 0 ? (
           <p className="palette-status" role="status">
-            {trimmed ? t(locale, "paletteEmpty") : t(locale, "paletteHint")}
+            {t(locale, "paletteHint")}
           </p>
         ) : (
           <div className="palette-list" id="command-palette-list" role="listbox" aria-label={t(locale, "paletteLabel")}>

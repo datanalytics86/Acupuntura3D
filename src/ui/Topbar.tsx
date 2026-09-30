@@ -87,6 +87,7 @@ export function Topbar() {
                   data-testid={`view-${view}`}
                   aria-checked={checked}
                   tabIndex={checked ? 0 : -1}
+                  title={t(locale, view === "anterior" ? "viewAnteriorTip" : "viewPosteriorTip")}
                   onClick={() => {
                     if (!checked) setAtlasView(view);
                   }}
@@ -112,6 +113,10 @@ export function Topbar() {
                   data-testid={`region-${id}`}
                   aria-checked={checked}
                   tabIndex={checked ? 0 : -1}
+                  title={t(
+                    locale,
+                    id === "body" ? "regionBodyTip" : id === "face" ? "regionFaceTip" : id === "hand" ? "regionHandTip" : "regionFootTip",
+                  )}
                   onClick={() => {
                     if (!checked) setAtlasRegion(id);
                   }}

@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useMuteCovered } from "@/atlas/censusHit";
+import { useCoarsePointer } from "@/atlas/PointTooltip";
 import {
   CENTERS,
   dantianProbeRadiusPx,
@@ -62,7 +64,9 @@ function Seal({
   spots,
   k,
   zoom,
+  coarse,
   name,
+  quiet,
   onSelect,
 }: {
   center: EnergyCenter;
@@ -71,7 +75,9 @@ function Seal({
   spots: Point2D[];
   k: number;
   zoom: number;
+  coarse: boolean;
   name: string;
+  quiet: boolean;
   onSelect: (id: EnergyCenter["id"]) => void;
 }) {
   const [focused, setFocused] = useState(false);
@@ -86,15 +92,17 @@ function Seal({
   const showLabel = zoom > 1.6 || hot || focused || selected;
   const activate = () => onSelect(center.id);
   return (
+    <>
     <g
       data-atlas-hit=""
       data-testid={`dantian-${center.id}`}
+      data-hit-key={center.id}
       transform={`translate(${draw.x} ${draw.y})`}
       className={selected ? "center-live" : undefined}
-      role="button"
-      tabIndex={0}
-      aria-label={`${center.zh} ${center.pinyin}, ${name}`}
-      aria-pressed={selected}
+      role={quiet ? undefined : "button"}
+      tabIndex={quiet ? undefined : 0}
+      aria-label={quiet ? undefined : `${center.zh} ${center.pinyin}, ${name}`}
+      aria-pressed={quiet ? undefined : selected}
       style={{ cursor: "pointer", outline: "none" }}
       onPointerDown={(e) => e.stopPropagation()}
       onPointerEnter={() => setHot(true)}
@@ -132,10 +140,17 @@ function Seal({
         stroke="var(--color-ink-2)"
         strokeWidth={k}
       />
+      <circle r={Math.max(r, (coarse ? 22 : 12) * k)} fill="transparent" pointerEvents="none" />
+      <text aria-hidden="true" fontSize={0} fill="transparent">
+        {center.zh}
+      </text>
       <circle r={1.5 * k} fill="var(--color-ink-2)" pointerEvents="none" />
       {focused ? (
         <circle r={r + 3 * k} fill="none" stroke={CINNABAR} strokeWidth={2 * k} pointerEvents="none" />
       ) : null}
+    </g>
+    {showLabel ? (
+      <g transform={`translate(${draw.x} ${draw.y})`} pointerEvents="none" aria-hidden="true">
       <text
         className="hanzi"
         x={label.x}
@@ -168,7 +183,9 @@ function Seal({
       >
         {center.pinyin}
       </text>
-    </g>
+      </g>
+      ) : null}
+    </>
   );
 }
 
@@ -181,6 +198,9 @@ export function DantianMarks() {
   const focus = useViewerStore((s) => s.focusCenter);
   const zoom = useViewerStore((s) => s.atlasZoom);
   const k = useUnitsPerPx();
+  const coarse = useCoarsePointer();
+  const rootRef = useRef<SVGGElement>(null);
+  const muted = useMuteCovered(rootRef);
   const points = useMemo(() => loadAcupoints(), []);
   const spots = useMemo(() => {
     const out: Point2D[] = [];
@@ -204,7 +224,7 @@ export function DantianMarks() {
       : [];
 
   return (
-    <g aria-label="Dantian">
+    <g ref={rootRef} role="group" aria-label="Dantian">
       {axis.length >= 2 ? (
         <line
           x1={400}
@@ -215,6 +235,7 @@ export function DantianMarks() {
           strokeWidth={k}
           strokeDasharray={`${2 * k} ${6 * k}`}
           opacity={0.4}
+          pointerEvents="none"
         />
       ) : null}
       {placed.map(({ center, pos }) => (
@@ -226,7 +247,9 @@ export function DantianMarks() {
           spots={spots}
           k={k}
           zoom={zoom}
+          coarse={coarse}
           name={locale === "en" ? center.en : center.es}
+          quiet={muted.has(center.id)}
           onSelect={focus}
         />
       ))}

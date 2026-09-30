@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { t } from "@/i18n";
+import { useInertSiblings } from "@/lib/inert";
 import { useViewerStore } from "@/state/viewerStore";
 
 const FLAG = "acu3d.disclaimer.v1";
@@ -23,6 +24,8 @@ export function LegalModal() {
   const locale = useViewerStore((s) => s.locale);
   const [open, setOpen] = useState(() => !disclaimerAccepted());
   const acceptRef = useRef<HTMLButtonElement>(null);
+  const gateRef = useRef<HTMLDivElement>(null);
+  useInertSiblings(open, gateRef);
 
   function accept() {
     try {
@@ -37,6 +40,11 @@ export function LegalModal() {
     if (!open) return;
     acceptRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        acceptRef.current?.focus();
+        return;
+      }
       if (e.key === "Escape" || e.key === "Enter") {
         e.preventDefault();
         e.stopPropagation();
@@ -53,6 +61,7 @@ export function LegalModal() {
     <div
       className="legal-gate"
       id="legal-gate"
+      ref={gateRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="legal-title"
