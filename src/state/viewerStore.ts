@@ -3,7 +3,8 @@ import type { AtlasRegion, AtlasView, Elemento, Locale, Point2D, ViewerState } f
 import { loadAcupoints } from "@/data";
 import { pointOnView } from "@/atlas/mapCoords";
 import { CENTERS, positionOnView, type CenterId } from "@/atlas/centers";
-import { regionFrame } from "@/atlas/regionFrames";
+import { fitRegion } from "@/atlas/regionAnatomy";
+import { inRegionFrame, noteRegionPlate, regionFrame } from "@/atlas/regionFrames";
 import { prefersReducedMotion } from "@/lib/quality";
 import { withPaperTransition } from "@/lib/paperTransition";
 import { clampZoom, lerpCamera, zoomAbout, type Camera } from "@/atlas/camera";
@@ -27,6 +28,8 @@ interface ViewerActions {
   setSelected: (id: string | null) => void;
   showPoint: (id: string) => void;
   setHovered: (id: string | null) => void;
+  hoveredMeridianId: string | null;
+  setHoveredMeridian: (id: string | null) => void;
   setActiveMeridian: (id: string | null) => void;
   toggleLayer: (key: keyof ViewerState["visibleLayers"]) => void;
   setQiPlaying: (v: boolean) => void;
@@ -69,6 +72,12 @@ function clampPan(pan: Point2D, zoom: number, box: PlateBox): Point2D {
     x: Math.min(VIEW_W + visW / 2, Math.max(-visW / 2, pan.x)),
     y: Math.min(VIEW_H + visH / 2, Math.max(-visH / 2, pan.y)),
   };
+}
+
+/** fitRegion once the plate is measured; the old locked frame in node tests (box 0). */
+function detailCamera(region: AtlasRegion, view: AtlasView, box: PlateBox): { pan: Point2D; zoom: number } {
+  if (box.w <= 0 || box.h <= 0) return regionFrame(region, view);
+  return fitRegion(region, view, box);
 }
 
 function insideFrame(pos: Point2D, frame: { pan: Point2D; zoom: number }): boolean {
@@ -123,8 +132,11 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     const other = s.atlasView === "anterior" ? "posterior" : "anterior";
     const pos = here ?? pointOnView(pt, other);
     const view = here ? s.atlasView : other;
-    const frame = s.atlasRegion === "body" ? null : regionFrame(s.atlasRegion, view);
-    const inDetail = Boolean(pos && frame && insideFrame(pos, frame));
+    const frame = s.atlasRegion === "body" ? null : detailCamera(s.atlasRegion, view, s.plateBox);
+    const measured = s.plateBox.w > 0 && s.plateBox.h > 0;
+    const inDetail = Boolean(
+      pos && frame && (measured ? inRegionFrame(s.atlasRegion, view, pos) : insideFrame(pos, frame)),
+    );
     const apply = () => {
       set({
         selectedPointId: id,
@@ -143,6 +155,8 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     else apply();
   },
   setHovered: (id) => set({ hoveredPointId: id }),
+  hoveredMeridianId: null,
+  setHoveredMeridian: (id) => set({ hoveredMeridianId: id }),
   setActiveMeridian: (id) => set({ activeMeridianId: id }),
   toggleLayer: (key) =>
     set((s) => ({
@@ -174,17 +188,17 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     }),
   setAtlasView: (v) =>
     withPaperTransition(() => {
-      const region = get().atlasRegion;
+      const s = get();
+      const region = s.atlasRegion;
       set({ atlasView: v });
       if (region === "body") return;
-      const frame = regionFrame(region, v);
-      get().flyTo(frame);
+      get().flyTo(detailCamera(region, v, s.plateBox));
     }),
   setAtlasRegion: (r) =>
     withPaperTransition(() => {
-      const frame = regionFrame(r, get().atlasView);
+      const s = get();
       set({ atlasRegion: r });
-      get().flyTo(frame);
+      get().flyTo(detailCamera(r, s.atlasView, s.plateBox));
     }),
   focusCenter: (id) => {
     if (!id) {
@@ -197,7 +211,7 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     const onFace = s.atlasRegion === "face" && center.id === "upper";
     const here = positionOnView(center, s.atlasView);
     const view = onFace ? s.atlasView : here ? s.atlasView : "anterior";
-    const framed = onFace ? regionFrame("face", view) : null;
+    const framed = onFace ? detailCamera("face", view, s.plateBox) : null;
     const pos = framed ? framed.pan : (positionOnView(center, view) ?? center.anterior);
     const apply = () => {
       set({
@@ -224,7 +238,10 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     const s = get();
     set({ atlasPan: clampPan(p, s.atlasZoom, s.plateBox) });
   },
-  setPlateBox: (b) => set({ plateBox: b }),
+  setPlateBox: (b) => {
+    noteRegionPlate(b);
+    set({ plateBox: b });
+  },
   setPaletteOpen: (v) => set({ paletteOpen: v }),
   setHelpOpen: (v) => set({ helpOpen: v }),
   setSheetSnap: (s) => set({ sheetSnap: s }),
