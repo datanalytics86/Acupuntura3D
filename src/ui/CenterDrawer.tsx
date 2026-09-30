@@ -5,7 +5,6 @@ import { loadAcupoints } from "@/data";
 import { t } from "@/i18n";
 import { CINNABAR } from "@/lib/tokens";
 import { useViewerStore } from "@/state/viewerStore";
-import { IconClose } from "@/ui/icons";
 import { Sheet, useNarrowSheet } from "@/ui/Sheet";
 import "./folio.css";
 
@@ -47,18 +46,21 @@ export function CenterDrawer() {
 
   const ficha = (
     <>
+      <button type="button" className="folio-close" onClick={close} aria-label={t(locale, "close")}>
+        ×
+      </button>
+      <header className="folio-head">
+        <div className="folio-kicker">
+          <span className="t-meta">{t(locale, "centers")}</span>
+          <span className="chip-square" style={{ background: CINNABAR }} />
+        </div>
+        <h2 id={headingId} ref={titleRef} tabIndex={-1} className="hanzi folio-hanzi">
+          {center.zh}
+        </h2>
+        <p className="pinyin folio-pinyin">{center.pinyin}</p>
+        <p className="t-body folio-name">{en ? center.en : center.es}</p>
+      </header>
       <div className="folio-body" tabIndex={0}>
-        <header>
-          <div className="folio-kicker">
-            <span className="t-meta">{t(locale, "centers")}</span>
-            <span className="chip-square" style={{ background: CINNABAR }} />
-          </div>
-          <h2 id={headingId} ref={titleRef} tabIndex={-1} className="hanzi folio-hanzi">
-            {center.zh}
-          </h2>
-          <p className="pinyin folio-pinyin">{center.pinyin}</p>
-          <p className="t-body folio-name">{en ? center.en : center.es}</p>
-        </header>
         <p className="t-body">{en ? center.noteEn : center.noteEs}</p>
         <section>
           <h3 className="t-meta">{t(locale, "location")}</h3>
@@ -88,9 +90,6 @@ export function CenterDrawer() {
             {t(locale, "openPoint")} {related.code} <span className="hanzi">{related.names.zh}</span>
           </button>
         ) : null}
-        <button type="button" className="btn btn-ghost" onClick={close} aria-label={t(locale, "close")}>
-          <IconClose />
-        </button>
       </footer>
     </>
   );
