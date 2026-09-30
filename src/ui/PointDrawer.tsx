@@ -9,7 +9,7 @@ import { stripTraditionalPrefix } from "@/lib/text";
 import { ELEMENT_HANZI, meridianPigment } from "@/lib/tokens";
 import { useViewerStore } from "@/state/viewerStore";
 import type { Acupoint, AtlasRegion, AtlasView, Confidence, Elemento, Point2D } from "@/types";
-import { IconArrowLeft, IconArrowRight, IconClose } from "@/ui/icons";
+import { IconArrowLeft, IconArrowRight } from "@/ui/icons";
 import { Sheet, useNarrowSheet } from "@/ui/Sheet";
 import "./folio.css";
 
@@ -117,18 +117,21 @@ export function PointDrawer() {
 
   const ficha = (
     <>
+      <button type="button" className="folio-close" onClick={close} aria-label={t(locale, "close")}>
+        ×
+      </button>
+      <header className="folio-head">
+        <div className="folio-kicker">
+          <span className="code">{point.code}</span>
+          <span className="chip-square" style={{ background: meridianPigment(mer ?? { id: point.meridianId, element }) }} />
+        </div>
+        <h2 id={headingId} ref={titleRef} tabIndex={-1} className="hanzi folio-hanzi">
+          {point.names.zh}
+        </h2>
+        <p className="pinyin folio-pinyin">{point.names.pinyin}</p>
+        <p className="t-body folio-name">{name}</p>
+      </header>
       <div className="folio-body" tabIndex={0}>
-        <header>
-          <div className="folio-kicker">
-            <span className="code">{point.code}</span>
-            <span className="chip-square" style={{ background: meridianPigment(mer ?? { id: point.meridianId, element }) }} />
-          </div>
-          <h2 id={headingId} ref={titleRef} tabIndex={-1} className="hanzi folio-hanzi">
-            {point.names.zh}
-          </h2>
-          <p className="pinyin folio-pinyin">{point.names.pinyin}</p>
-          <p className="t-body folio-name">{name}</p>
-        </header>
         <dl className="folio-meta">
           {mer ? (
             <>
@@ -269,9 +272,6 @@ export function PointDrawer() {
             {t(locale, "followQiBtn")}
           </button>
         ) : null}
-        <button type="button" className="btn btn-ghost" onClick={close} aria-label={t(locale, "close")}>
-          <IconClose />
-        </button>
       </footer>
     </>
   );
