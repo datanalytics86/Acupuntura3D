@@ -1,27 +1,25 @@
-/** Plate ink. Cinnabar is the only accent, for the active meridian and the active or hovered point. */
-export const INK = "#1C1915";
-export const CINNABAR = "#8B1E1E";
+import type { Elemento } from "@/types";
+import { INK, meridianPigment } from "./tokens";
 
-/** Idle color of every channel, including GV. Active paint is CINNABAR, not a second hue. */
-export const MERIDIAN_COLORS: Record<string, string> = {
-  LU: INK,
-  LI: INK,
-  ST: INK,
-  SP: INK,
-  HT: INK,
-  SI: INK,
-  BL: INK,
-  KI: INK,
-  PC: INK,
-  TE: INK,
-  GB: INK,
-  LR: INK,
-  GV: INK,
-  CV: INK,
-  EX: INK,
+export { CINNABAR, INK } from "./tokens";
+
+const ELEMENT_OF: Record<string, Elemento> = {
+  LU: "metal",
+  LI: "metal",
+  ST: "earth",
+  SP: "earth",
+  HT: "fire",
+  SI: "fire",
+  BL: "water",
+  KI: "water",
+  PC: "fire",
+  TE: "fire",
+  GB: "wood",
+  LR: "wood",
 };
 
+/** Channel pigment. Extra points stay ink; GV and CV resolve to vessel. */
 export function getMeridianColor(id: string): string {
-  if (id.startsWith("EX")) return MERIDIAN_COLORS.EX ?? INK;
-  return MERIDIAN_COLORS[id] ?? INK;
+  if (id.startsWith("EX")) return INK;
+  return meridianPigment({ id, element: ELEMENT_OF[id] });
 }

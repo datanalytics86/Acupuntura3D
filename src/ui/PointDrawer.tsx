@@ -1,13 +1,60 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useId, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { PlateThumb } from "@/atlas/figure/PlateThumb";
+import { VIEW_H, VIEW_W } from "@/atlas/figure/landmarks";
+import { pointOnView } from "@/atlas/mapCoords";
+import { regionFrame } from "@/atlas/regionFrames";
 import { loadAcupoints, loadMeridians } from "@/data";
 import { t } from "@/i18n";
+import { stripTraditionalPrefix } from "@/lib/text";
+import { ELEMENT_HANZI, meridianPigment } from "@/lib/tokens";
 import { useViewerStore } from "@/state/viewerStore";
+import type { Acupoint, AtlasRegion, AtlasView, Confidence, Elemento, Point2D } from "@/types";
+import { IconArrowLeft, IconArrowRight, IconClose } from "@/ui/icons";
+import { Sheet, useNarrowSheet } from "@/ui/Sheet";
+import "./folio.css";
 
-function EsBadge({ show }: { show: boolean }) {
+const CONFIDENCE_KEY = {
+  high: "confidenceHigh",
+  medium: "confidenceMedium",
+  low: "confidenceLow",
+} as const;
+
+function confidenceSteps(level: Confidence): number {
+  if (level === "high") return 3;
+  if (level === "medium") return 2;
+  return 1;
+}
+
+function clockLabel(hour: number): string {
+  const start = ((hour % 24) + 24) % 24;
+  const end = (start + 2) % 24;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(start)}–${pad(end)}`;
+}
+
+function framedPoint(
+  point: Acupoint,
+  view: AtlasView,
+  region: AtlasRegion,
+): { pos: Point2D; zoom: number } | null {
+  const here = pointOnView(point, view);
+  const other: AtlasView = view === "anterior" ? "posterior" : "anterior";
+  const pos = here ?? pointOnView(point, other);
+  if (!pos) return null;
+  const face = here ? view : other;
+  if (region !== "body") {
+    const frame = regionFrame(region, face);
+    const hw = VIEW_W / frame.zoom / 2;
+    const hh = VIEW_H / frame.zoom / 2;
+    const inside = Math.abs(pos.x - frame.pan.x) <= hw && Math.abs(pos.y - frame.pan.y) <= hh;
+    if (inside) return { pos, zoom: frame.zoom };
+  }
+  return { pos, zoom: 2.4 };
+}
+
+function EsMark({ show }: { show: boolean }) {
   if (!show) return null;
-  return (
-    <span className="ml-1 px-1 py-px text-[9px] tracking-[0.16em] text-brass uppercase">ES</span>
-  );
+  return <span className="t-meta"> ES</span>;
 }
 
 export function PointDrawer() {
@@ -15,151 +62,237 @@ export function PointDrawer() {
   const meridians = useMemo(() => loadMeridians(), []);
   const selectedId = useViewerStore((s) => s.selectedPointId);
   const setSelected = useViewerStore((s) => s.setSelected);
+  const showPoint = useViewerStore((s) => s.showPoint);
   const followQi = useViewerStore((s) => s.followQi);
+  const setSheetSnap = useViewerStore((s) => s.setSheetSnap);
   const locale = useViewerStore((s) => s.locale);
-  const panelRef = useRef<HTMLElement>(null);
-  const point = points.find((p) => p.id === selectedId);
+  const atlasView = useViewerStore((s) => s.atlasView);
+  const atlasRegion = useViewerStore((s) => s.atlasRegion);
+  const narrow = useNarrowSheet();
+  const headingId = useId();
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const point = points.find((p) => p.id === selectedId) ?? null;
 
   useEffect(() => {
-    if (point) panelRef.current?.focus();
-  }, [point]);
+    if (!selectedId) return;
+    const active = document.activeElement;
+    const back = active instanceof HTMLElement || active instanceof SVGElement ? active : null;
+    titleRef.current?.focus({ preventScroll: true });
+    return () => {
+      if (back?.isConnected) back.focus({ preventScroll: true });
+    };
+  }, [selectedId, narrow]);
 
   if (!point) return null;
+
   const mer = meridians.find((m) => m.id === point.meridianId);
   const name = locale === "en" ? point.names.en : point.names.es;
   const esOnly = locale === "en";
+  const element: Elemento | undefined = point.element ?? mer?.element;
+  const polarity = point.polaridad ?? mer?.polaridad;
+  const group = points.filter((pt) => pt.meridianId === point.meridianId);
+  const idx = group.findIndex((pt) => pt.id === point.id);
+  const prev = idx >= 0 ? group[(idx - 1 + group.length) % group.length] : undefined;
+  const next = idx >= 0 ? group[(idx + 1) % group.length] : undefined;
+  const framed = framedPoint(point, atlasView, atlasRegion);
+  const thumbView: AtlasView =
+    pointOnView(point, atlasView) != null
+      ? atlasView
+      : pointOnView(point, "anterior")
+        ? "anterior"
+        : "posterior";
+  const mark = pointOnView(point, thumbView);
+  const traditional = point.indications.map((line) => stripTraditionalPrefix(line)).filter((line) => line.length > 0);
+  const steps = confidenceSteps(point.confidence);
 
-  return (
-    <aside
-      ref={panelRef}
-      tabIndex={-1}
-      role="dialog"
-      aria-modal="true"
-      aria-label={`${point.code} ${point.names.pinyin}`}
-      className="marginalia drawer-in scroll-thin absolute top-28 right-3 bottom-[5.5rem] z-20 flex w-full max-w-md flex-col overflow-y-auto outline-none md:top-[4.25rem]"
-      onKeyDown={(e) => {
-        if (e.key !== "Escape") return;
-        setSelected(null);
-      }}
-    >
-      <div className="h-px w-full" style={{ background: mer?.color ?? "var(--color-brass)" }} />
-      <div className="flex flex-1 flex-col p-4">
-        <div className="mb-3 flex items-start justify-between gap-2">
-          <div>
-            <div className="text-[11px] tracking-[0.22em] text-brass uppercase">{point.code}</div>
-            <h2 className="hanzi display mt-1 text-6xl leading-none font-medium text-ink">{point.names.zh}</h2>
-            <div className="mt-2 text-sm text-ink">
-              {point.names.pinyin}
-              <span className="mx-1.5 text-brass">·</span>
-              {name}
+  function close() {
+    setSheetSnap("closed");
+    setSelected(null);
+  }
+
+  function onEsc(e: ReactKeyboardEvent) {
+    if (e.key !== "Escape") return;
+    close();
+  }
+
+  const ficha = (
+    <>
+      <div className="folio-body" tabIndex={0}>
+        <header>
+          <div className="folio-kicker">
+            <span className="code">{point.code}</span>
+            <span className="chip-square" style={{ background: meridianPigment(mer ?? { id: point.meridianId, element }) }} />
+          </div>
+          <h2 id={headingId} ref={titleRef} tabIndex={-1} className="hanzi folio-hanzi">
+            {point.names.zh}
+          </h2>
+          <p className="pinyin folio-pinyin">{point.names.pinyin}</p>
+          <p className="t-body folio-name">{name}</p>
+        </header>
+        <dl className="folio-meta">
+          {mer ? (
+            <>
+              <dt className="t-meta">{t(locale, "meridian")}</dt>
+              <dd className="t-body">
+                {mer.code} {locale === "en" ? mer.names.en : mer.names.es}
+              </dd>
+            </>
+          ) : null}
+          {element ? (
+            <>
+              <dt className="t-meta">{t(locale, "element")}</dt>
+              <dd className="t-body">
+                <span className="hanzi">{ELEMENT_HANZI[element]}</span> {t(locale, element)}
+              </dd>
+            </>
+          ) : null}
+          {polarity ? (
+            <>
+              <dt className="t-meta">{t(locale, "polarity")}</dt>
+              <dd className="t-body">{t(locale, polarity)}</dd>
+            </>
+          ) : null}
+          {mer ? (
+            <>
+              <dt className="t-meta">{t(locale, "laterality")}</dt>
+              <dd className="t-body">{mer.laterality === "midline" ? t(locale, "midline") : t(locale, "bilateral")}</dd>
+            </>
+          ) : null}
+          {mer?.clockHour !== undefined ? (
+            <>
+              <dt className="t-meta">{t(locale, "clockHour")}</dt>
+              <dd className="t-body code">{clockLabel(mer.clockHour)}</dd>
+            </>
+          ) : null}
+        </dl>
+        <section>
+          <h3 className="t-meta">
+            {t(locale, "location")}
+            <EsMark show={esOnly} />
+          </h3>
+          <div className="folio-loc">
+            <PlateThumb view={thumbView} x={mark?.x} y={mark?.y} />
+            <div>
+              <p className="t-body">{point.location.anatomicEs}</p>
+              {point.location.cunNote ? <p className="t-label folio-note">{point.location.cunNote}</p> : null}
             </div>
           </div>
-          <button
-            type="button"
-            className="file-link"
-            style={{ minWidth: 44, minHeight: 44 }}
-            onClick={() => setSelected(null)}
-            aria-label={t(locale, "close")}
-          >
-            Esc
-          </button>
-        </div>
-        <div className="mb-4 flex flex-wrap gap-x-3 gap-y-1 text-[11px] tracking-[0.14em] text-ink uppercase">
-          {mer ? <span>{mer.id} {locale === "en" ? mer.names.en : mer.names.es}</span> : null}
-          {point.element ? <span>{t(locale, point.element)}</span> : null}
-          {point.polaridad ? <span>{t(locale, point.polaridad)}</span> : null}
-          <span>
-            {point.laterality}
-            {mer?.laterality === "bilateral" ? " · L/R" : ""}
-          </span>
-        </div>
-        <section className="mb-4">
-          <h3 className="mb-1 text-[10px] tracking-[0.18em] text-brass uppercase">
-            {t(locale, "location")}
-            <EsBadge show={esOnly} />
-          </h3>
-          <p className="text-sm leading-relaxed text-ink">{point.location.anatomicEs}</p>
-          {point.location.cunNote ? <p className="mt-1 text-xs text-brass">{point.location.cunNote}</p> : null}
         </section>
         {point.functions.length > 0 ? (
-          <section className="mb-4">
-            <h3 className="mb-1 text-[10px] tracking-[0.18em] text-brass uppercase">
+          <section>
+            <h3 className="t-meta">
               {t(locale, "functions")}
-              <EsBadge show={esOnly} />
+              <EsMark show={esOnly} />
             </h3>
-            <ul className="space-y-1 text-sm leading-relaxed text-ink">
-              {point.functions.map((f) => (
-                <li key={f} className="border-l border-brass-line pl-2">
-                  {f}
-                </li>
+            <ul className="folio-list t-body">
+              {point.functions.map((line) => (
+                <li key={line}>{line}</li>
               ))}
             </ul>
           </section>
         ) : null}
-        {point.indications.length > 0 ? (
-          <section className="mb-4">
-            <h3 className="mb-1 text-[10px] tracking-[0.18em] text-brass uppercase">
-              {t(locale, "indications")}
-              <EsBadge show={esOnly} />
+        {traditional.length > 0 ? (
+          <section>
+            <h3 className="t-meta">
+              {t(locale, "traditionalUse")}
+              <EsMark show={esOnly} />
             </h3>
-            <ul className="space-y-2 text-sm leading-relaxed text-ink">
-              {point.indications.map((f) => (
-                <li key={f}>
-                  <span className="mr-1.5 text-[9px] tracking-[0.16em] text-brass uppercase">{t(locale, "traditional")}</span>
-                  {f}
-                </li>
+            <ul className="folio-list t-body">
+              {traditional.map((line) => (
+                <li key={line}>{line}</li>
               ))}
             </ul>
           </section>
         ) : null}
         {point.precautions.length > 0 ? (
-          <section className="caution mb-4">
-            <h3 className="mb-1 text-[10px] tracking-[0.18em] uppercase">
+          <section className="caution">
+            <h3 className="t-meta">
               {t(locale, "precautions")}
-              <EsBadge show={esOnly} />
+              <EsMark show={esOnly} />
             </h3>
-            <ul className="space-y-1 text-sm">
-              {point.precautions.map((f) => (
-                <li key={f}>{f}</li>
+            <ul className="folio-list t-body">
+              {point.precautions.map((line) => (
+                <li key={line}>{line}</li>
               ))}
             </ul>
           </section>
         ) : null}
         {point.combinations && point.combinations.length > 0 ? (
-          <section className="mb-4">
-            <h3 className="mb-1 text-[10px] tracking-[0.18em] text-brass uppercase">
+          <section>
+            <h3 className="t-meta">
               {t(locale, "combinations")}
-              <EsBadge show={esOnly} />
+              <EsMark show={esOnly} />
             </h3>
-            <ul className="space-y-1 text-sm text-ink">
-              {point.combinations.map((f) => (
-                <li key={f}>{f}</li>
+            <ul className="folio-list t-body">
+              {point.combinations.map((line) => (
+                <li key={line}>{line}</li>
               ))}
             </ul>
           </section>
         ) : null}
-        <section className="mb-4 text-[11px] leading-relaxed text-brass">
-          <div>
-            {t(locale, "confidence")}:{" "}
-            {t(
-              locale,
-              point.confidence === "high"
-                ? "confidenceHigh"
-                : point.confidence === "medium"
-                  ? "confidenceMedium"
-                  : "confidenceLow",
-            )}
+        <section>
+          <h3 className="t-meta">{t(locale, "confidence")}</h3>
+          <p className="t-body">{t(locale, CONFIDENCE_KEY[point.confidence])}</p>
+          <div className="folio-meter" aria-hidden="true">
+            {[0, 1, 2].map((step) => (
+              <span key={step} className={step < steps ? "is-on" : undefined} />
+            ))}
           </div>
-          <div>
-            {t(locale, "sources")}: {point.sources.join(" · ")}
-          </div>
+          <p className="t-label folio-note">{t(locale, "confidenceDidactic")}</p>
         </section>
-        {mer ? (
-          <button type="button" onClick={() => followQi(mer.id)} className="stamp-btn mt-auto">
-            {t(locale, "followQi")}
-          </button>
+        {point.sources.length > 0 ? (
+          <section>
+            <h3 className="t-meta">{t(locale, "sources")}</h3>
+            <ol className="folio-notes t-body">
+              {point.sources.map((src) => (
+                <li key={src}>{src}</li>
+              ))}
+            </ol>
+          </section>
         ) : null}
       </div>
+      <footer className="folio-foot">
+        {prev ? (
+          <button type="button" className="btn btn-ghost" onClick={() => showPoint(prev.id)} aria-label={t(locale, "pointPrev")}>
+            <IconArrowLeft />
+            <span>{t(locale, "pointPrev")}</span>
+          </button>
+        ) : null}
+        {next ? (
+          <button type="button" className="btn btn-ghost" onClick={() => showPoint(next.id)} aria-label={t(locale, "pointNext")}>
+            <span>{t(locale, "pointNext")}</span>
+            <IconArrowRight />
+          </button>
+        ) : null}
+        {mer ? (
+          <button type="button" className="btn" onClick={() => followQi(mer.id)}>
+            {t(locale, "followQiBtn")}
+          </button>
+        ) : null}
+        <button type="button" className="btn btn-ghost" onClick={close} aria-label={t(locale, "close")}>
+          <IconClose />
+        </button>
+      </footer>
+    </>
+  );
+
+  if (narrow) {
+    return (
+      <Sheet
+        onClose={close}
+        labelledBy={headingId}
+        anchor={framed?.pos ?? null}
+        anchorKey={point.id}
+        zoomHint={framed?.zoom ?? 2.4}
+      >
+        <div className="folio">{ficha}</div>
+      </Sheet>
+    );
+  }
+
+  return (
+    <aside className="folio" role="dialog" aria-modal="false" aria-labelledby={headingId} onKeyDown={onEsc}>
+      {ficha}
     </aside>
   );
 }

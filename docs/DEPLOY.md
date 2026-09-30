@@ -18,8 +18,17 @@ npm ci
 npm run typecheck
 npm test
 npm run build
+npm run budget
 npm run preview
+npm run e2e
 ```
+
+## CI
+
+`.github/workflows/ci.yml` corre en cada push a `main` y en cada pull request.
+
+1. Job `build`: `npm ci`, typecheck, test, build y `npm run budget` (dist < 8 MB, JS gzip ≤ 130 KB, CSS gzip ≤ 14 KB).
+2. Job `e2e`: depende de `build`. Instala Chromium y corre `npm run e2e` (proyecto chromium y proyecto `reduced` con `prefers-reduced-motion`).
 
 ## Vercel
 

@@ -69,6 +69,24 @@ describe("viewer store", () => {
     expect(() => useViewerStore.getState().setLocale("es")).not.toThrow();
     expect(useViewerStore.getState().locale).toBe("es");
   });
+
+  it("flyTo applies at once without rAF (node) and clamps", () => {
+    useViewerStore.getState().flyTo({ pan: { x: 338, y: 1185 }, zoom: 9 });
+    expect(useViewerStore.getState().atlasZoom).toBe(6);
+    expect(useViewerStore.getState().atlasPan).toEqual({ x: 338, y: 1185 });
+    useViewerStore.getState().resetAtlasCamera();
+    expect(useViewerStore.getState().atlasZoom).toBe(1);
+    useViewerStore.getState().zoomBy(2, { x: 400, y: 400 });
+    expect(useViewerStore.getState().atlasZoom).toBe(2);
+    expect(useViewerStore.getState().atlasPan.y).toBe(600);
+  });
+
+  it("showPoint(\"ST36\") deja selectedPointId síncrono", () => {
+    useViewerStore.getState().showPoint("ST36");
+    expect(useViewerStore.getState().selectedPointId).toBe("ST36");
+    expect(useViewerStore.getState().atlasZoom).toBe(2.4);
+    expect(useViewerStore.getState().atlasPan).toEqual({ x: 338, y: 1185 });
+  });
 });
 
 describe("search", () => {

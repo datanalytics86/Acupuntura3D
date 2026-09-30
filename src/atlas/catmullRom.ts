@@ -42,3 +42,61 @@ export function catmullRomPath(pts: Point2D[], closed = false): string {
 export function anchorsToPath(pts: Point2D[]): string {
   return catmullRomPath(pts, false);
 }
+
+export interface PathSample {
+  x: number;
+  y: number;
+  /** Tangent angle in degrees, 0 = +x, clockwise on screen. */
+  angle: number;
+  /** Arc length from the first anchor, viewBox units. */
+  s: number;
+}
+
+/**
+ * Samples the same curve catmullRomPath draws, analytically (no DOM).
+ * Used for flow chevrons, route labels, Qi timing and the skin test.
+ */
+export function samplePath(pts: Point2D[], step: number): PathSample[] {
+  const d = catmullRomPath(pts, false);
+  const nums = d.replace(/[MC,]/g, " ").trim().split(/\s+/).map(Number);
+  if (nums.length < 8) return [];
+  const fine: PathSample[] = [];
+  let x0 = nums[0]!;
+  let y0 = nums[1]!;
+  let s = 0;
+  let px = x0;
+  let py = y0;
+  for (let i = 2; i + 5 < nums.length; i += 6) {
+    const [c1x, c1y, c2x, c2y, x3, y3] = nums.slice(i, i + 6) as [number, number, number, number, number, number];
+    for (let j = i === 2 ? 0 : 1; j <= 32; j += 1) {
+      const t = j / 32;
+      const u = 1 - t;
+      const x = u * u * u * x0 + 3 * u * u * t * c1x + 3 * u * t * t * c2x + t * t * t * x3;
+      const y = u * u * u * y0 + 3 * u * u * t * c1y + 3 * u * t * t * c2y + t * t * t * y3;
+      const dx = 3 * u * u * (c1x - x0) + 6 * u * t * (c2x - c1x) + 3 * t * t * (x3 - c2x);
+      const dy = 3 * u * u * (c1y - y0) + 6 * u * t * (c2y - c1y) + 3 * t * t * (y3 - c2y);
+      s += Math.hypot(x - px, y - py);
+      px = x;
+      py = y;
+      fine.push({ x, y, angle: (Math.atan2(dy, dx) * 180) / Math.PI, s });
+    }
+    x0 = x3;
+    y0 = y3;
+  }
+  if (step <= 0) return fine;
+  const out: PathSample[] = [];
+  let next = 0;
+  for (const p of fine) {
+    if (p.s >= next) {
+      out.push(p);
+      next += step;
+    }
+  }
+  return out;
+}
+
+/** Total arc length of the drawn curve, viewBox units. */
+export function pathLength(pts: Point2D[]): number {
+  const all = samplePath(pts, 0);
+  return all.length ? all[all.length - 1]!.s : 0;
+}

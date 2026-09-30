@@ -13,3 +13,6 @@ coverage
 *.local
 .vite
 .env*
+test-results
+playwright-report
+blob-report
