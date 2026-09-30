@@ -28,6 +28,16 @@ function frameHolds(region: AtlasRegion, view: AtlasView, pos: Point2D): boolean
 }
 
 /**
+ * Detail plates are a portrait frame inside a wide stage. A mark belongs on
+ * the plate only when it sits in that frame, so the abdomen does not float
+ * beside the hand.
+ */
+export function inRegionFrame(region: AtlasRegion, view: AtlasView, pos: Point2D): boolean {
+  if (region === "body") return true;
+  return frameHolds(region, view, pos);
+}
+
+/**
  * Ellipse around every star point whose position2d falls inside the region frame
  * on either view. Radii include ≥ 16u so the point sits at least that far from the edge.
  */

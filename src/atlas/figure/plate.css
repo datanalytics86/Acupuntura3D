@@ -9,9 +9,10 @@
   }
 
   @media (max-width: 1023px) {
+    /* Title band above, clock and key below. Height is set: an SVG ignores bottom. */
     .atlas-stage {
       top: 8rem;
-      height: calc(100% - 8rem);
+      height: calc(100% - 14rem);
     }
   }
 
@@ -103,6 +104,16 @@
   @media (prefers-reduced-motion: reduce) {
     .plate-qi-pulse {
       animation: none;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .plate-key {
+      width: min(11.5rem, calc(50vw - 0.75rem));
+    }
+
+    .plate-colophon {
+      max-width: calc(50vw - 1.5rem);
     }
   }
 }
