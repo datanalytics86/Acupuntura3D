@@ -147,6 +147,8 @@ const es = {
   plateSubtitleFace: "{n} puntos del rostro y la cabeza",
   plateSubtitleHand: "{n} puntos de la mano y la muñeca",
   plateSubtitleFoot: "{n} puntos del tobillo y el pie",
+  // --- U1 ---
+  titleShort: "针 Enciclopedia",
 };
 
 const en: typeof es = {
@@ -296,6 +298,8 @@ const en: typeof es = {
   plateSubtitleFace: "{n} points of the face and head",
   plateSubtitleHand: "{n} points of the hand and wrist",
   plateSubtitleFoot: "{n} points of the ankle and foot",
+  // --- U1 ---
+  titleShort: "针 Encyclopedia",
 };
 
 export const MESSAGES: Record<Locale, typeof es> = { es, en };

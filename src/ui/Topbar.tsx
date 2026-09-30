@@ -71,71 +71,36 @@ export function Topbar() {
           针
         </span>
         <h1 className="topbar-title">{t(locale, "title")}</h1>
-      </div>
-      <div className="topbar-tools">
-        <SearchBox />
-        <button
-          type="button"
-          className="topbar-tool topbar-locale"
-          aria-label={`${t(locale, "locale")}: ${locale === "es" ? "ES" : "EN"}`}
-          onClick={() => setLocale(locale === "es" ? "en" : "es")}
-        >
-          <span className={locale === "es" ? "is-on" : "is-off"}>ES</span>
-          <span aria-hidden="true">·</span>
-          <span className={locale === "en" ? "is-on" : "is-off"}>EN</span>
-        </button>
-        <button
-          type="button"
-          className="topbar-tool topbar-help"
-          aria-label={t(locale, "helpOpen")}
-          onClick={() => setHelpOpen(true)}
-        >
-          ?
-        </button>
-        <button
-          type="button"
-          className="topbar-tool"
-          data-testid="index-toggle"
-          aria-pressed={railOpen}
-          aria-label={t(locale, "indexOpen")}
-          onClick={() => setRailOpen(!railOpen)}
-        >
-          <IconIndex />
-        </button>
+        <p className="topbar-short">{t(locale, "titleShort")}</p>
       </div>
       <div className="topbar-plate">
-        <div
-          className="topbar-seg"
-          role="radiogroup"
-          aria-label={t(locale, "viewGroup")}
-          data-view={atlasView}
-        >
-          {VIEWS.map((view) => {
-            const checked = atlasView === view;
-            return (
-              <button
-                key={view}
-                type="button"
-                role="radio"
-                className="topbar-radio"
-                data-testid={`view-${view}`}
-                aria-checked={checked}
-                tabIndex={checked ? 0 : -1}
-                onClick={() => {
-                  if (!checked) setAtlasView(view);
-                }}
-                onKeyDown={(event) =>
-                  onRadioKey(event, VIEWS, atlasView, setAtlasView, (value) => `view-${value}`)
-                }
-              >
-                {t(locale, view)}
-              </button>
-            );
-          })}
-          <span className="topbar-seg-bar" aria-hidden="true" />
-        </div>
-        <div className="topbar-regions">
-          <div className="topbar-regions-scroller" role="radiogroup" aria-label={t(locale, "regionGroup")} tabIndex={0}>
+        <div className="topbar-plate-scroll">
+          <div className="topbar-seg" role="radiogroup" aria-label={t(locale, "viewGroup")}>
+            {VIEWS.map((view) => {
+              const checked = atlasView === view;
+              return (
+                <button
+                  key={view}
+                  type="button"
+                  role="radio"
+                  className="topbar-radio"
+                  data-testid={`view-${view}`}
+                  aria-checked={checked}
+                  tabIndex={checked ? 0 : -1}
+                  onClick={() => {
+                    if (!checked) setAtlasView(view);
+                  }}
+                  onKeyDown={(event) =>
+                    onRadioKey(event, VIEWS, atlasView, setAtlasView, (value) => `view-${value}`)
+                  }
+                >
+                  {t(locale, view)}
+                </button>
+              );
+            })}
+          </div>
+          <span className="topbar-fillet" aria-hidden="true" />
+          <div className="topbar-regions" role="radiogroup" aria-label={t(locale, "regionGroup")} tabIndex={0}>
             {REGIONS.map((id) => {
               const checked = atlasRegion === id;
               return (
@@ -160,6 +125,37 @@ export function Topbar() {
             })}
           </div>
         </div>
+      </div>
+      <div className="topbar-tools">
+        <SearchBox />
+        <button
+          type="button"
+          className="topbar-tool"
+          data-testid="index-toggle"
+          aria-pressed={railOpen}
+          aria-label={t(locale, "indexOpen")}
+          onClick={() => setRailOpen(!railOpen)}
+        >
+          <IconIndex />
+        </button>
+        <button
+          type="button"
+          className="topbar-tool topbar-locale"
+          aria-label={`${t(locale, "locale")}: ${locale === "es" ? "ES" : "EN"}`}
+          onClick={() => setLocale(locale === "es" ? "en" : "es")}
+        >
+          <span className={locale === "es" ? "is-on" : "is-off"}>ES</span>
+          <span aria-hidden="true">·</span>
+          <span className={locale === "en" ? "is-on" : "is-off"}>EN</span>
+        </button>
+        <button
+          type="button"
+          className="topbar-tool topbar-help"
+          aria-label={t(locale, "helpOpen")}
+          onClick={() => setHelpOpen(true)}
+        >
+          ?
+        </button>
       </div>
       <CommandPalette />
     </header>
