@@ -70,3 +70,4 @@ JSON versionado en `data/`. Ver `data/README.md`. Fuentes de nomenclatura: WHO y
 ## Licencia
 
 Código: MIT. Textos educativos originales. Nomenclatura según estándares OMS.
+Noto Serif SC: SIL OFL 1.1. El texto de la licencia está en `src/assets/fonts/OFL.txt`.
