@@ -148,11 +148,10 @@ for (const viewport of VIEWPORTS) {
         await expect(page.locator('[data-testid^="callout-"]')).toHaveCount(15);
         await expectMarkPx(page.getByTestId("point-ST36"));
       }
-      await expect.poll(async () =>
+      await expect.poll(() =>
         page.evaluate(async () => {
-          await document.fonts.load("16px 'Noto Serif SC'", "足三里");
           await document.fonts.ready;
-          return document.fonts.check("16px 'Noto Serif SC'", "足三里");
+          return [...document.fonts].some((f) => f.family.replace(/["']/g, "") === "Noto Serif SC" && f.status === "loaded");
         }),
       ).toBe(true);
 
