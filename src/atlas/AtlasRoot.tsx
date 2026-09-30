@@ -9,6 +9,7 @@ import { PlateFurniture } from "./figure/PlateFurniture";
 import { MeridianPaths } from "./MeridianPaths";
 import { Points2D } from "./Points2D";
 import { QiFlow } from "./QiFlow";
+import "./figure/plate.css";
 
 let sparePlate: HTMLImageElement | null = null;
 let spareSrc = "";
@@ -38,18 +39,19 @@ export function AtlasRoot({ clock }: { clock?: ReactNode }) {
   }, [view]);
 
   return (
-    <main id="plate" data-testid="plate" className="paper-grain relative h-full min-h-0 w-full bg-paper">
-      <Viewport>
-        <PlateDefs />
-        <Figure />
-        <MeridianPaths />
-        <QiFlow />
-        <Points2D />
-        <DantianMarks />
-        <Minimap host={minimapHost} />
-      </Viewport>
-      <div className="paper-grain pointer-events-none absolute inset-0" aria-hidden="true" />
+    <main id="plate" data-testid="plate" className="plate-cell">
       <PlateFurniture clock={clock} onMinimapHost={setMinimapHost} />
+      <div className="plate-window" data-testid="plate-window">
+        <Viewport>
+          <PlateDefs />
+          <Figure />
+          <MeridianPaths />
+          <QiFlow />
+          <Points2D />
+          <DantianMarks />
+          <Minimap host={minimapHost} />
+        </Viewport>
+      </div>
     </main>
   );
 }

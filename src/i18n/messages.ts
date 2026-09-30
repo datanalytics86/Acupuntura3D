@@ -138,6 +138,15 @@ const es = {
   regionHand: "Mano",
   regionFoot: "Pie",
   selected: "seleccionado",
+  // --- F2 ---
+  plateLam: "LÁM.",
+  plateTitleFace: "Rostro y cabeza",
+  plateTitleHand: "Mano y muñeca",
+  plateTitleFoot: "Tobillo y pie",
+  plateSubtitleBody: "{n} puntos estrella en esta lámina · toca uno para abrir su ficha",
+  plateSubtitleFace: "{n} puntos del rostro y la cabeza",
+  plateSubtitleHand: "{n} puntos de la mano y la muñeca",
+  plateSubtitleFoot: "{n} puntos del tobillo y el pie",
 };
 
 const en: typeof es = {
@@ -278,6 +287,15 @@ const en: typeof es = {
   regionHand: "Hand",
   regionFoot: "Foot",
   selected: "selected",
+  // --- F2 ---
+  plateLam: "PL.",
+  plateTitleFace: "Face and head",
+  plateTitleHand: "Hand and wrist",
+  plateTitleFoot: "Ankle and foot",
+  plateSubtitleBody: "{n} star points on this plate · tap one to open its card",
+  plateSubtitleFace: "{n} points of the face and head",
+  plateSubtitleHand: "{n} points of the hand and wrist",
+  plateSubtitleFoot: "{n} points of the ankle and foot",
 };
 
 export const MESSAGES: Record<Locale, typeof es> = { es, en };

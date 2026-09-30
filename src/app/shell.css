@@ -19,6 +19,8 @@
     position: relative;
     z-index: 40;
     min-width: 0;
+    background-color: var(--color-desk);
+    background-image: none;
   }
 
   /* Current Topbar is Tailwind-absolute; pull the root into the head row so it cannot cover the plate. */
@@ -61,6 +63,8 @@
     gap: 0.35rem;
     min-width: 0;
     border-top: 1px solid var(--color-rule);
+    background-color: var(--color-desk);
+    background-image: none;
   }
 
   /* 44px hole so the mobile clock chip (C4) can share this row. */
