@@ -13,9 +13,10 @@ const NARROW = "(max-width: 1023px)";
 const SPEEDS = [0.5, 1, 2, 4] as const;
 const CX = 66;
 const CY = 66;
-const R_OUT = 65;
+const R_RING = 64;
+const R_OUT = 63;
 const R_IN = 24;
-const R_LABEL = 44;
+const R_LABEL = 45;
 
 /** Degrees clockwise from 12 o'clock. One organ-clock hour is 15°. */
 export function sectorAngle(hour: number): number {
@@ -44,6 +45,23 @@ function hasClock(m: Meridian): m is Meridian & { clockHour: number } {
   return m.clockHour !== undefined;
 }
 
+export function sectorPaint(hour: number, meridians: Meridian[]) {
+  const activeId = meridianAtHour(hour, meridians);
+  return meridians
+    .filter(hasClock)
+    .slice()
+    .sort((a, b) => a.clockHour - b.clockHour)
+    .map((meridian) => {
+      const on = meridian.id === activeId;
+      return {
+        meridian,
+        on,
+        fill: on ? meridianPigment(meridian) : "none",
+        fillOpacity: on ? 0.85 : undefined,
+      };
+    });
+}
+
 function polar(radius: number, degrees: number): [number, number] {
   const rad = ((degrees - 90) * Math.PI) / 180;
   return [CX + radius * Math.cos(rad), CY + radius * Math.sin(rad)];
@@ -67,9 +85,36 @@ function rangeLabel(start: number): string {
   return `${pad2(start)}:00\u2013${pad2((start + 2) % 24)}:00`;
 }
 
+function speedMark(value: (typeof SPEEDS)[number]): string {
+  if (value === 0.5) return "\u00bd\u00d7";
+  return `${value}\u00d7`;
+}
+
+const HOUR_TICKS = Array.from({ length: 24 }, (_, hour) => {
+  const long = hour % 3 === 0;
+  const inner = R_RING - (long ? 9 : 4);
+  const [x1, y1] = polar(R_RING, sectorAngle(hour));
+  const [x2, y2] = polar(inner, sectorAngle(hour));
+  return { hour, x1, y1, x2, y2, long };
+});
+
+function DialGlyph({ playing }: { playing: boolean }) {
+  return (
+    <svg viewBox="0 0 20 20" width={16} height={16} aria-hidden="true">
+      {playing ? (
+        <>
+          <rect x="5" y="4" width="3.25" height="12" fill="currentColor" />
+          <rect x="11.75" y="4" width="3.25" height="12" fill="currentColor" />
+        </>
+      ) : (
+        <path d="M7.25 4.25 15 10l-7.75 5.75V4.25Z" fill="currentColor" />
+      )}
+    </svg>
+  );
+}
+
 function OrganDial() {
   const meridians = useMemo(() => loadMeridians(), []);
-  const sectors = useMemo(() => meridians.filter(hasClock).sort((a, b) => a.clockHour - b.clockHour), [meridians]);
   const locale = useViewerStore((s) => s.locale);
   const playing = useViewerStore((s) => s.qiPlaying);
   const setPlaying = useViewerStore((s) => s.setQiPlaying);
@@ -77,6 +122,7 @@ function OrganDial() {
   const setSpeed = useViewerStore((s) => s.setQiSpeed);
   const hour = useViewerStore((s) => s.clockHour);
   const setHour = useViewerStore((s) => s.setClockHour);
+  const sectors = useMemo(() => sectorPaint(hour, meridians), [hour, meridians]);
   const reduced = prefersReducedMotion();
   const activeId = meridianAtHour(hour, meridians);
   const current = meridians.find((m) => m.id === activeId);
@@ -84,7 +130,7 @@ function OrganDial() {
   const name = current ? (locale === "en" ? current.names.en : current.names.es) : "";
   const needle = sectorAngle(hour);
   const [nx1, ny1] = polar(R_IN + 2, needle);
-  const [nx2, ny2] = polar(R_OUT - 3, needle);
+  const [nx2, ny2] = polar(R_OUT - 1.5, needle);
   // QiFlow.useOrganClock advances clockHour while qiPlaying; speed scales that tick.
   const onPlay = () => setPlaying(!playing);
 
@@ -93,11 +139,11 @@ function OrganDial() {
     if (dir === 0 || sectors.length === 0) return;
     e.preventDefault();
     e.stopPropagation();
-    const idx = Math.max(0, sectors.findIndex((m) => m.id === activeId));
+    const idx = Math.max(0, sectors.findIndex((sector) => sector.meridian.id === activeId));
     const next = sectors[(idx + dir + sectors.length) % sectors.length];
     if (!next) return;
-    setHour(next.clockHour);
-    document.getElementById(`clock-sector-${next.id}`)?.focus();
+    setHour(next.meridian.clockHour);
+    document.getElementById(`clock-sector-${next.meridian.id}`)?.focus();
   };
 
   return (
@@ -110,8 +156,8 @@ function OrganDial() {
           aria-label={t(locale, "clock")}
           onKeyDown={onDialKey}
         >
-          {sectors.map((m) => {
-            const on = m.id === activeId;
+          {sectors.map((sector) => {
+            const m = sector.meridian;
             const sectorName = `${m.code} ${pad2(m.clockHour)}\u2013${pad2((m.clockHour + 2) % 24)} ${
               locale === "en" ? m.names.en : m.names.es
             }`;
@@ -121,36 +167,44 @@ function OrganDial() {
                 id={`clock-sector-${m.id}`}
                 className="qi-sector"
                 role="radio"
-                aria-checked={on}
+                aria-checked={sector.on}
                 aria-label={sectorName}
-                tabIndex={on ? 0 : -1}
+                tabIndex={sector.on ? 0 : -1}
+                data-sector={m.id}
+                data-on={sector.on ? "true" : "false"}
                 d={sectorPath(m.clockHour)}
-                fill={meridianPigment(m)}
-                fillOpacity={on ? 1 : 0.18}
-                stroke="var(--color-paper)"
-                strokeWidth={1}
+                fill={sector.fill}
+                fillOpacity={sector.fillOpacity}
+                stroke="none"
+                pointerEvents="visibleFill"
                 onClick={() => setHour(m.clockHour)}
               />
             );
           })}
-          <line
-            x1={nx1}
-            y1={ny1}
-            x2={nx2}
-            y2={ny2}
-            stroke="var(--color-cinnabar)"
-            strokeWidth={2}
-            pointerEvents="none"
-          />
-          {sectors.map((m) => {
+          <circle className="qi-ring" cx={CX} cy={CY} r={R_RING} />
+          {HOUR_TICKS.map((tick) => (
+            <line
+              key={tick.hour}
+              className={tick.long ? "qi-tick qi-tick-long" : "qi-tick"}
+              x1={tick.x1}
+              y1={tick.y1}
+              x2={tick.x2}
+              y2={tick.y2}
+            />
+          ))}
+          <line className="qi-needle" x1={nx1} y1={ny1} x2={nx2} y2={ny2} />
+          {sectors.map((sector) => {
+            const m = sector.meridian;
             const [lx, ly] = polar(R_LABEL, sectorAngle(m.clockHour + 1));
             return (
               <text
                 key={`label-${m.id}`}
-                className={m.id === activeId ? "code is-on" : "code"}
+                className={sector.on ? "code is-on" : "code"}
                 x={lx}
                 y={ly}
+                fontFamily='"Outfit", sans-serif'
                 fontSize={11}
+                fontWeight={600}
                 textAnchor="middle"
                 dominantBaseline="central"
                 pointerEvents="none"
@@ -171,7 +225,7 @@ function OrganDial() {
           disabled={reduced}
           onClick={onPlay}
         >
-          {playing ? <IconPause /> : <IconPlay />}
+          <DialGlyph playing={playing} />
         </button>
       </div>
       <p className="qi-caption">
@@ -181,7 +235,7 @@ function OrganDial() {
       <div className="qi-speeds" role="group" aria-label={t(locale, "speed")}>
         {SPEEDS.map((value) => (
           <button key={value} type="button" aria-pressed={speed === value} onClick={() => setSpeed(value)}>
-            {`${value}\u00d7`}
+            {speedMark(value)}
           </button>
         ))}
       </div>
@@ -240,7 +294,7 @@ export function QiClock({ variant = "dial" }: { variant?: "dial" | "chip" }) {
   if (chip) {
     const label = `${t(locale, "clock")} ${pad2(start)}${activeId ? ` ${activeId}` : ""}`;
     return (
-      <div className="qi-clock qi-chip-wrap" ref={wrapRef}>
+      <div className="qi-clock qi-chip-wrap" data-testid="plate-clock" ref={wrapRef}>
         <button
           type="button"
           className="qi-chip"
@@ -263,7 +317,7 @@ export function QiClock({ variant = "dial" }: { variant?: "dial" | "chip" }) {
   }
 
   return (
-    <div className="qi-clock">
+    <div className="qi-clock" data-testid="plate-clock">
       <OrganDial />
     </div>
   );
