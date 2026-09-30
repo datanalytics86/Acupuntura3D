@@ -33,3 +33,10 @@
 - J2 PASS. paperTransition, pointStep y coarseHit fallan sin el arreglo y pasan al restaurar.
 - G1–G8 en verde. Cero S1 y cero S2 abiertos. Q08 y A1-10 documentados.
 - El workflow `qa.yml` espera el PR. El verde de GitHub se confirma antes del merge.
+
+## F6
+- PR 13 mergeada en `e1fc60b`. CI `qa` en verde antes del merge.
+- Producción sirve `index-CTIhc3pc.js`.
+- Health de producción: 18/18. LCP 1688 ms. Cero toques mal abiertos.
+- Censo ligero de inicio y ficha: 146 controles, sin hallazgos.
+- No hizo falta revertir.
