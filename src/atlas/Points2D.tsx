@@ -7,7 +7,7 @@ import { meridianPigment } from "@/lib/tokens";
 import { prefersReducedMotion } from "@/lib/quality";
 import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
-import { regionFrame, REGION_FOCUS } from "@/atlas/regionFrames";
+import { inRegionFrame, regionFrame, REGION_FOCUS } from "@/atlas/regionFrames";
 import { unitsPerPx, usePlateBox, useUnitsPerPx, visibleRect } from "@/atlas/screen";
 import { estimateLabelPx, layoutMarginCallouts, type Callout, type CalloutInput } from "@/atlas/callouts";
 import { PointTooltip, useCoarsePointer } from "@/atlas/PointTooltip";
@@ -284,7 +284,7 @@ export function Points2D() {
     const figure = focus ? { l: focus.cx - focus.rx, r: focus.cx + focus.rx } : BODY_FIGURE;
     const byId = new Map<string, CalloutInput>();
     for (const it of items) {
-      if (!inView(it.position, viewRect, 0)) continue;
+      if (!inView(it.position, viewRect, 0) || !inRegionFrame(region, view, it.position)) continue;
       const text = `${it.point.code} ${it.point.names.zh}`;
       const row = byId.get(it.point.id) ?? {
         key: it.point.id,
@@ -303,7 +303,9 @@ export function Points2D() {
 
   const measured = box.w > 0 && box.h > 0;
   const viewRect = measured ? visibleRect(pan, k, box) : null;
-  const shown = viewRect ? items.filter((it) => inView(it.position, viewRect, 48 * k)) : items;
+  const shown = (viewRect ? items.filter((it) => inView(it.position, viewRect, 48 * k)) : items).filter((it) =>
+    inRegionFrame(region, view, it.position),
+  );
   const groups = clusterItems(shown, measured ? 14 * k : 0);
   const calloutById = new Map<string, Callout>((margin ?? []).map((c) => [c.key, c]));
   const hidden = new Set<string>();

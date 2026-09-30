@@ -3,6 +3,7 @@ import { CENTERS, type EnergyCenter } from "@/atlas/centers";
 import { instancesOnView } from "@/atlas/mapCoords";
 import { loadAcupoints } from "@/data";
 import { CINNABAR, INK } from "@/lib/colors";
+import { inRegionFrame } from "@/atlas/regionFrames";
 import { useUnitsPerPx } from "@/atlas/screen";
 import { useViewerStore } from "@/state/viewerStore";
 import type { Point2D } from "@/types";
@@ -193,11 +194,15 @@ export function DantianMarks() {
 
   const placed = CENTERS.flatMap((center) => {
     const pos = view === "posterior" ? center.posterior : center.anterior;
-    return pos ? [{ center, pos }] : [];
+    if (!pos || !inRegionFrame(region, view, pos)) return [];
+    return [{ center, pos }];
   });
   if (placed.length === 0) return null;
 
-  const axis = view === "anterior" ? placed.filter((p) => p.center.anterior).map((p) => p.pos) : [];
+  const axis =
+    region === "body" && view === "anterior"
+      ? placed.filter((p) => p.center.anterior).map((p) => p.pos)
+      : [];
 
   return (
     <g aria-label="Dantian">
