@@ -13,7 +13,10 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "budget": "node scripts/budget.mjs",
+    "e2e": "playwright test",
+    "shots": "node scripts/shots.mjs docs/T1_2909/shots/after"
   },
   "dependencies": {
     "@fontsource/cormorant-garamond": "^5.3.0",
@@ -23,6 +26,8 @@
     "zustand": "5.0.15"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
     "@tailwindcss/vite": "4.3.3",
     "@types/node": "24.5.2",
     "@types/react": "19.2.18",

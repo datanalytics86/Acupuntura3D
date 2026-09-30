@@ -33,6 +33,17 @@ data/
   schema/
 ```
 
+## Módulos del rediseño Tier 1
+
+- `src/atlas/screen.ts` — pasa unidades del viewBox a píxeles de pantalla (`k`). Trazo, marca y rótulo se multiplican por `k`, así el tamaño en px no depende del zoom.
+- `src/atlas/camera.ts` y `cameraKeys.ts` — zoom hacia el cursor, `flyTo`, teclas + − 0 y doble clic para resetear.
+- `src/atlas/callouts.ts` — rótulos de margen. Si no caben, devuelve null (en una lámina de 350×500 no hay rótulos).
+- `src/atlas/figure/PlateDefs.tsx` — grano, máscara regional y defs de la lámina. `PlateFurniture.tsx` es el mobiliario (clave, orientación, colofón).
+- `src/lib/tokens.ts` — espejo de los tokens de `src/app/index.css` (papel, tinta, cinabrio).
+- `src/ui/Sheet.tsx` — bottom sheet en menos de 1024 px (peek, half, full). El alto del pie se reserva para que la acción no quede bajo el reloj.
+- `src/ui/CommandPalette.tsx` — paleta con `/` o Ctrl/Meta+K. El índice ya no filtra la búsqueda.
+- `src/ui/QiClock.tsx` — reloj de órganos. En móvil es un chip; Esc cierra el dial.
+
 ## Lámina
 
 - Un `<svg>` con viewBox. La figura (anterior / posterior) va dentro de ese SVG.

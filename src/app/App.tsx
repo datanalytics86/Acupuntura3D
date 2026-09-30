@@ -1,5 +1,9 @@
 import { useEffect, useMemo } from "react";
 import { AtlasRoot } from "@/atlas/AtlasRoot";
+import { handleCameraKey } from "@/atlas/cameraKeys";
+import { CENTERS } from "@/atlas/centers";
+import { loadAcupoints } from "@/data";
+import { t } from "@/i18n";
 import { Disclaimer } from "@/ui/Disclaimer";
 import { Topbar } from "@/ui/Topbar";
 import { MeridianRail } from "@/ui/MeridianRail";
@@ -7,22 +11,42 @@ import { PointDrawer } from "@/ui/PointDrawer";
 import { CenterDrawer } from "@/ui/CenterDrawer";
 import { QiClock } from "@/ui/QiClock";
 import { LegalModal } from "@/ui/LegalModal";
-import { CENTERS } from "@/atlas/centers";
-import { loadAcupoints } from "@/data";
+import { HelpDialog } from "@/ui/HelpDialog";
 import { useViewerStore } from "@/state/viewerStore";
+
+function isTextField(target: EventTarget | null): target is HTMLInputElement | HTMLTextAreaElement {
+  return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
+}
+
+function isPaletteField(target: EventTarget | null): boolean {
+  return target instanceof HTMLElement && target.dataset.testid === "palette-input";
+}
+
+function inPalette(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return false;
+  if (target.closest("[data-testid='palette-input'], [data-testid='palette-option']")) return true;
+  const dialog = target.closest("[role='dialog']");
+  if (!(dialog instanceof HTMLElement) || dialog.dataset.testid === "help-dialog" || dialog.id === "legal-gate") {
+    return false;
+  }
+  return Boolean(dialog.querySelector("[data-testid='palette-input']"));
+}
+
+function inRadioGroup(target: EventTarget | null): boolean {
+  return target instanceof Element && Boolean(target.closest("[role='radiogroup']"));
+}
 
 export function App() {
   const points = useMemo(() => loadAcupoints(), []);
   const selected = useViewerStore((s) => s.selectedPointId);
-  const setSelected = useViewerStore((s) => s.setSelected);
-  const showPoint = useViewerStore((s) => s.showPoint);
   const selectedCenter = useViewerStore((s) => s.selectedCenterId);
-  const focusCenter = useViewerStore((s) => s.focusCenter);
-  const toggleLayer = useViewerStore((s) => s.toggleLayer);
-  const setSearch = useViewerStore((s) => s.setSearch);
+  const railOpen = useViewerStore((s) => s.railOpen);
   const locale = useViewerStore((s) => s.locale);
-  const setAtlasView = useViewerStore((s) => s.setAtlasView);
-  const setRegion = useViewerStore((s) => s.setAtlasRegion);
+  const folioOpen = Boolean(selected || selectedCenter);
+  const selectedPoint = points.find((pt) => pt.id === selected) ?? null;
+  const selectionLive = selectedPoint
+    ? `${selectedPoint.code} ${selectedPoint.names.pinyin} ${t(locale, "selected")}`
+    : "";
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -31,84 +55,124 @@ export function App() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (document.getElementById("legal-gate")) return;
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
-        if (e.key === "Escape") (e.target as HTMLElement).blur();
+      const store = useViewerStore.getState();
+      const target = e.target;
+
+      if (store.helpOpen) {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          store.setHelpOpen(false);
+        }
         return;
       }
-      if (e.key === "/") {
+
+      if (isTextField(target) && !isPaletteField(target)) {
+        if (e.key === "Escape") target.blur();
+        return;
+      }
+      if (isPaletteField(target) || inPalette(target)) return;
+
+      if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && inRadioGroup(target)) return;
+
+      if (store.paletteOpen) {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          store.setPaletteOpen(false);
+        }
+        return;
+      }
+
+      const chordK = e.key === "k" || e.key === "K";
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.repeat && chordK) {
         e.preventDefault();
-        document.querySelector<HTMLInputElement>('input[type="search"]')?.focus();
+        store.setPaletteOpen(true);
         return;
       }
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (e.key === "/" && !e.repeat) {
+        e.preventDefault();
+        store.setPaletteOpen(true);
+        return;
+      }
+      if (e.key === "?" && !e.repeat) {
+        e.preventDefault();
+        store.setHelpOpen(true);
+        return;
+      }
+      if (handleCameraKey(e)) return;
+      if (e.repeat) return;
+
       if (e.key === "Escape") {
-        setSelected(null);
-        focusCenter(null);
-        setSearch("");
+        store.setSelected(null);
+        store.focusCenter(null);
+        store.setSearch("");
         return;
       }
-      if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
       if (e.key === "a" || e.key === "A") {
-        setAtlasView("anterior");
+        store.setAtlasView("anterior");
         return;
       }
       if (e.key === "p" || e.key === "P") {
-        setAtlasView("posterior");
+        store.setAtlasView("posterior");
         return;
       }
       if (e.key === "c" || e.key === "C") {
-        toggleLayer("centers");
+        store.toggleLayer("centers");
         return;
       }
       if (e.key >= "1" && e.key <= "4") {
-        setRegion((["body", "face", "hand", "foot"] as const)[Number(e.key) - 1]!);
+        store.setAtlasRegion((["body", "face", "hand", "foot"] as const)[Number(e.key) - 1]!);
         return;
       }
       if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-      if (selectedCenter) {
+      const selectedCenterId = store.selectedCenterId;
+      if (selectedCenterId) {
         const order = CENTERS.map((c) => c.id);
-        const idx = order.indexOf(selectedCenter);
+        const idx = order.indexOf(selectedCenterId);
         const step = e.key === "ArrowRight" ? 1 : -1;
         const next = order[(idx + step + order.length) % order.length];
-        if (next) focusCenter(next);
+        if (next) store.focusCenter(next);
         return;
       }
-      if (!selected) return;
-      const merId = points.find((pt) => pt.id === selected)?.meridianId;
+      const selectedId = store.selectedPointId;
+      if (!selectedId) return;
+      const merId = points.find((pt) => pt.id === selectedId)?.meridianId;
       const group = points.filter((pt) => pt.meridianId === merId);
-      const idx = group.findIndex((pt) => pt.id === selected);
+      const idx = group.findIndex((pt) => pt.id === selectedId);
       if (idx < 0 || group.length === 0) return;
       const next =
         e.key === "ArrowRight" ? group[(idx + 1) % group.length] : group[(idx - 1 + group.length) % group.length];
-      if (next) showPoint(next.id);
+      if (next) store.showPoint(next.id);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [points, selected, selectedCenter, setSelected, showPoint, focusCenter, toggleLayer, setSearch, setAtlasView, setRegion]);
+  }, [points]);
 
   return (
-    <div className="relative h-dvh w-full overflow-hidden bg-desk">
-      <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
-        <filter id="desk-grain">
-          <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" stitchTiles="stitch" />
-        </filter>
-        <rect width="100%" height="100%" filter="url(#desk-grain)" opacity="0.05" className="mix-blend-multiply" />
-      </svg>
-      <div
-        className="pointer-events-none absolute inset-0"
-        aria-hidden="true"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 42%, transparent 48%, rgba(120, 86, 48, 0.18) 100%)",
-        }}
-      />
-      <AtlasRoot />
-      <Topbar />
-      <MeridianRail />
-      <PointDrawer />
-      <CenterDrawer />
-      <QiClock />
-      <Disclaimer />
+    <div className="app desk-grain" data-rail={railOpen ? "open" : "closed"} data-folio={folioOpen ? "open" : "closed"}>
+      <div className="app-head">
+        <Topbar />
+      </div>
+      <div className="app-index">
+        <MeridianRail />
+      </div>
+      <div className="app-plate">
+        <AtlasRoot clock={<QiClock />} />
+      </div>
+      <div className="app-folio">
+        <PointDrawer />
+        <CenterDrawer />
+      </div>
+      <footer className="app-foot">
+        <p className="a11y-live" aria-live="polite" aria-atomic="true">
+          {selectionLive}
+        </p>
+        <div className="foot-chip" data-slot="clock-chip" aria-hidden="true" />
+        <Disclaimer />
+      </footer>
       <LegalModal />
+      <HelpDialog />
     </div>
   );
 }
