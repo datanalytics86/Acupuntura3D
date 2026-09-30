@@ -8,7 +8,7 @@
 
 El 29.09 arregló la física de la lámina: escala en píxeles, cámara, pigmentos, rótulos de margen, ficha, paleta y reloj. Su propio juez se puso 8.75/10. Esta revisión independiente de `main` (48 capturas y un sondeo con métricas) muestra que **no es Tier 1 todavía**: `main` falla **16 de 18 gates objetivos**. Lo más grave:
 
-1. **Los hanzi nunca usan Noto Serif SC, ni siquiera en producción.** Vite 8 borra del build el `<link>` de Google Fonts (multilínea, con `href` antes de `rel`). `dist/index.html` y acupuntura3d.vercel.app no lo tienen, así que los 67 hanzi caen en fuentes del sistema (WenQuanYi, SimSun, PingFang). El e2e lo dio por bueno porque `document.fonts.check()` devuelve `true` cuando no existe ninguna FontFace de esa familia.
+1. **Los hanzi dependen de un CDN externo y el test no lo vigila.** `index.html` pide Noto Serif SC a Google Fonts. Cuando ese pedido falla (proxy o bloqueo, red corporativa, países sin Google, bloqueadores, CI), los 67 hanzi caen en fuentes del sistema (WenQuanYi, SimSun, PingFang), y así salieron en esta auditoría. El e2e no lo detecta porque `document.fonts.check()` devuelve `true` cuando no existe ninguna FontFace de esa familia. *(Corrección del 30-09: una primera versión de este prompt decía que Vite 8 borraba el `<link>` del build. Era un error de medición: el link es multilínea y la búsqueda lo leía línea por línea. El link sí está en `dist` y en producción. El arreglo, auto-alojar la fuente, se mantiene.)*
 2. **Fondo:** el mobiliario (clave, reloj, zoom, minimapa, colofón) flota **sobre** el dibujo. Hay 105 151 px² de solape a zoom 1 y 111 515 px² al acercarse: el título se imprime sobre los dedos y el pie legal sobre las manos. Además hay una franja fantasma bajo el título (Δ1.5) y la cabecera y el pie difieren 26 niveles de tono.
 3. **Forma:** la figura sigue leyendo como «maniquí 3D de wiki» (piel naranja aerografiada) y su contorno engorda con el zoom. Hay 23 rótulos de ruta y chevrones encendidos en reposo, así que se ve un cableado. Rostro corta la cara por la mitad (la elipse de foco sale de los puntos, que en la cara están todos en x = 400, y mide 23 u de ancho). Al acercarse, los puntos pierden el nombre. Las letras D/I quedan a 559 px de la figura.
 4. **Estética:** tres acentos cinabrio a la vez en la cabecera, un reloj que parece gráfico de torta pastel, una clave en caja bilingüe, controles en cajas, la marca truncada en móvil, un peek del sheet sin hanzi y la figura en móvil ocupando solo el 51 % de la altura.
@@ -100,8 +100,8 @@ Sondeo sobre `main` @ `3e29ca2` (`docs/T1_3009/probe-before.json` lo regenera OX
 
 | Gate | `main` hoy | Meta |
 |---|---|---|
-| `hanziFontPlate` | Outfit Thin SemiBold + WenQuanYi Zen Hei ❌ | Noto Serif SC (CDP) |
-| `hanziFontFolio` | Cormorant Garamond Light Medium + WenQuanYi Zen Hei ❌ | Noto Serif SC (CDP) |
+| `hanziFontPlate` | Outfit Thin SemiBold + WenQuanYi Zen Hei ❌ (Google Fonts inaccesible en la auditoría) | Noto Serif SC (CDP) |
+| `hanziFontFolio` | Cormorant Garamond Light Medium + WenQuanYi Zen Hei ❌ (ídem) | Noto Serif SC (CDP) |
 | `seamDelta` | 1.5 ❌ | ≤ 1 |
 | `overlapBody` | 105 151 px² ❌ | 0 px² |
 | `overlapZoom4` | 111 515 px² ❌ | 0 px² |
@@ -120,7 +120,7 @@ Sondeo sobre `main` @ `3e29ca2` (`docs/T1_3009/probe-before.json` lo regenera OX
 | `sheetPeekShowsHanzi` | false ❌ | true |
 
 **Crítico**
-- **V01 · Hanzi sin su fuente, también en producción.** El build de Vite 8 descarta el `<link>` multilínea de Google Fonts de `index.html` (con `rel` primero y en una sola línea sobrevive, pero depender de un tercero no es T1). Los 67 hanzi del atlas se pintan con WenQuanYi, SimSun o PingFang según el sistema. El e2e T5 (`document.fonts.check`) es un falso positivo. **Arreglo:** auto-alojar un subconjunto de Noto Serif SC 500/600 (≈12.8 KB por peso) con Vite (URL con hash, caché inmutable), borrar el link externo y los `preconnect`, y dejar la CSP en `font-src 'self'` (§8.2).
+- **V01 · Hanzi atados a un CDN externo.** `index.html` pide Noto Serif SC a fonts.googleapis.com. Si ese pedido falla (proxy, bloqueo, red lenta, CI), los hanzi se pintan con WenQuanYi, SimSun o PingFang según el sistema: así los midió este sondeo en un entorno sin acceso a Google. El e2e T5 (`document.fonts.check`) es un falso positivo y no lo detecta. **Arreglo:** auto-alojar un subconjunto de Noto Serif SC 500/600 (≈12.8 KB por peso) con Vite (URL con hash, caché inmutable, sin tercero ni rastreo), borrar el link externo y los `preconnect`, y dejar la CSP en `font-src 'self'` (§8.2).
 
 **Fondo**
 - **V02 · Franja fantasma bajo el título.** La banda del título es (248,244,235) y el área del SVG (250,246,237): Δ1.5 en todo el ancho, en y ≈ 128. Hay dos capas de grano (`main.paper-grain` + overlay) más el rect de papel del SVG. **Arreglo:** una sola fuente de grano por superficie y el papel pintado por un solo elemento.
@@ -902,7 +902,7 @@ describe("self-hosted hanzi font", () => {
     expect(css).toMatch(/@font-face\s*{[^}]*"Noto Serif SC"[^}]*noto-serif-sc-600\.woff2/);
   });
 
-  it("does not depend on Google Fonts (Vite 8 drops that <link> in build)", () => {
+  it("does not depend on Google Fonts (a blocked CDN silently falls back to system CJK fonts)", () => {
     expect(readFileSync(join(root, "index.html"), "utf8")).not.toMatch(/fonts\.(googleapis|gstatic)\.com/);
   });
 });
