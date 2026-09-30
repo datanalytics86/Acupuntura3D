@@ -15,12 +15,12 @@ Changes made for this atlas (2026): background removed (PNG alpha is real;
 paper shows between the limbs), crop, alignment to viewBox 800×1600
 (vertex y=40, sole y=1480, midline x=400), and a small inward shift of the
 legs so medial points stay on the skin. The plate composite is SVG, not a
-new painting: `mix-blend-mode: multiply` onto the paper, a warm
-`feColorMatrix` grade, local radial washes, and an
-academic pubic plane that covers the source linework. A hair cap was tried
+new painting. The composite now includes a duotone grade and a vector contour
+traced from the plate alpha. An academic pubic plane covers the source
+linework. A hair cap was tried
 and removed because it read as a pasted wig. The adapted plates stay CC BY-SA 4.0.
-- Regional focus: mask `#region-focus` feathers face, hand and foot (white at the centre, 12% outside) so the rest of the body stays a ghost.
-- Grade: `fig-grade` was cooled (less orange from red into green) and the constant offsets were raised so midtones sit higher.
+- Regional focus: mask `#region-focus` feathers face, hand and foot (white at the centre, 14% outside) so the rest of the body stays a ghost.
+- Grade: a sepia `fig-duo` (`feColorMatrix` luminance plus `feComponentTransfer`) replaces `fig-grade`.
 - Grain: the SVG `plate-grain` filter was removed; paper tooth is the CSS class `.paper-grain`.
 
 They are not scans, traces, or copies of Microsoft Encarta, Netter, Deadman,

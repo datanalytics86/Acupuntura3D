@@ -1,6 +1,7 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
+import { useUnitsPerPx } from "@/atlas/screen";
 import { useViewerStore } from "@/state/viewerStore";
-import { ANTERIOR_WASHES, POSTERIOR_WASHES, PUBIS_PLANE, type Wash } from "./interiorShading";
+import { PUBIS_PLANE } from "./interiorShading";
 
 /**
  * Goran surface plate, printed into the paper.
@@ -24,25 +25,21 @@ export const BODY_PLATE = {
   },
 } as const;
 
-function WashLayer({ items, blend }: { items: Wash[]; blend: "multiply" | "soft-light" }) {
-  const tone = blend === "multiply" ? "lo" : "hi";
-  const list = items.filter((w) => w.tone === tone);
-  if (list.length === 0) return null;
-  return (
-    <g mask="url(#fig-skin)" style={{ mixBlendMode: blend }}>
-      {list.map((w) => (
-        <ellipse
-          key={w.id}
-          cx={w.cx}
-          cy={w.cy}
-          rx={w.rx}
-          ry={w.ry}
-          fill={tone === "hi" ? "url(#wash-hi)" : "url(#wash-lo)"}
-          opacity={w.opacity}
-        />
-      ))}
-    </g>
-  );
+type Silhouette = { readonly anterior: string; readonly posterior: string };
+
+/** Kept off the initial bundle: the traced contour is ~38 KB. */
+function useSilhouette(): Silhouette | null {
+  const [paths, setPaths] = useState<Silhouette | null>(null);
+  useEffect(() => {
+    let live = true;
+    void import("./silhouette").then((mod) => {
+      if (live) setPaths(mod.SILHOUETTE);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
+  return paths;
 }
 
 export const Figure = memo(function Figure() {
@@ -50,51 +47,35 @@ export const Figure = memo(function Figure() {
   // Contact shadow only toggles at this threshold. A continuous zoom (or pan) must not repaint the plate.
   const showShadow = useViewerStore((s) => s.atlasZoom <= 1.3);
   const showBody = useViewerStore((s) => s.visibleLayers.body);
+  const k = useUnitsPerPx();
+  const silhouette = useSilhouette();
   if (!showBody) return null;
 
   const plate = BODY_PLATE[view];
-  const washes = view === "anterior" ? ANTERIOR_WASHES : POSTERIOR_WASHES;
+  const contour = silhouette?.[view];
 
   return (
     <g>
       <defs>
-        <filter id="fig-grade" colorInterpolationFilters="sRGB">
-          <feColorMatrix
-            type="matrix"
-            values="0.86 0.04 0.02 0 0.06  0.05 0.78 0.03 0 0.08  0.02 0.06 0.70 0 0.08  0 0 0 1 0"
-          />
-        </filter>
-        <filter id="fig-shade" colorInterpolationFilters="sRGB">
+        <filter id="fig-duo" colorInterpolationFilters="sRGB">
           <feColorMatrix
             type="matrix"
             values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0"
           />
           <feComponentTransfer>
-            <feFuncR type="table" tableValues="0.28 0.48 0.92 1 1" />
-            <feFuncG type="table" tableValues="0.24 0.42 0.88 1 1" />
-            <feFuncB type="table" tableValues="0.14 0.30 0.84 1 1" />
+            <feFuncR type="table" tableValues="0.23 0.45 0.66 0.80 0.89 0.95 0.985" />
+            <feFuncG type="table" tableValues="0.15 0.31 0.50 0.65 0.78 0.87 0.94" />
+            <feFuncB type="table" tableValues="0.10 0.21 0.37 0.51 0.65 0.77 0.86" />
           </feComponentTransfer>
         </filter>
         <filter id="fig-pubis" x="-30%" y="-30%" width="160%" height="160%">
           <feGaussianBlur stdDeviation="1.8" />
         </filter>
-        <filter id="fig-edge" colorInterpolationFilters="sRGB" x="-3%" y="-1%" width="106%" height="102%">
-          <feColorMatrix type="matrix" values="0 0 0 0 0.420  0 0 0 0 0.290  0 0 0 0 0.212  0 0 0 1 0" />
-          <feMorphology operator="dilate" radius="0.75" />
-        </filter>
-        <radialGradient id="wash-lo" cx="42%" cy="38%" r="68%">
-          <stop offset="0%" stopColor="#6B5344" stopOpacity="0.45" />
-          <stop offset="100%" stopColor="#6B5344" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id="wash-hi" cx="32%" cy="28%" r="72%">
-          <stop offset="0%" stopColor="#F3D7C0" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#F3D7C0" stopOpacity="0" />
-        </radialGradient>
         <linearGradient id="pubis-skin" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#E3C5AC" stopOpacity="0.04" />
-          <stop offset="24%" stopColor="#E3C5AC" stopOpacity="0.7" />
-          <stop offset="76%" stopColor="#D9BBA0" stopOpacity="0.7" />
-          <stop offset="100%" stopColor="#CDB59A" stopOpacity="0.06" />
+          <stop offset="0%" stopColor="#E2C8A9" stopOpacity="0.04" />
+          <stop offset="24%" stopColor="#E2C8A9" stopOpacity="0.7" />
+          <stop offset="76%" stopColor="#D5BC9E" stopOpacity="0.7" />
+          <stop offset="100%" stopColor="#D3B08D" stopOpacity="0.06" />
         </linearGradient>
         <mask id="fig-skin" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="1600">
           <image href={plate.href} x={plate.x} y={plate.y} width={plate.width} height={plate.height} />
@@ -103,7 +84,7 @@ export const Figure = memo(function Figure() {
 
       <g mask="url(#region-focus)">
         {showShadow ? (
-          <ellipse cx={400} cy={1492} rx={240} ry={12} fill="url(#contact-shadow)" opacity={0.14} />
+          <ellipse cx={400} cy={1492} rx={240} ry={12} fill="url(#contact-shadow)" opacity={0.1} />
         ) : null}
 
         <image
@@ -113,33 +94,19 @@ export const Figure = memo(function Figure() {
           width={plate.width}
           height={plate.height}
           preserveAspectRatio="xMidYMid meet"
-          filter="url(#fig-edge)"
-          opacity={0.32}
-          style={{ pointerEvents: "none" }}
-        />
-        <image
-          href={plate.href}
-          x={plate.x}
-          y={plate.y}
-          width={plate.width}
-          height={plate.height}
-          preserveAspectRatio="xMidYMid meet"
-          filter="url(#fig-grade)"
-        />
-        <image
-          href={plate.href}
-          x={plate.x}
-          y={plate.y}
-          width={plate.width}
-          height={plate.height}
-          preserveAspectRatio="xMidYMid meet"
-          filter="url(#fig-shade)"
-          opacity={0.34}
-          style={{ mixBlendMode: "multiply", pointerEvents: "none" }}
+          filter="url(#fig-duo)"
         />
 
-        <WashLayer items={washes} blend="multiply" />
-        <WashLayer items={washes} blend="soft-light" />
+        {contour ? (
+          <path
+            d={contour}
+            fill="none"
+            stroke="#3A2A1E"
+            strokeOpacity={0.85}
+            strokeWidth={1.1 * k}
+            strokeLinejoin="round"
+          />
+        ) : null}
 
         {view === "anterior" ? (
           <g mask="url(#fig-skin)">
@@ -147,18 +114,16 @@ export const Figure = memo(function Figure() {
             <path
               d="M356 758C372 786 386 808 398 820"
               fill="none"
-              stroke="#a67b62"
-              strokeWidth={1.15}
-              opacity={0.45}
-              style={{ mixBlendMode: "multiply" }}
+              stroke="#3A2A1E"
+              strokeOpacity={0.35}
+              strokeWidth={0.9 * k}
             />
             <path
               d="M444 758C428 786 414 808 402 820"
               fill="none"
-              stroke="#a67b62"
-              strokeWidth={1.15}
-              opacity={0.45}
-              style={{ mixBlendMode: "multiply" }}
+              stroke="#3A2A1E"
+              strokeOpacity={0.35}
+              strokeWidth={0.9 * k}
             />
           </g>
         ) : null}

@@ -1,3 +1,4 @@
+import "@/app/fonts.css";
 import "@/app/index.css";
 import "@/app/shell.css";
 import { StrictMode } from "react";

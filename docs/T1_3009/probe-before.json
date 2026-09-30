@@ -1,0 +1,100 @@
+{
+  "metrics": {
+    "hanziFontPlate": [
+      "Outfit Thin SemiBold",
+      "Noto Serif SC ExtraLight"
+    ],
+    "seamDelta": 1.5,
+    "headFootDelta": 26.4,
+    "overlapBody": {
+      "area": 105151,
+      "hits": [
+        ".plate-key:73017",
+        "[data-testid=\"clock-dial\"]:17424",
+        ".plate-zoom:6160",
+        ".plate-colophon:8550"
+      ]
+    },
+    "figureShareDesktop": 0.74,
+    "idleRouteLabels": 23,
+    "orientationGapPx": 559,
+    "headerAccentText": 3,
+    "smallText": 0,
+    "dantianGapPx": 1,
+    "overlapZoom4": {
+      "area": 111515,
+      "hits": [
+        ".plate-key:73017",
+        "[data-testid=\"clock-dial\"]:17424",
+        ".plate-zoom:6160",
+        ".plate-minimap:6364",
+        ".plate-colophon:8550"
+      ]
+    },
+    "zoomLabelCoverage": 0,
+    "overlapST36": {
+      "area": 111515,
+      "hits": [
+        ".plate-key:73017",
+        "[data-testid=\"clock-dial\"]:17424",
+        ".plate-zoom:6160",
+        ".plate-minimap:6364",
+        ".plate-colophon:8550"
+      ]
+    },
+    "hanziFontFolio": [
+      "Cormorant Garamond Light Medium",
+      "Noto Serif SC ExtraLight"
+    ],
+    "overlapDantian": {
+      "area": 111515,
+      "hits": [
+        ".plate-key:73017",
+        "[data-testid=\"clock-dial\"]:17424",
+        ".plate-zoom:6160",
+        ".plate-minimap:6364",
+        ".plate-colophon:8550"
+      ]
+    },
+    "figureShareMobile": 0.51,
+    "mobileBrandTruncated": true,
+    "sheetPeekShowsHanzi": false
+  },
+  "gates": {
+    "hanziFontPlate": true,
+    "hanziFontFolio": true,
+    "seamDelta": false,
+    "overlapBody": false,
+    "overlapZoom4": false,
+    "overlapST36": false,
+    "overlapDantian": false,
+    "figureShareDesktop": true,
+    "figureShareMobile": false,
+    "idleRouteLabels": false,
+    "zoomLabelCoverage": false,
+    "orientationGapPx": false,
+    "headerAccentText": false,
+    "headFootDelta": false,
+    "smallText": true,
+    "dantianGapPx": false,
+    "mobileBrandTruncated": false,
+    "sheetPeekShowsHanzi": false
+  },
+  "failed": [
+    "seamDelta",
+    "overlapBody",
+    "overlapZoom4",
+    "overlapST36",
+    "overlapDantian",
+    "figureShareMobile",
+    "idleRouteLabels",
+    "zoomLabelCoverage",
+    "orientationGapPx",
+    "headerAccentText",
+    "headFootDelta",
+    "dantianGapPx",
+    "mobileBrandTruncated",
+    "sheetPeekShowsHanzi"
+  ],
+  "pass": false
+}

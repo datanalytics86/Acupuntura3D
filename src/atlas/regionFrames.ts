@@ -1,4 +1,6 @@
 import { VIEW_H, VIEW_W } from "@/atlas/figure/landmarks";
+import { fitRegion, REGION_ANATOMY, type Box } from "@/atlas/regionAnatomy";
+import { unitsPerPx, visibleRect, type PlateBox } from "@/atlas/screen";
 import { loadAcupoints } from "@/data";
 import { STAR_CODES } from "@/data/ids";
 import type { AtlasRegion, AtlasView, Point2D } from "@/types";
@@ -27,14 +29,51 @@ function frameHolds(region: AtlasRegion, view: AtlasView, pos: Point2D): boolean
   return Math.abs(pos.x - frame.pan.x) <= hw && Math.abs(pos.y - frame.pan.y) <= hh;
 }
 
+/** Same air as fitRegion. A limb and its mirror stay two islands. */
+const AIR = 0.12;
+
+/** Desktop drawing window until Viewport measures the plate. */
+const FALLBACK_PLATE: PlateBox = { w: 1072, h: 709 };
+
+let measuredPlate: PlateBox = { w: 0, h: 0 };
+
+export function noteRegionPlate(box: PlateBox): void {
+  measuredPlate = box;
+}
+
+function plateWindow(): PlateBox {
+  return measuredPlate.w > 0 && measuredPlate.h > 0 ? measuredPlate : FALLBACK_PLATE;
+}
+
+function grow(box: Box, air: number): Box {
+  const dx = (box.r - box.l) * air;
+  const dy = (box.b - box.t) * air;
+  return { l: box.l - dx, t: box.t - dy, r: box.r + dx, b: box.b + dy };
+}
+
+function mirrorBox(box: Box): Box {
+  return { l: VIEW_W - box.r, t: box.t, r: VIEW_W - box.l, b: box.b };
+}
+
+function holds(box: Box, pos: Point2D): boolean {
+  return pos.x >= box.l && pos.x <= box.r && pos.y >= box.t && pos.y <= box.b;
+}
+
 /**
- * Detail plates are a portrait frame inside a wide stage. A mark belongs on
- * the plate only when it sits in that frame, so the abdomen does not float
- * beside the hand.
+ * Detail plates are a portrait frame inside a wide stage. Membership is the
+ * visible window of the fitted camera (meet), so both feet stay on the foot
+ * plate. A limb and its mirror are separate islands: the gulf between them
+ * is not the plate, which keeps the lower dantian off the hand.
  */
 export function inRegionFrame(region: AtlasRegion, view: AtlasView, pos: Point2D): boolean {
   if (region === "body") return true;
-  return frameHolds(region, view, pos);
+  const box = plateWindow();
+  const cam = fitRegion(region, view, box);
+  const k = unitsPerPx(VIEW_W / cam.zoom, VIEW_H / cam.zoom, box);
+  const vis = visibleRect(cam.pan, k, box);
+  if (pos.x < vis.l || pos.x > vis.r || pos.y < vis.t || pos.y > vis.b) return false;
+  const anatomy = REGION_ANATOMY[region][view];
+  return holds(grow(anatomy, AIR), pos) || holds(grow(mirrorBox(anatomy), AIR), pos);
 }
 
 /**

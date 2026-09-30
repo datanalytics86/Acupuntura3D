@@ -71,7 +71,7 @@ async function expectMarkPx(locator: Locator): Promise<void> {
 }
 
 async function viewBoxWidth(page: Page): Promise<number> {
-  const value = await page.locator("#plate svg").first().getAttribute("viewBox");
+  const value = await page.locator('[data-testid="plate-window"] svg').first().getAttribute("viewBox");
   const parts = (value ?? "").split(/[\s,]+/);
   return Number(parts[2] ?? "0");
 }
@@ -148,11 +148,10 @@ for (const viewport of VIEWPORTS) {
         await expect(page.locator('[data-testid^="callout-"]')).toHaveCount(15);
         await expectMarkPx(page.getByTestId("point-ST36"));
       }
-      await expect.poll(async () =>
+      await expect.poll(() =>
         page.evaluate(async () => {
-          await document.fonts.load("16px 'Noto Serif SC'", "足三里");
           await document.fonts.ready;
-          return document.fonts.check("16px 'Noto Serif SC'", "足三里");
+          return [...document.fonts].some((f) => f.family.replace(/["']/g, "") === "Noto Serif SC" && f.status === "loaded");
         }),
       ).toBe(true);
 
@@ -215,6 +214,9 @@ for (const viewport of VIEWPORTS) {
       if ((await chip.count()) > 0) await chip.click();
       await page.locator("#clock-sector-LR").click();
       await expect(page.locator("#clock-sector-LR")).toHaveAttribute("aria-checked", "true");
+      const filled = page.locator('path[data-sector][data-on="true"]');
+      await expect(filled).toHaveCount(1);
+      await expect(filled).not.toHaveCSS("fill", "none");
       await expect(page.locator(".qi-caption").first()).toContainText("01:00");
       await expect(page.locator(".qi-caption").first()).toContainText("LR");
       await expect(page.locator('[data-meridian="LR"][data-hour="on"]').first()).toBeAttached();
@@ -277,21 +279,27 @@ for (const viewport of VIEWPORTS) {
       await expect(page.locator("html")).toHaveAttribute("lang", "es");
 
       const before = await viewBoxWidth(page);
-      const plate = page.getByTestId("plate");
-      const plateBox = await plate.boundingBox();
-      expect(plateBox).not.toBeNull();
-      if (plateBox) {
-        await page.mouse.move(plateBox.x + plateBox.width * 0.5, plateBox.y + plateBox.height * 0.35);
-        await page.mouse.wheel(0, -500);
+      const win = page.getByTestId("plate-window");
+      const winBox = await win.boundingBox();
+      expect(winBox).not.toBeNull();
+      if (winBox) {
+        await page.mouse.move(winBox.x + winBox.width * 0.5, winBox.y + winBox.height * 0.45);
+        await page.mouse.wheel(0, -800);
       }
       await expect.poll(() => viewBoxWidth(page)).toBeLessThan(before - 5);
       await page.keyboard.press("+");
       await page.keyboard.press("-");
       await page.keyboard.press("0");
       await expect.poll(() => viewBoxWidth(page)).toBeGreaterThan(700);
-      await page.getByTestId("zoom-in").click();
-      await page.getByTestId("zoom-in").click();
-      await page.getByTestId("zoom-in").click();
+      if (viewport.name === "desktop") {
+        await page.getByTestId("zoom-in").click();
+        await page.getByTestId("zoom-in").click();
+        await page.getByTestId("zoom-in").click();
+      } else {
+        await page.keyboard.press("+");
+        await page.keyboard.press("+");
+        await page.keyboard.press("+");
+      }
       await expect(page.locator(".plate-minimap")).toBeVisible();
       await page.getByRole("group", { name: "Atlas corporal de meridianos" }).dblclick({ position: { x: 24, y: 70 } });
       await expect(page.locator(".plate-minimap")).toHaveCount(0);
@@ -322,10 +330,10 @@ for (const viewport of VIEWPORTS) {
       await enterAtlas(page);
       const png = decodePng(await page.getByTestId("plate").screenshot({ type: "png" }));
       const bands = [
-        [0.04, 0.22],
-        [0.04, 0.3],
-        [0.04, 0.38],
-        [0.04, 0.62],
+        [0.18, 0.22],
+        [0.18, 0.3],
+        [0.18, 0.38],
+        [0.18, 0.62],
       ] as const;
       for (const [xf, yf] of bands) {
         const stats = patchStats(
@@ -340,6 +348,88 @@ for (const viewport of VIEWPORTS) {
           expect(Math.abs((stats.mean[c] ?? 0) - (PAPER[c] ?? 0))).toBeLessThanOrEqual(8);
         }
       }
+    });
+
+    test("el mobiliario no pisa la ventana", async ({ page }) => {
+      await enterAtlas(page);
+      const area = await page.evaluate(() => {
+        const w = document.querySelector('[data-testid="plate-window"]')?.getBoundingClientRect();
+        if (!w) return -1;
+        const selectors = [
+          '[data-testid="plate-title"]',
+          '[data-testid="plate-key"]',
+          '[data-testid="plate-clock"]',
+          '[data-testid="plate-zoom"]',
+          '[data-testid="minimap"]',
+          '[data-testid="plate-colophon"]',
+        ];
+        let hit = 0;
+        for (const sel of selectors) {
+          for (const el of document.querySelectorAll(sel)) {
+            const r = el.getBoundingClientRect();
+            if (r.width === 0 || r.height === 0) continue;
+            const ix = Math.max(0, Math.min(r.right, w.right) - Math.max(r.left, w.left));
+            const iy = Math.max(0, Math.min(r.bottom, w.bottom) - Math.max(r.top, w.top));
+            hit += ix * iy;
+          }
+        }
+        return hit;
+      });
+      expect(area).toBe(0);
+    });
+
+    test("con zoom cada punto visible tiene rótulo", async ({ page }) => {
+      await enterAtlas(page);
+      for (let i = 0; i < 4; i += 1) await page.keyboard.press("+");
+      await page.waitForTimeout(500);
+      const coverage = await page.evaluate(() => {
+        const node = document.querySelector('[data-testid="plate-window"]');
+        if (!node) return -1;
+        const w = node.getBoundingClientRect();
+        const inside = (r: DOMRect) => r.width > 0 && r.left >= w.left && r.right <= w.right && r.top >= w.top && r.bottom <= w.bottom;
+        const marks = [...document.querySelectorAll('[data-testid^="point-"]')].filter((el) => inside(el.getBoundingClientRect()));
+        const labels = new Set(
+          [...document.querySelectorAll('[data-testid^="label-"], [data-testid^="callout-"]')]
+            .filter((el) => el.getBoundingClientRect().width > 0)
+            .map((el) => (el.getAttribute("data-testid") ?? "").replace(/^(label|callout)-/, "")),
+        );
+        const codes = marks.map((el) => (el.getAttribute("data-testid") ?? "").replace(/^point-/, ""));
+        return codes.length === 0 ? -1 : codes.filter((code) => labels.has(code)).length / codes.length;
+      });
+      expect(coverage).toBe(1);
+    });
+
+    test("el peek móvil muestra el hanzi y no pisa el aviso", async ({ page }) => {
+      test.skip(viewport.name !== "mobile", "el peek se mide en 390");
+      await enterAtlas(page);
+      await openPalette(page, "ST36");
+      await page.keyboard.press("Enter");
+      const hanzi = page.locator('[data-testid="sheet"] .folio-hanzi');
+      await expect(hanzi).toHaveText("足三里");
+      const box = await hanzi.boundingBox();
+      expect(box).not.toBeNull();
+      if (box) {
+        expect(box.y).toBeGreaterThanOrEqual(0);
+        expect(box.y + box.height).toBeLessThanOrEqual(viewport.height);
+      }
+      const overlap = await page.evaluate(() => {
+        const foot = document.querySelector(".app-foot")?.getBoundingClientRect();
+        const bar = document.querySelector('[data-testid="sheet"] .folio-foot')?.getBoundingClientRect();
+        if (!foot || !bar || bar.height === 0) return -1;
+        const ix = Math.max(0, Math.min(bar.right, foot.right) - Math.max(bar.left, foot.left));
+        const iy = Math.max(0, Math.min(bar.bottom, foot.bottom) - Math.max(bar.top, foot.top));
+        return ix * iy;
+      });
+      expect(overlap).toBe(0);
+    });
+
+    test("el foco de la portada es tinta", async ({ page }) => {
+      await page.goto("/");
+      const cta = page.getByTestId("legal-accept");
+      await cta.focus();
+      await expect(cta).toBeFocused();
+      const outline = await cta.evaluate((el) => getComputedStyle(el).outlineColor);
+      expect(outline).toBe("rgb(28, 25, 21)");
     });
   });
 }

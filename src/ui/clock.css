@@ -2,8 +2,9 @@
   .qi-clock {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 8px;
+    width: max-content;
     max-width: 100%;
     color: var(--color-ink);
     pointer-events: auto;
@@ -16,7 +17,7 @@
   .qi-face {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 8px;
     width: max-content;
     max-width: 100%;
@@ -25,22 +26,43 @@
   .qi-dial {
     position: relative;
     width: 132px;
-    height: 132px;
+    max-width: 100%;
+    aspect-ratio: 1;
     flex: none;
   }
 
   .qi-dial svg {
     display: block;
-    width: 132px;
-    height: 132px;
+    width: 100%;
+    height: 100%;
   }
 
   .qi-sector {
     cursor: pointer;
   }
 
+  .qi-ring,
+  .qi-tick {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 1;
+    pointer-events: none;
+  }
+
+  .qi-needle {
+    fill: none;
+    stroke: var(--color-cinnabar);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    pointer-events: none;
+  }
+
   .qi-dial text {
     fill: var(--color-ink);
+    font-family: "Outfit", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
   }
 
   .qi-dial text.is-on {
@@ -62,11 +84,15 @@
     margin: 0;
     padding: 0;
     transform: translate(-50%, -50%);
-    border: 1px solid var(--color-cinnabar);
-    border-radius: var(--radius-chip);
-    background: var(--color-cinnabar);
-    color: var(--color-paper);
+    border: 1px solid var(--color-ink);
+    border-radius: 50%;
+    background: var(--color-paper);
+    color: var(--color-ink);
     cursor: pointer;
+  }
+
+  .qi-play svg {
+    display: block;
   }
 
   .qi-play:disabled {
@@ -76,41 +102,63 @@
 
   .qi-caption {
     margin: 0;
+    width: 100%;
     max-width: 220px;
-    font-size: 11px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 400;
     line-height: 1.35;
-    letter-spacing: 0.04em;
-    color: var(--color-ink-2);
+    letter-spacing: 0.01em;
+    text-align: center;
+    color: var(--color-ink);
   }
 
   .qi-speeds {
-    display: inline-flex;
-    border: 1px solid var(--color-rule);
-    background: var(--color-paper);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.7em;
+    width: 100%;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 1.35;
   }
 
   .qi-speeds button {
-    min-width: 44px;
-    min-height: 44px;
+    min-width: 0;
+    min-height: 0;
     margin: 0;
+    padding: 0;
     border: 0;
     border-radius: 0;
     background: transparent;
-    color: var(--color-ink-2);
-    padding: 0 8px;
+    box-shadow: none;
+    color: var(--color-ink-3);
     font-family: inherit;
-    font-size: 13px;
-    line-height: 1;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+    text-decoration: none;
     cursor: pointer;
   }
 
   .qi-speeds button + button {
-    border-left: 1px solid var(--color-rule);
+    border: 0;
   }
 
   .qi-speeds button[aria-pressed="true"] {
-    background: var(--color-paper-inset);
-    color: var(--color-cinnabar);
+    background: transparent;
+    color: var(--color-ink);
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-cinnabar);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
   }
 
   .qi-chip {

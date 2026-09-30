@@ -174,7 +174,7 @@ function RailBody({ titleRef }: { titleRef?: Ref<HTMLHeadingElement> }) {
               onClick={() => setElementFilter(element === el ? undefined : el)}
             >
               <span className="rail-swatch" style={{ background: PIGMENT[el] }} aria-hidden="true" />
-              {t(locale, el)}
+              <span className="rail-element-name">{t(locale, el)}</span>
             </button>
           ))}
         </div>
@@ -212,6 +212,11 @@ function RailBody({ titleRef }: { titleRef?: Ref<HTMLHeadingElement> }) {
   );
 }
 
+function meridianTail(meridian: Meridian): string {
+  if (meridian.clockHour === undefined) return ` · ${meridian.pointCount}`;
+  return ` · ${hourLabel(meridian.clockHour)} · ${meridian.pointCount}`;
+}
+
 function MeridianRow({
   meridian,
   locale,
@@ -229,18 +234,39 @@ function MeridianRow({
   onToggle: () => void;
   onPoint: (id: string) => void;
 }) {
+  const setHoveredMeridian = useViewerStore((s) => s.setHoveredMeridian);
   const name = locale === "en" ? meridian.names.en : meridian.names.es;
+  useEffect(() => {
+    return () => {
+      if (useViewerStore.getState().hoveredMeridianId === meridian.id) {
+        useViewerStore.getState().setHoveredMeridian(null);
+      }
+    };
+  }, [meridian.id]);
   return (
     <li>
-      <button type="button" className="rail-row" aria-pressed={open} aria-expanded={open} onClick={onToggle}>
+      <button
+        type="button"
+        className="rail-row"
+        aria-pressed={open}
+        aria-expanded={open}
+        onClick={onToggle}
+        onPointerEnter={() => setHoveredMeridian(meridian.id)}
+        onPointerLeave={() => setHoveredMeridian(null)}
+        onFocus={() => setHoveredMeridian(meridian.id)}
+        onBlur={() => setHoveredMeridian(null)}
+      >
         <span className="rail-swatch" style={{ background: meridianPigment(meridian) }} aria-hidden="true" />
-        <span className="code">{meridian.code}</span>
-        <span className="rail-name">{name}</span>
-        <span className="hanzi">{meridian.names.zh}</span>
-        <span className="rail-meta">{meridian.pointCount}</span>
-        {meridian.clockHour !== undefined ? (
-          <span className="rail-meta">{hourLabel(meridian.clockHour)}</span>
-        ) : null}
+        <span className="rail-copy">
+          <span className="rail-line">
+            <span className="code">{meridian.code}</span>
+            <span className="rail-name">{`  ${name}`}</span>
+          </span>
+          <span className="rail-sub">
+            <span className="hanzi">{meridian.names.zh}</span>
+            <span className="rail-meta">{meridianTail(meridian)}</span>
+          </span>
+        </span>
       </button>
       {open && stars.length > 0 ? (
         <ul className="rail-stars">

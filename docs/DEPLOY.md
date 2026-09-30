@@ -28,7 +28,8 @@ npm run e2e
 `.github/workflows/ci.yml` corre en cada push a `main` y en cada pull request.
 
 1. Job `build`: `npm ci`, typecheck, test, build y `npm run budget` (dist < 8 MB, JS gzip ≤ 130 KB, CSS gzip ≤ 14 KB).
-2. Job `e2e`: depende de `build`. Instala Chromium y corre `npm run e2e` (proyecto chromium y proyecto `reduced` con `prefers-reduced-motion`).
+2. Job `probe`: depende de `build`. Levanta `vite preview` en el puerto 4173 y corre `npm run probe`. Falla si algún gate de la plancha falla.
+3. Job `e2e`: depende de `build`. Instala Chromium y corre `npm run e2e` (proyecto chromium y proyecto `reduced` con `prefers-reduced-motion`).
 
 ## Vercel
 
@@ -55,6 +56,8 @@ Dashboard de Vercel → Deployments → el último **READY** anterior → **Inst
 
 Sobre el deploy del atlas 2D, después del merge a `main`:
 
+- El hash `assets/index-*.js` del HTML en https://acupuntura3d.vercel.app coincide con `dist/` de `main`.
+- `node scripts/probe-plate.mjs https://acupuntura3d.vercel.app/ docs/T1_3009/probe-prod.json` deja los 18 gates en PASS. Si uno falla, `git revert -m 1` del merge y push a `main`.
 - La página no debe contener un `<canvas>` de WebGL.
 - Debe haber un `<svg>` con la lámina.
 - Vistas Anterior y Posterior.
@@ -64,8 +67,8 @@ Sobre el deploy del atlas 2D, después del merge a `main`:
 ## Fuentes y CSP
 
 - Outfit + Cormorant Garamond: self-host (`@fontsource/*`).
-- Noto Serif SC (hanzi): CDN Google Fonts.
-- `Content-Security-Policy-Report-Only` en `vercel.json` (incluye `fonts.gstatic.com` / `fonts.googleapis.com`).
+- Noto Serif SC (hanzi): woff2 autoalojado, SIL OFL 1.1 (`src/assets/fonts/OFL.txt`).
+- `Content-Security-Policy` en `vercel.json`: `font-src 'self' data:`.
 
 ## Qué no entra en este atlas
 

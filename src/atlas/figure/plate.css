@@ -1,86 +1,341 @@
 @layer components {
-  /* The caption sits on the plate. The drawing starts under it, as in the museum grid. */
-  .atlas-stage {
+  /* #FBF7EE continues 12px past the window. The seam probe reads 8px outside and 4px inside. */
+  .plate-cell {
+    --m-top: 72px;
+    --m-bottom: 36px;
+    --m-side: clamp(132px, 12.8vw, 184px);
+    --paper-lip: 12px;
+    --lip-x: max(0px, calc(var(--m-side) - var(--paper-lip)));
+    --lip-y: max(0px, calc(var(--m-top) - var(--paper-lip)));
+    --lip-b: max(0px, calc(var(--m-bottom) - var(--paper-lip)));
     position: absolute;
-    top: 4.5rem;
-    left: 0;
-    width: 100%;
-    height: calc(100% - 4.5rem);
+    inset: 0;
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+    grid-template-columns: var(--m-side) minmax(0, 1fr) var(--m-side);
+    grid-template-rows: var(--m-top) minmax(0, 1fr) var(--m-bottom);
+    grid-template-areas:
+      "top top top"
+      "clock window tools"
+      "bottom bottom bottom";
+    background-color: var(--color-paper-outer, #f4eddf);
+    background-image:
+      linear-gradient(var(--color-paper, #fbf7ee), var(--color-paper, #fbf7ee)),
+      radial-gradient(ellipse at 50% 42%, transparent 58%, rgba(120, 86, 48, 0.14) 100%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: var(--lip-x) var(--lip-y), center, 0 0;
+    background-size:
+      calc(100% - var(--lip-x) - var(--lip-x)) calc(100% - var(--lip-y) - var(--lip-b)),
+      100% 100%,
+      160px 160px;
   }
 
-  @media (max-width: 1023px) {
-    /* Title band above, clock and key below. Height is set: an SVG ignores bottom. */
-    .atlas-stage {
-      top: 8rem;
-      height: calc(100% - 14rem);
-    }
+  .plate-band-top {
+    position: relative;
+    grid-area: top;
+    display: flex;
+    align-items: flex-start;
+    min-width: 0;
+    height: 100%;
+    padding: 8px 12px 12px;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .plate-title-block {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: max-content;
+    max-width: calc(100% - 8.5rem);
+    transform: translateX(-50%);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .plate-heading {
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.05;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .plate-subtitle {
+    margin: 2px 0 0;
+    color: var(--color-ink-2);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
   }
 
   .plate-folio {
+    margin: 2px 0 0;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.14em;
     font-variant-caps: all-small-caps;
   }
 
-  .plate-side {
-    font-family: var(--font-serif);
-    font-size: 18px;
-    line-height: 1;
-    letter-spacing: 0.12em;
-    color: var(--color-ink-2);
+  .plate-window {
+    position: relative;
+    grid-area: window;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--color-paper, #fbf7ee);
+  }
+
+  .atlas-stage {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+  }
+
+  .plate-window::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    z-index: 2;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 160px 160px;
+  }
+
+  .plate-window::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    box-sizing: border-box;
+    padding: 3px;
+    pointer-events: none;
+    background: transparent;
+    box-shadow:
+      inset 0 0 0 1px rgba(28, 25, 21, 0.22),
+      inset 0 0 0 2px rgba(255, 255, 255, 0.55),
+      inset 0 2px 7px rgba(28, 25, 21, 0.07);
+    /* Keep the plate bite, but stop the blur before the seam sample at +4px. */
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+
+  .plate-slot-clock {
+    z-index: 2;
+    display: flex;
+    grid-area: clock;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 0;
+    padding: 4px 2px;
+    box-sizing: border-box;
+  }
+
+  .plate-slot-clock > * {
+    max-width: 100%;
+  }
+
+  .plate-slot-clock .qi-caption,
+  .plate-slot-clock .qi-speeds {
+    max-width: 100%;
+  }
+
+  .plate-slot-right {
+    z-index: 2;
+    display: flex;
+    grid-area: tools;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    min-height: 0;
+    padding: 4px 8px 8px;
+    box-sizing: border-box;
+  }
+
+  .plate-minimap-host {
+    flex: none;
+    line-height: 0;
+  }
+
+  .plate-slot-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    min-height: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  .plate-band-bottom {
+    display: flex;
+    grid-area: bottom;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    padding: 0 12px;
+    overflow: hidden;
   }
 
   .plate-colophon {
     margin: 0;
-    max-width: 18rem;
+    max-width: 100%;
+    color: var(--color-ink-2);
     font-size: 11px;
     line-height: 1.35;
-    color: var(--color-ink-2);
+    text-align: center;
+  }
+
+  .plate-zoom {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    width: 42px;
+    border: 1px solid var(--color-rule);
+    background: transparent;
   }
 
   .plate-zoom button {
-    border: 1px solid var(--color-rule);
-    background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-ink);
+    cursor: pointer;
+    appearance: none;
+  }
+
+  .plate-zoom button + button {
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .plate-zoom button:hover {
+    background: transparent;
     color: var(--color-ink);
   }
 
   .plate-minimap {
+    display: block;
+    margin: 0;
     padding: 0;
     border: 1px solid var(--color-rule);
     background: var(--color-paper);
     line-height: 0;
+    color: inherit;
     cursor: pointer;
   }
 
   .plate-key {
-    width: min(16.5rem, 72vw);
-    max-height: min(42vh, 22rem);
-    overflow: auto;
-    border: 1px solid var(--color-rule);
-    background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+    width: 100%;
+    margin: 0;
+    padding: 8px 0 0;
+    overflow: hidden;
+    border: 0;
+    border-top: 1px solid var(--color-rule);
+    background: transparent;
     color: var(--color-ink);
-    padding: 0 0.6rem 0.5rem;
   }
 
-  .plate-key summary {
-    display: flex;
-    align-items: center;
-    min-height: 44px;
-    cursor: pointer;
+  .plate-key-title {
+    margin: 0 0 6px;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.14em;
+    font-variant-caps: all-small-caps;
+  }
+
+  .plate-key-cols,
+  .plate-key-swatches {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 8px;
+    row-gap: 2px;
+  }
+
+  .plate-key-swatches {
+    margin-top: 6px;
   }
 
   .plate-key-row {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.4rem;
+    gap: 4px;
+    min-width: 0;
     margin: 0;
-    padding: 0.12rem 0;
+    color: var(--color-ink);
+    font-size: 13px;
+    line-height: 1.35;
   }
 
-  .plate-hanzi-row {
-    margin: 0.15rem 0 0.25rem;
+  .plate-key-qi {
+    grid-column: 1 / -1;
+  }
+
+  .plate-key-pop {
+    position: relative;
+    flex: none;
+  }
+
+  .plate-key-button {
+    min-width: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 0 12px;
+    border: 1px solid var(--color-rule);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .plate-key-panel {
+    position: absolute;
+    z-index: 5;
+    right: 0;
+    bottom: calc(100% + 8px);
+    width: min(18rem, 72vw);
+    padding: 8px 10px 10px;
+    border: 1px solid var(--color-rule);
+    background: var(--color-paper);
+    box-shadow: var(--shadow-pop);
   }
 
   .plate-swatch {
     display: inline-block;
+    flex: none;
     width: 2.25rem;
     height: 0;
     border-top: 2px solid var(--color-ink);
@@ -107,13 +362,109 @@
     }
   }
 
-  @media (max-width: 1023px) {
-    .plate-key {
-      width: min(11.5rem, calc(50vw - 0.75rem));
+  @media (max-width: 1099px) {
+    .plate-cell {
+      --m-top: 64px;
+      --m-bottom: 36px;
+      --m-side: 96px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .plate-cell {
+      --m-top: 44px;
+      --m-bottom: 56px;
+      --m-side: 8px;
+      grid-template-areas:
+        "top top top"
+        ". window ."
+        "bottom bottom bottom";
     }
 
+    .plate-band-top {
+      align-items: center;
+      padding: 0 8px 12px;
+    }
+
+    .plate-title-block {
+      position: static;
+      width: auto;
+      max-width: none;
+      transform: none;
+      pointer-events: auto;
+    }
+
+    .plate-heading {
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .plate-subtitle,
     .plate-colophon {
-      max-width: calc(50vw - 1.5rem);
+      display: none;
+    }
+
+    .plate-minimap-host {
+      display: block;
+      flex: none;
+      order: 0;
+    }
+
+    .plate-minimap svg {
+      width: 20px;
+      height: 40px;
+    }
+
+    .plate-slot-clock,
+    .plate-slot-right {
+      position: absolute;
+      z-index: 4;
+      top: auto;
+      bottom: 0;
+      align-items: center;
+      justify-content: flex-start;
+      height: var(--m-bottom);
+      padding: 0;
+    }
+
+    .plate-slot-clock {
+      left: 8px;
+      width: auto;
+      max-width: 46%;
+    }
+
+    .plate-slot-right {
+      right: 8px;
+      left: auto;
+      flex-direction: row;
+      gap: 8px;
+      width: auto;
+      max-width: 54%;
+    }
+
+    .plate-slot-controls {
+      flex-direction: row;
+      gap: 8px;
+      width: auto;
+      margin: 0;
+    }
+
+    .plate-key-pop {
+      order: 1;
+    }
+
+    .plate-zoom {
+      order: 2;
+      width: auto;
+    }
+
+    .plate-zoom [data-testid="zoom-in"],
+    .plate-zoom [data-testid="zoom-out"] {
+      display: none;
+    }
+
+    .plate-zoom button + button {
+      border-top: 0;
     }
   }
 }

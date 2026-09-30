@@ -8,12 +8,12 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    background: var(--color-paper);
+    background: var(--color-paper-inset);
     color: var(--color-ink);
     border-top: 1px solid var(--color-rule);
-    box-shadow: var(--shadow-sheet);
-    /* --foot-cover matches .app-foot so folio actions clear the clock row. */
-    padding-bottom: var(--foot-cover, env(safe-area-inset-bottom));
+    box-shadow: 0 -10px 24px rgba(28, 25, 21, 0.08);
+    /* --foot-cover matches .app-foot so the action bar is not covered by the legal row. */
+    padding-bottom: var(--foot-cover, env(safe-area-inset-bottom, 0px));
     outline: none;
     overflow: hidden;
   }
@@ -25,6 +25,8 @@
 
   .sheet[data-snap="peek"] {
     height: 168px;
+    bottom: var(--foot-cover, env(safe-area-inset-bottom, 0px));
+    padding-bottom: 0;
   }
 
   .sheet[data-snap="half"] {
@@ -64,6 +66,10 @@
     border-radius: 2px;
   }
 
+  .sheet[data-snap="peek"] .sheet-handle {
+    height: 22px;
+  }
+
   .sheet-handle:active {
     cursor: grabbing;
   }
@@ -78,5 +84,58 @@
 
   .sheet .folio {
     height: 100%;
+  }
+
+  .sheet .folio-head {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    grid-template-areas:
+      "hanzi code"
+      "hanzi py"
+      "hanzi name";
+    align-items: center;
+    column-gap: 0.75rem;
+    row-gap: 0;
+    padding: 2px 44px 2px 12px;
+  }
+
+  .sheet .folio-hanzi {
+    grid-area: hanzi;
+    align-self: center;
+    width: max-content;
+    max-width: 100%;
+    font-family: "Noto Serif SC";
+    font-size: 40px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .sheet .folio-kicker {
+    grid-area: code;
+    font-size: 13px;
+    line-height: 1.15;
+  }
+
+  .sheet .folio-pinyin {
+    grid-area: py;
+    margin: 0;
+    font-size: 15px;
+    font-style: italic;
+    line-height: 1.15;
+  }
+
+  .sheet .folio-name {
+    grid-area: name;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.2;
+  }
+
+  .sheet[data-snap="peek"] .folio-foot {
+    flex-wrap: nowrap;
+  }
+
+  .sheet[data-snap="peek"] .folio-foot .btn {
+    min-width: 0;
   }
 }
