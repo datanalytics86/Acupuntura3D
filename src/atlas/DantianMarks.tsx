@@ -1,5 +1,11 @@
 import { useMemo, useState } from "react";
-import { CENTERS, type EnergyCenter } from "@/atlas/centers";
+import {
+  CENTERS,
+  dantianProbeRadiusPx,
+  dantianRingRadiusPx,
+  placeDantianSeal,
+  type EnergyCenter,
+} from "@/atlas/centers";
 import { instancesOnView } from "@/atlas/mapCoords";
 import { loadAcupoints } from "@/data";
 import { CINNABAR, INK } from "@/lib/colors";
@@ -15,41 +21,6 @@ function nearest(pos: Point2D, pts: Point2D[]): { d: number; p: Point2D } | null
     if (!best || d < best.d) best = { d, p };
   }
   return best;
-}
-
-/**
- * Move the seal off any point it would cover.
- * A block that sits above or below is cleared sideways, so the seal does not
- * climb the midline into the next point.
- */
-function clearSeal(pos: Point2D, guard: number, pts: Point2D[]): Point2D {
-  let x = pos.x;
-  let y = pos.y;
-  for (let n = 0; n < 8; n += 1) {
-    let blocker: Point2D | null = null;
-    let best = guard;
-    for (const p of pts) {
-      const d = Math.hypot(x - p.x, y - p.y);
-      if (d < best) {
-        best = d;
-        blocker = p;
-      }
-    }
-    if (!blocker) return { x, y };
-    const dx = x - blocker.x;
-    const dy = y - blocker.y;
-    if (best < 1e-6 || Math.abs(dy) >= Math.abs(dx)) {
-      const room = guard * guard - dy * dy;
-      const horiz = room > 0 ? Math.sqrt(room) : guard;
-      const sign = dx < -1e-6 ? -1 : 1;
-      x = blocker.x + sign * horiz * 1.02;
-    } else {
-      const push = (guard - best) * 1.02;
-      x += (dx / best) * push;
-      y += (dy / best) * push;
-    }
-  }
-  return { x, y };
 }
 
 function labelPlace(
@@ -90,7 +61,7 @@ function Seal({
   selected,
   spots,
   k,
-  regionDetail,
+  zoom,
   name,
   onSelect,
 }: {
@@ -99,23 +70,25 @@ function Seal({
   selected: boolean;
   spots: Point2D[];
   k: number;
-  regionDetail: boolean;
+  zoom: number;
   name: string;
   onSelect: (id: EnergyCenter["id"]) => void;
 }) {
   const [focused, setFocused] = useState(false);
-  const near = nearest(pos, spots);
+  const [hot, setHot] = useState(false);
+  const ringPx = dantianRingRadiusPx(zoom);
+  const placed = placeDantianSeal(pos, spots, k, dantianProbeRadiusPx(zoom));
+  const draw = placed.draw;
+  const r = ringPx * k;
+  const near = nearest(draw, spots);
   const shrink = near != null && near.d < 20 * k;
-  const diameter = (regionDetail ? 32 : 26) * (shrink ? 0.7 : 1);
-  const r = (diameter / 2) * k;
-  const hitR = r;
-  const draw = clearSeal(pos, r + 6 * k + k, spots);
   const label = labelPlace(draw, r, k, shrink, spots, center.zh, center.pinyin);
-  const ink = selected ? CINNABAR : INK;
+  const showLabel = zoom > 1.6 || hot || focused || selected;
   const activate = () => onSelect(center.id);
   return (
     <g
       data-atlas-hit=""
+      data-testid={`dantian-${center.id}`}
       transform={`translate(${draw.x} ${draw.y})`}
       className={selected ? "center-live" : undefined}
       role="button"
@@ -124,6 +97,8 @@ function Seal({
       aria-pressed={selected}
       style={{ cursor: "pointer", outline: "none" }}
       onPointerDown={(e) => e.stopPropagation()}
+      onPointerEnter={() => setHot(true)}
+      onPointerLeave={() => setHot(false)}
       onClick={(e) => {
         e.stopPropagation();
         activate();
@@ -137,12 +112,29 @@ function Seal({
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
     >
-      <circle r={hitR} fill="transparent" />
-      <circle r={r} fill="var(--color-paper)" fillOpacity={0.92} stroke={ink} strokeWidth={(selected ? 1.5 : 1.1) * k} />
-      <circle r={r * (15 / 22)} fill="none" stroke={ink} strokeWidth={0.7 * k} />
-      <circle r={Math.max(1.5 * k, r * (2.4 / 22))} fill={ink} />
+      {placed.shifted ? (
+        <line
+          x1={pos.x - draw.x}
+          y1={pos.y - draw.y}
+          x2={0}
+          y2={0}
+          stroke="var(--color-ink-2)"
+          strokeWidth={k}
+          strokeDasharray={`${k} ${2.4 * k}`}
+          strokeLinecap="round"
+          pointerEvents="none"
+        />
+      ) : null}
+      <circle
+        r={r}
+        fill="var(--color-paper)"
+        fillOpacity={0.92}
+        stroke="var(--color-ink-2)"
+        strokeWidth={k}
+      />
+      <circle r={1.5 * k} fill="var(--color-ink-2)" pointerEvents="none" />
       {focused ? (
-        <circle r={hitR + 3 * k} fill="none" stroke={CINNABAR} strokeWidth={2 * k} pointerEvents="none" />
+        <circle r={r + 3 * k} fill="none" stroke={CINNABAR} strokeWidth={2 * k} pointerEvents="none" />
       ) : null}
       <text
         className="hanzi"
@@ -154,6 +146,9 @@ function Seal({
         stroke="var(--color-paper)"
         strokeWidth={3 * k}
         paintOrder="stroke"
+        opacity={showLabel ? 1 : 0}
+        aria-hidden
+        pointerEvents="none"
       >
         {center.zh}
       </text>
@@ -167,6 +162,9 @@ function Seal({
         stroke="var(--color-paper)"
         strokeWidth={3 * k}
         paintOrder="stroke"
+        opacity={showLabel ? 1 : 0}
+        aria-hidden
+        pointerEvents="none"
       >
         {center.pinyin}
       </text>
@@ -181,6 +179,7 @@ export function DantianMarks() {
   const visible = useViewerStore((s) => s.visibleLayers.centers);
   const selected = useViewerStore((s) => s.selectedCenterId);
   const focus = useViewerStore((s) => s.focusCenter);
+  const zoom = useViewerStore((s) => s.atlasZoom);
   const k = useUnitsPerPx();
   const points = useMemo(() => loadAcupoints(), []);
   const spots = useMemo(() => {
@@ -226,7 +225,7 @@ export function DantianMarks() {
           selected={selected === center.id}
           spots={spots}
           k={k}
-          regionDetail={region !== "body"}
+          zoom={zoom}
           name={locale === "en" ? center.en : center.es}
           onSelect={focus}
         />

@@ -2,8 +2,9 @@ import { describe, expect, it } from "vitest";
 import { loadAcupoints } from "@/data";
 import { instancesOnView } from "@/atlas/mapCoords";
 import { estimateLabelPx, layoutMarginCallouts, type Callout, type CalloutInput } from "@/atlas/callouts";
+import { CENTERS, dantianProbeGapPx, dantianProbeRadiusPx, placeDantianSeal } from "@/atlas/centers";
 import { unitsPerPx, visibleRect } from "@/atlas/screen";
-import type { AtlasView } from "@/types";
+import type { AtlasView, Point2D } from "@/types";
 
 const FIGURE = { l: 97.6, r: 702.4 };
 
@@ -69,4 +70,36 @@ describe("margin callouts", () => {
   it("falls back to hover labels when the margin is too narrow (phone 350×500)", () => {
     expect(layoutMarginCallouts(inputs("anterior"), frame(350, 500))).toBeNull();
   });
+});
+
+describe("dantian seal clearance", () => {
+  const windows = [
+    { w: 1072, h: 709 },
+    { w: 374, h: 612 },
+  ];
+  for (const box of windows) {
+    for (const view of ["anterior", "posterior"] as const) {
+      for (const zoom of [1, 1.75]) {
+        it(`${view} ${box.w}×${box.h} zoom ${zoom}: no seal sits under 6px from a point`, () => {
+          const k = unitsPerPx(800 / zoom, 1600 / zoom, box);
+          const spots: Point2D[] = [];
+          for (const point of loadAcupoints()) {
+            for (const inst of instancesOnView(point, view, true)) spots.push(inst.position);
+          }
+          const radius = dantianProbeRadiusPx(zoom);
+          for (const center of CENTERS) {
+            const anchor = view === "posterior" ? center.posterior : center.anterior;
+            if (!anchor) continue;
+            const frozen = { x: anchor.x, y: anchor.y };
+            const { draw } = placeDantianSeal(anchor, spots, k, radius);
+            expect(anchor).toEqual(frozen);
+            for (const spot of spots) {
+              const gap = dantianProbeGapPx(draw, spot, k, radius);
+              expect(gap, `${center.id} vs ${spot.x},${spot.y}`).toBeGreaterThanOrEqual(6);
+            }
+          }
+        });
+      }
+    }
+  }
 });

@@ -163,6 +163,128 @@ function centroidOf(members: PlatePoint[]): Point2D {
   return { x: x / members.length, y: y / members.length };
 }
 
+/** The mark farther up the plate, or farther from the midline when they share a row. */
+function rearMarkKeys(items: PlatePoint[], k: number): Set<string> {
+  const rear = new Set<string>();
+  const limit = 10 * k;
+  for (let i = 0; i < items.length; i += 1) {
+    const a = items[i]!;
+    for (let j = 0; j < items.length; j += 1) {
+      if (i === j) continue;
+      const b = items[j]!;
+      if (Math.hypot(a.position.x - b.position.x, a.position.y - b.position.y) >= limit) continue;
+      const behind =
+        a.position.y < b.position.y - 0.5 ||
+        (Math.abs(a.position.y - b.position.y) <= 0.5 &&
+          Math.abs(a.position.x - CX) > Math.abs(b.position.x - CX) + 0.5);
+      if (behind) {
+        rear.add(`${a.point.id}-${a.side}`);
+        break;
+      }
+    }
+  }
+  return rear;
+}
+
+type ProxLabel = { code: string; zh: string; x: number; y: number; anchor: Anchor; hot: boolean };
+
+function proximityLabels(shown: PlatePoint[], hotId: string | null, selectedId: string | null): ProxLabel[] {
+  const seeds: CalloutSeed[] = [];
+  const meta = new Map<string, { code: string; zh: string; id: string }>();
+  for (const it of shown) {
+    if (it.side === "R") continue;
+    const anchor: Anchor = it.position.x < CX - 8 ? "end" : it.position.x > CX + 8 ? "start" : "middle";
+    seeds.push({
+      key: it.point.code,
+      x: it.position.x,
+      y: it.position.y,
+      anchor,
+      text: `${it.point.code} ${it.point.names.zh}`,
+    });
+    meta.set(it.point.code, { code: it.point.code, zh: it.point.names.zh, id: it.point.id });
+  }
+  const placed = layoutCallouts(seeds);
+  const out: ProxLabel[] = [];
+  for (const [key, place] of placed) {
+    const row = meta.get(key);
+    if (!row) continue;
+    out.push({
+      code: row.code,
+      zh: row.zh,
+      x: place.x,
+      y: place.y,
+      anchor: place.anchor,
+      hot: row.id === hotId || row.id === selectedId,
+    });
+  }
+  return out;
+}
+
+/** 24–40px outside the figure box, pulled in only when the window cannot hold 32. */
+function plateSideX(edge: number, outward: -1 | 1, k: number, rect: Rect): number {
+  const glyph = 14 * k;
+  const pad = 6 * k;
+  const room = outward < 0 ? edge - (rect.l + pad + glyph) : rect.r - pad - glyph - edge;
+  const prefer = 32 * k;
+  const near = 24 * k;
+  const far = 40 * k;
+  let gap = prefer;
+  if (room < prefer) gap = room >= near ? room : Math.max(room, 0);
+  if (gap > far) gap = far;
+  return edge + outward * gap;
+}
+
+function PlateSideMarks({
+  view,
+  k,
+  rect,
+  locale,
+}: {
+  view: AtlasView;
+  k: number;
+  rect: Rect;
+  locale: "es" | "en";
+}) {
+  const y = Y.fingertips;
+  const leftX = plateSideX(BODY_FIGURE.l, -1, k, rect);
+  const rightX = plateSideX(BODY_FIGURE.r, 1, k, rect);
+  const anterior = view === "anterior";
+  const ink = {
+    y,
+    fill: "var(--color-ink-2)",
+    stroke: "var(--color-paper)",
+    strokeWidth: 3 * k,
+    paintOrder: "stroke" as const,
+    fontSize: 16 * k,
+    fontFamily: "var(--font-serif)",
+    fontWeight: 500,
+    dominantBaseline: "middle" as const,
+    pointerEvents: "none" as const,
+  };
+  return (
+    <g pointerEvents="none">
+      <text
+        data-testid="plate-side-left"
+        x={leftX}
+        textAnchor="end"
+        aria-label={t(locale, anterior ? "plateSideRight" : "plateSideLeft")}
+        {...ink}
+      >
+        {anterior ? "D" : "I"}
+      </text>
+      <text
+        data-testid="plate-side-right"
+        x={rightX}
+        textAnchor="start"
+        aria-label={t(locale, anterior ? "plateSideLeft" : "plateSideRight")}
+        {...ink}
+      >
+        {anterior ? "I" : "D"}
+      </text>
+    </g>
+  );
+}
+
 function Registration({
   k,
   halo,
@@ -192,7 +314,7 @@ function Registration({
       <circle data-testid={testId} r={halo} fill="var(--color-paper)" />
       <circle r={ringR} fill="none" stroke={ring} strokeWidth={ringW} pointerEvents="none" />
       {number == null ? (
-        <circle r={2.5 * k} fill={INK} pointerEvents="none" />
+        <circle r={Math.min(2.5 * k, halo * 0.45)} fill={INK} pointerEvents="none" />
       ) : (
         <text
           className="code"
@@ -266,8 +388,8 @@ export function Points2D() {
     () => points.flatMap((p) => instancesOnView(p, view, both)),
     [points, view, both],
   );
-  const allowColumns =
-    labelsMode === "all" || (labelsMode !== "none" && (region !== "body" || zoom <= 1.6));
+  const wantMargin = labelsMode !== "none" && zoom <= 1.6;
+  const wantProximity = labelsMode !== "none" && zoom > 1.6;
   const zoomKey = Math.round(zoom * 20) / 20;
   // Column layout reads visibleRect, so pan is part of the key, but snapped so a drag does not redo it per pixel.
   const panX = Math.round(pan.x / 4) * 4;
@@ -275,7 +397,7 @@ export function Points2D() {
   const pointIds = items.map((it) => `${it.point.id}:${it.side}`).join("|");
 
   const margin = useMemo(() => {
-    if (!allowColumns || box.w <= 0 || box.h <= 0) return null;
+    if (!wantMargin || box.w <= 0 || box.h <= 0) return null;
     const z = zoomKey > 0 ? zoomKey : 1;
     const plate = { w: box.w, h: box.h };
     const kLay = unitsPerPx(VIEW_W / z, VIEW_H / z, plate);
@@ -295,18 +417,27 @@ export function Points2D() {
       row.anchors.push(it.position);
       byId.set(it.point.id, row);
     }
-    if (byId.size === 0) return null;
+    if (byId.size === 0) return [];
     return layoutMarginCallouts([...byId.values()], { view: viewRect, figure, k: kLay });
-  }, [allowColumns, view, region, zoomKey, box.w, box.h, pointIds, panX, panY, items]);
-
-  if (!visible) return null;
+  }, [wantMargin, view, region, zoomKey, box.w, box.h, pointIds, panX, panY, items]);
 
   const measured = box.w > 0 && box.h > 0;
   const viewRect = measured ? visibleRect(pan, k, box) : null;
+  const sideMarks =
+    region === "body" && zoom <= 1.3 && viewRect ? (
+      <PlateSideMarks view={view} k={k} rect={viewRect} locale={locale} />
+    ) : null;
+
+  if (!visible) return <g ref={rootRef}>{sideMarks}</g>;
+
   const shown = (viewRect ? items.filter((it) => inView(it.position, viewRect, 48 * k)) : items).filter((it) =>
     inRegionFrame(region, view, it.position),
   );
-  const groups = clusterItems(shown, measured ? 14 * k : 0);
+  const marginFailed = wantMargin && measured && margin === null;
+  const cluster = marginFailed && coarse;
+  const groups = clusterItems(shown, cluster ? 14 * k : 0);
+  const rear = cluster ? new Set<string>() : rearMarkKeys(shown, k);
+  const proximity = wantProximity ? proximityLabels(shown, hovered, selected) : [];
   const calloutById = new Map<string, Callout>((margin ?? []).map((c) => [c.key, c]));
   const hidden = new Set<string>();
   for (const group of groups) {
@@ -328,6 +459,7 @@ export function Points2D() {
 
   return (
     <g ref={rootRef}>
+      {sideMarks}
       {groups.map((members) => {
         if (members.length > 1) {
           const at = centroidOf(members);
@@ -387,12 +519,14 @@ export function Points2D() {
         const primary = it.side !== "R";
         const isSel = selected === it.point.id;
         const isHov = hovered === it.point.id;
-        const halo = isHov ? 7 * k : 6 * k;
+        const basePx = rear.has(key) ? 4 : 6;
+        const halo = (isHov ? basePx + 1 : basePx) * k;
         const meridian = meridianById.get(it.point.meridianId);
         const meridianName = meridian ? (locale === "en" ? meridian.names.en : meridian.names.es) : null;
         const showLocal =
           labelsMode !== "none" &&
           primary &&
+          !wantProximity &&
           !calloutById.has(it.point.id) &&
           (isHov || isSel);
         const dir = it.position.x < CX ? -1 : 1;
@@ -554,6 +688,23 @@ export function Points2D() {
           </g>
         );
       })}
+      {proximity.map((lab) => (
+        <text
+          key={lab.code}
+          data-testid={`label-${lab.code}`}
+          x={lab.x}
+          y={lab.y}
+          textAnchor={lab.anchor}
+          fontSize={12 * k}
+          fill={lab.hot ? CINNABAR : INK}
+          pointerEvents="none"
+        >
+          <tspan className="code">{lab.code}</tspan>
+          <tspan className="hanzi" dx={4 * k} fontSize={12.5 * k}>
+            {lab.zh}
+          </tspan>
+        </text>
+      ))}
       {tip && tipPoint && !coarse ? (
         <PointTooltip
           open
