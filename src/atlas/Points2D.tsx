@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { nearestMarkAtClient, pointWinsOverSeal, svgUserToClient } from "@/atlas/coarseHit";
+import { clusterGapPx, nearestMarkAtClient, pointWinsOverSeal, svgUserToClient } from "@/atlas/coarseHit";
 import { loadAcupoints, loadMeridians } from "@/data";
 import { instancesOnView } from "@/atlas/mapCoords";
 import { CX, VIEW_H, VIEW_W, Y } from "@/atlas/figure/landmarks";
@@ -439,10 +439,15 @@ export function Points2D() {
   useEffect(() => {
     const svg = rootRef.current?.ownerSVGElement;
     if (!svg) return;
-    const onClick = (event: MouseEvent) => {
+    const host = svg.closest("[data-testid='plate']") ?? svg;
+    let down: { x: number; y: number } | null = null;
+    const pick = (event: Event) => {
+      if (!(event instanceof MouseEvent)) return;
       const target = event.target;
-      if (!(target instanceof Element) || !svg.contains(target)) return;
+      if (!(target instanceof Element) || !host.contains(target)) return;
       if (target.closest("[data-cluster]")) return;
+      const widget = target.closest("button, a, input, textarea, [role='button'], [role='radio']");
+      if (widget && !widget.closest("[data-atlas-hit]")) return;
       const picked = nearestMarkAtClient(svg, event.clientX, event.clientY, marksRef.current, 22);
       if (!picked) return;
       const seal = target.closest("[data-testid^='dantian-']");
@@ -463,8 +468,25 @@ export function Points2D() {
       store.setSelected(picked.id);
       store.setActiveMeridian(picked.meridianId);
     };
-    svg.addEventListener("click", onClick, true);
-    return () => svg.removeEventListener("click", onClick, true);
+    const onDown = (event: Event) => {
+      if (!(event instanceof PointerEvent) || event.button !== 0) return;
+      down = { x: event.clientX, y: event.clientY };
+    };
+    const onUp = (event: Event) => {
+      if (!(event instanceof PointerEvent) || event.button !== 0) return;
+      const start = down;
+      down = null;
+      if (!start || Math.hypot(event.clientX - start.x, event.clientY - start.y) > 8) return;
+      pick(event);
+    };
+    host.addEventListener("pointerdown", onDown, true);
+    host.addEventListener("pointerup", onUp, true);
+    host.addEventListener("click", pick, true);
+    return () => {
+      host.removeEventListener("pointerdown", onDown, true);
+      host.removeEventListener("pointerup", onUp, true);
+      host.removeEventListener("click", pick, true);
+    };
   }, [visible]);
 
   const meridianById = useMemo(() => new Map(meridians.map((m) => [m.id, m])), [meridians]);
@@ -521,7 +543,8 @@ export function Points2D() {
   const shown = (viewRect ? items.filter((it) => inView(it.position, viewRect, 48 * k)) : items).filter((it) =>
     inRegionFrame(region, view, it.position),
   );
-  const groups = clusterItems(shown, 24 * k);
+  // Paper halo is 6px. A 24px coarse gap also merges SP6 with KI3 and hides LI4 on the hand.
+  const groups = clusterItems(shown, clusterGapPx() * k);
   const clustered = groups.some((members) => members.length > 1);
   const rear = clustered ? new Set<string>() : rearMarkKeys(shown, k);
   const proximity = wantProximity && viewRect ? proximityLabels(shown, hovered, selected, viewRect, k) : [];

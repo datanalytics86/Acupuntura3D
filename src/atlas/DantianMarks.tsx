@@ -133,7 +133,6 @@ function Seal({
           pointerEvents="none"
         />
       ) : null}
-      <circle r={Math.max(r, (coarse ? 22 : 12) * k)} fill="transparent" pointerEvents="none" />
       <circle
         r={r}
         fill="var(--color-paper)"
@@ -141,6 +140,10 @@ function Seal({
         stroke="var(--color-ink-2)"
         strokeWidth={k}
       />
+      <circle r={Math.max(r, (coarse ? 22 : 12) * k)} fill="transparent" pointerEvents="none" />
+      <text aria-hidden="true" fontSize={0} fill="transparent">
+        {center.zh}
+      </text>
       <circle r={1.5 * k} fill="var(--color-ink-2)" pointerEvents="none" />
       {focused ? (
         <circle r={r + 3 * k} fill="none" stroke={CINNABAR} strokeWidth={2 * k} pointerEvents="none" />

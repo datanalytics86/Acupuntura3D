@@ -88,6 +88,20 @@ function insideFrame(pos: Point2D, frame: { pan: Point2D; zoom: number }): boole
 
 let flight = 0;
 let aim: Camera | null = null;
+let returnCamera: Camera | null = null;
+
+function rememberCamera(): void {
+  if (returnCamera) return;
+  const s = useViewerStore.getState();
+  returnCamera = { pan: s.atlasPan, zoom: s.atlasZoom };
+}
+
+function restoreCamera(): void {
+  const back = returnCamera;
+  returnCamera = null;
+  if (!back) return;
+  useViewerStore.getState().flyTo(back);
+}
 
 function cancelFlight(): void {
   if (typeof cancelAnimationFrame === "function") cancelAnimationFrame(flight);
@@ -130,10 +144,15 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
   helpOpen: false,
   sheetSnap: "closed",
   labelsMode: "auto",
-  setSelected: (id) => set({ selectedPointId: id, ...(id ? { selectedCenterId: null } : {}) }),
+  setSelected: (id) => {
+    if (id) rememberCamera();
+    set({ selectedPointId: id, ...(id ? { selectedCenterId: null } : {}) });
+    if (!id && !get().selectedCenterId) restoreCamera();
+  },
   showPoint: (id) => {
     const pt = loadAcupoints().find((p) => p.id === id);
     if (!pt) return;
+    rememberCamera();
     const s = get();
     const here = pointOnView(pt, s.atlasView);
     const other = s.atlasView === "anterior" ? "posterior" : "anterior";
@@ -210,8 +229,10 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
   focusCenter: (id) => {
     if (!id) {
       set({ selectedCenterId: null });
+      if (!get().selectedPointId) restoreCamera();
       return;
     }
+    rememberCamera();
     const s = get();
     const center = CENTERS.find((c) => c.id === id);
     if (!center) return;
@@ -256,6 +277,7 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
   setSheetSnap: (s) => set({ sheetSnap: s }),
   setLabelsMode: (m) => set({ labelsMode: m }),
   resetAtlasCamera: () => {
+    returnCamera = null;
     set({ atlasRegion: "body" });
     get().flyTo({ pan: { x: 400, y: 800 }, zoom: 1 });
   },
@@ -265,7 +287,7 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     const to: Camera = { pan: clampPan(target.pan, zoom, box), zoom };
     if (opts?.keepAim) aim = to;
     else aim = null;
-    const duration = opts?.duration ?? 420;
+    const duration = opts?.duration ?? 0;
     cancelFlight();
     if (duration <= 0 || prefersReducedMotion() || typeof requestAnimationFrame !== "function") {
       set({ atlasPan: to.pan, atlasZoom: to.zoom });
@@ -288,7 +310,7 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     const spun = zoomAbout(base, factor, anchor ?? base.pan);
     const zoom = clampZoom(spun.zoom);
     aim = { pan: clampPan(spun.pan, zoom, s.plateBox), zoom };
-    get().flyTo(aim, { duration: 160, keepAim: true });
+    get().flyTo(aim, { keepAim: true });
   },
   stopFlight,
 }));

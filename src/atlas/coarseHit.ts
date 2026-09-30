@@ -23,8 +23,22 @@ export function nearestWithin<T extends ScreenPoint>(
   return best;
 }
 
-/** The seal keeps the tap unless the point is strictly closer and still inside the radius. */
+/**
+ * Marks closer than this, in CSS px, share one control.
+ * The paper halo is 6px, so 7px groups LI4 with SI3 on the body (about 5px apart)
+ * and leaves SP6/KI3 and the hand plate's LI4 as their own buttons.
+ */
+export function clusterGapPx(): number {
+  return 7;
+}
+
+/**
+ * The seal keeps the tap unless the point is strictly closer and still inside the radius.
+ * A tap on the mark itself (within the 6px paper halo) wins a tie, so CV17 opens when the
+ * middle seal sits on the same anchor.
+ */
 export function pointWinsOverSeal(pointDistance: number, sealDistance: number, radius: number): boolean {
+  if (pointDistance <= 6 && pointDistance <= sealDistance) return true;
   return pointDistance <= radius && pointDistance < sealDistance;
 }
 

@@ -50,6 +50,8 @@ test.describe("cada marca abre su código", () => {
       const codes = await visibleCodes(page);
       expect(codes.length).toBeGreaterThan(8);
       for (const code of codes) await tapCode(page, code, false);
+      await page.waitForTimeout(300);
+      await expect(page.getByTestId("first-hint")).toHaveCount(0);
     });
   });
 
@@ -63,6 +65,8 @@ test.describe("cada marca abre su código", () => {
         await expect(page.getByTestId(`point-${code}`)).toBeVisible();
         await tapCode(page, code, true);
       }
+      await page.waitForTimeout(300);
+      await expect(page.getByTestId("first-hint")).toHaveCount(0);
     });
   });
 });

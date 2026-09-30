@@ -3,6 +3,7 @@ import { AtlasRoot } from "@/atlas/AtlasRoot";
 import { handleCameraKey } from "@/atlas/cameraKeys";
 import { CENTERS } from "@/atlas/centers";
 import { loadAcupoints } from "@/data";
+import { stepPoint } from "@/lib/pointStep";
 import { t } from "@/i18n";
 import { Disclaimer } from "@/ui/Disclaimer";
 import { Topbar } from "@/ui/Topbar";
@@ -80,11 +81,22 @@ function FirstHint() {
       return;
     }
     let alive = true;
+    let id = 0;
     const reveal = () => {
       if (!alive || document.getElementById("legal-gate")) return;
+      try {
+        if (window.localStorage.getItem("acu3d.hint.v1") === "1") {
+          window.clearInterval(id);
+          return;
+        }
+      } catch {
+        window.clearInterval(id);
+        return;
+      }
       setShow(true);
+      window.clearInterval(id);
     };
-    const id = window.setInterval(reveal, 200);
+    id = window.setInterval(reveal, 200);
     reveal();
     return () => {
       alive = false;
@@ -242,12 +254,7 @@ export function App() {
       }
       const selectedId = store.selectedPointId;
       if (!selectedId) return;
-      const merId = points.find((pt) => pt.id === selectedId)?.meridianId;
-      const group = points.filter((pt) => pt.meridianId === merId);
-      const idx = group.findIndex((pt) => pt.id === selectedId);
-      if (idx < 0 || group.length === 0) return;
-      const next =
-        e.key === "ArrowRight" ? group[(idx + 1) % group.length] : group[(idx - 1 + group.length) % group.length];
+      const next = stepPoint(points, selectedId, e.key === "ArrowRight" ? 1 : -1);
       if (next) store.showPoint(next.id);
     };
     window.addEventListener("keydown", onKey);

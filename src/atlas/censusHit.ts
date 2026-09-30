@@ -35,7 +35,9 @@ export function useMuteCovered(rootRef: RefObject<Element | null>): ReadonlySet<
       const next = new Set<string>();
       for (const node of root.querySelectorAll<Element>("[data-hit-key]")) {
         const key = node.getAttribute("data-hit-key");
-        if (key && elementCovered(node)) next.add(key);
+        const active = document.activeElement;
+        const focused = active !== null && (active === node || node.contains(active));
+        if (key && !focused && elementCovered(node)) next.add(key);
       }
       setMuted((prev) => (sameSet(prev, next) ? prev : next));
     };

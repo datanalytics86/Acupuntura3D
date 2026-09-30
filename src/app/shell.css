@@ -11,7 +11,6 @@
     grid-template-rows: auto 1fr auto;
     grid-template-columns: var(--index-w, 0px) minmax(0, 1fr) var(--folio-w, 0px);
     grid-template-areas: "head head head" "index plate folio" "foot foot foot";
-    transition: grid-template-columns var(--dur-2, 200ms) var(--ease-paper, cubic-bezier(0.22, 1, 0.36, 1));
   }
 
   .app-head {

@@ -42,6 +42,7 @@
     padding: 8px 12px 12px;
     overflow: hidden;
     box-sizing: border-box;
+    pointer-events: none;
   }
 
   .plate-title-block {
@@ -195,6 +196,7 @@
     min-width: 0;
     padding: 0 12px;
     overflow: hidden;
+    pointer-events: none;
   }
 
   .plate-colophon {
@@ -391,7 +393,6 @@
       width: auto;
       max-width: none;
       transform: none;
-      pointer-events: auto;
     }
 
     .plate-heading {
