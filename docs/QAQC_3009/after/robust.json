@@ -1,0 +1,69 @@
+{
+  "forcedColors": {
+    "marks": 10,
+    "buttons": 18,
+    "buttonColor": "rgb(0, 0, 0)"
+  },
+  "zoom400": {
+    "accept": true,
+    "found": {
+      "search-trigger": "present",
+      "view-anterior": "present",
+      "view-posterior": "present",
+      "region-body": "present",
+      "plate": "present"
+    },
+    "overflowX": false,
+    "h1": [
+      "Enciclopedia del cuerpo"
+    ],
+    "errors": []
+  },
+  "reducedMotion": {
+    "reduced": true,
+    "running": 0
+  },
+  "trace": {
+    "over50": 0,
+    "top": [],
+    "names": []
+  },
+  "heap": {
+    "before": {
+      "detached": 1,
+      "kb": 8358
+    },
+    "after": {
+      "detached": 1,
+      "kb": 10839
+    },
+    "usedHeap": 10000000
+  },
+  "slow": {
+    "lcp": 0,
+    "during": {
+      "contour": false,
+      "failed": false
+    },
+    "elapsedMs": 1545,
+    "pngSeen": true
+  },
+  "offline": {
+    "errors": [],
+    "plate": true,
+    "posteriorThenBack": "false",
+    "body": "true"
+  },
+  "resize": {
+    "errors": [],
+    "before": "0 0 800 1600",
+    "after": "0 0 800 1600",
+    "same": true
+  },
+  "repeat": {
+    "errors": [],
+    "code": "ST36",
+    "folios": 1,
+    "again": "ST36"
+  }
+}

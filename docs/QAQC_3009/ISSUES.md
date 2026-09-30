@@ -9,7 +9,7 @@ Esperado: la ficha de ese código.
 Obtenido: `ST36→GB34`, `SP6→KI3`, `LR3→KI3`, `CV12→nada` (`tapPoints` 9).
 Evidencia: `baseline/health.json` (`tapWrong`)
 Dueño: FX-ATLAS · Test que lo prueba: `tests/coarseHit.test.ts` · `e2e/tap.spec.ts`
-Estado: abierto
+Estado: corregido (447c74b, 1cbd5b0)
 
 ### Q02 · S1 · El aviso legal no atrapa el foco
 Dónde: `#legal-gate` · Viewport: desktop · Contexto: legal
@@ -18,7 +18,7 @@ Esperado: el foco permanece en el modal.
 Obtenido: `focusLeakLegal = 25`.
 Evidencia: `baseline/health.json`
 Dueño: FX-APP · Test que lo prueba: `scripts/qa/health.mjs` (gate `focusLeakLegal`)
-Estado: abierto
+Estado: corregido (447c74b)
 
 ### Q03 · S2 · Sectores del reloj tapados
 Dónde: dial de `QiClock` · Viewport: desktop y móvil
@@ -44,7 +44,7 @@ Esperado: 0 `smallTarget`.
 Obtenido: 10. Velocidades ~14–16 px; ⟲ móvil 40×40; sellos de alto 32; minimapa; asa 390×22.
 Evidencia: `baseline/census.json` (`summary.smallTarget`)
 Dueño: FX-UI · Test: censo (`smallTarget`)
-Estado: abierto
+Estado: corregido (447c74b, 14c8a3d, 1cbd5b0)
 
 ### Q06 · S2 · Petición a fonts.googleapis.com
 Esperado: `thirdPartyHosts` vacío.
@@ -71,7 +71,7 @@ Esperado: `aria-hidden="true"` y `tabIndex={-1}`; el cierre es el botón visible
 Obtenido en la base: el scrim era un botón «Cerrar» de pantalla completa.
 Evidencia: censo previo al 30.09; el patrón se aplica en este ciclo.
 Dueño: FX-UI · Test: revisión de `MeridianRail.tsx`
-Estado: abierto
+Estado: corregido (447c74b)
 
 ### A1-01 · S1 · Escape cierra una capa que está debajo
 Dónde: `App`, `MeridianRail`, `QiClock`, `PlateKey` · Viewport: estrecho
@@ -79,63 +79,63 @@ Esperado: paleta, luego ayuda, luego ficha, luego índice.
 Obtenido: el índice o el reloj consumían Escape encima de la paleta o la ayuda.
 Evidencia: `A1.md`
 Dueño: FX-APP · Test: `e2e/tasks.spec.ts` (U9 y cierre por capas)
-Estado: abierto
+Estado: corregido (447c74b)
 
 ### A1-02 · S1 · La ficha estrecha pisa el vuelo de región y de reset
 Dónde: `Sheet.tsx` `useLayoutEffect` · Viewport: estrecho
 Esperado: si el ancla ya está encuadrada, no cancelar el `flyTo` de la región, la vista o `0`.
 Evidencia: `A1.md`
 Dueño: FX-UI · Test: el efecto sale antes de `flyTo` cuando `framed.current === anchorKey`
-Estado: abierto
+Estado: corregido (447c74b)
 
 ### A1-03 · S1 · `matchMedia` ausente tira el arranque
 Dónde: `src/lib/quality.ts` · el store lo llama al crearse
 Esperado: sin `matchMedia`, movimiento reducido es falso y la portada monta.
 Evidencia: `A1.md`
 Dueño: FX-APP · Test: `tests/paperTransition.test.ts`
-Estado: abierto
+Estado: corregido (447c74b)
 
 ### A1-04 · S1 · El error de render se lleva el aviso legal
 Dónde: `ErrorBoundary` · Viewport: cualquiera
 Esperado: el fallback incluye el aviso y un reintento, por `t()`.
 Evidencia: `A1.md`
 Dueño: FX-APP
-Estado: abierto
+Estado: corregido (447c74b)
 
 ### A1-05 · S2 · El zoom siguiente olvida el arrastre
 Dónde: `viewerStore` `aim` · Viewport: cualquiera
 Esperado: `stopFlight`, `setAtlasPan` y `setAtlasZoom` anulan `aim`. `flyTo` no lo anula a mitad de un zoom apilado.
 Evidencia: `A1.md`
 Dueño: FX-APP · Test: `tests/controls.test.ts` («drops the stacked zoom aim after a pan»)
-Estado: abierto
+Estado: corregido (447c74b, 1cbd5b0)
 
 ### A1-06 · S2 · El PNG de la lámina falla en silencio
 Dónde: `Figure.tsx` · Viewport: cualquiera
 Esperado: mensaje y botón de reintento, sin cambiar el `href`.
 Evidencia: `A1.md`
 Dueño: FX-ATLAS
-Estado: abierto
+Estado: corregido (447c74b)
 
 ### A1-07 · S2 · Los loaders no rechazan un JSON de forma inválida
 Dónde: `loadAcupoints.ts`, `loadMeridians.ts`
 Esperado: `Array.isArray` y campos que la ficha lee. El semillero actual pasa.
 Evidencia: `A1.md`
 Dueño: FX-APP · Test: `tests/schema.test.ts`
-Estado: abierto
+Estado: corregido (447c74b)
 
 ### A1-08 · S2 · Texto visible fuera de `t()`
 Dónde: letras D/I, `Viewport` `aria-label`, título anterior
 Esperado: R/L en inglés, `atlasLabel`, `plateAnterior` vía `t()`.
 Evidencia: `A1.md`
 Dueño: FX-ATLAS · Test: `tests/smoke.test.ts` (la frase vive en `messages.ts`)
-Estado: abierto
+Estado: corregido (447c74b)
 
 ### A1-09 · S2 · La clave estrecha no se cierra con Escape
 Dónde: `PlateKey` · Viewport: &lt; 1100 px
 Esperado: Escape cierra la clave si no hay una capa más alta.
 Evidencia: `A1.md`
 Dueño: FX-ATLAS
-Estado: abierto
+Estado: corregido (447c74b)
 
 ### A1-10 · S3 · Exports de knip y claves i18n sin uso
 Dónde: 12 exports y 14 tipos; claves `search`, `stars`, `followQi`, `traditional`, `indications`, `mapped`, `omsPoints`, `choosePoint`, `plateFace`, `plateHand`, `plateFoot`, `plateSubtitle`
@@ -149,4 +149,4 @@ Dónde: paleta, ayuda, historial, pista, `aria-live`, glosario
 Esperado: topes de U1–U12, Esc por capas, atrás en móvil, pista `acu3d.hint.v1`, sugerencias a distancia 3, glosario en la ayuda.
 Evidencia: `A4` pendiente de la corrida posterior
 Dueño: FX-APP · Test: `e2e/tasks.spec.ts` · `tests/search.test.ts`
-Estado: abierto
+Estado: corregido (447c74b, 1cbd5b0)

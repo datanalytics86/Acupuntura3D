@@ -1,21 +1,21 @@
 {
   "base": "http://127.0.0.1:4173/",
   "metrics": {
-    "lcpMs": 236,
+    "lcpMs": 192,
     "clsLoad": 0,
     "clsSession": 0,
     "longTasks": 1,
-    "longestTaskMs": 67,
+    "longestTaskMs": 71,
     "longTaskSteps": [
-      "67ms @ load"
+      "71ms @ load"
     ],
-    "domNodes": 683,
+    "domNodes": 808,
     "consoleErrors": [],
     "consoleWarnings": [],
     "requestFailed": [],
     "http4xx5xx": [],
     "thirdPartyHosts": [],
-    "heapGrowth": 0.091,
+    "heapGrowth": -0.008,
     "domGrowth": 0,
     "focusLeakLegal": 0,
     "focusLeakPalette": 0,
@@ -32,7 +32,7 @@
     },
     "langAfterEn": "en",
     "spanishLeaksInEn": [],
-    "tapPoints": 4,
+    "tapPoints": 10,
     "tapWrong": [],
     "storageDenied": {
       "pageErrors": [],
