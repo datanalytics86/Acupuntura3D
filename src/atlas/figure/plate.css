@@ -424,6 +424,13 @@
       height: 40px;
     }
 
+    .app[data-folio="open"] .plate-slot-clock,
+    .app[data-folio="open"] .plate-slot-right {
+      position: fixed;
+      z-index: 26;
+      bottom: calc(100dvh - var(--sheet-top, 100dvh));
+    }
+
     .plate-slot-clock,
     .plate-slot-right {
       position: absolute;

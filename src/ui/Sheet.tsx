@@ -98,6 +98,22 @@ export function Sheet({
   }, [setSheetSnap]);
 
   useLayoutEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const apply = () => {
+      const top = Math.floor(el.getBoundingClientRect().top);
+      document.documentElement.style.setProperty("--sheet-top", `${top}px`);
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty("--sheet-top");
+    };
+  }, [snap]);
+
+  useLayoutEffect(() => {
     const foot = document.querySelector(".app-foot");
     const root = rootRef.current;
     if (!foot || !root) return;

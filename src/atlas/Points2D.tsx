@@ -10,7 +10,8 @@ import { t } from "@/i18n";
 import { useViewerStore } from "@/state/viewerStore";
 import { inRegionFrame, regionFrame, REGION_FOCUS } from "@/atlas/regionFrames";
 import { unitsPerPx, usePlateBox, useUnitsPerPx, visibleRect } from "@/atlas/screen";
-import { estimateLabelPx, layoutMarginCallouts, type Callout, type CalloutInput } from "@/atlas/callouts";
+import { calloutHitSize, estimateLabelPx, layoutMarginCallouts, type Callout, type CalloutInput } from "@/atlas/callouts";
+import { useMuteCovered } from "@/atlas/censusHit";
 import { PointTooltip, useCoarsePointer } from "@/atlas/PointTooltip";
 import type { Acupoint, AtlasView, Meridian, Point2D } from "@/types";
 
@@ -430,6 +431,7 @@ export function Points2D() {
   const box = usePlateBox();
   const coarse = useCoarsePointer();
   const rootRef = useRef<SVGGElement>(null);
+  const muted = useMuteCovered(rootRef);
   const marksRef = useRef<{ id: string; meridianId: string; x: number; y: number }[]>([]);
   const [focusKey, setFocusKey] = useState<string | null>(null);
   const [tip, setTip] = useState<{ id: string; at: Point2D } | null>(null);
@@ -519,7 +521,7 @@ export function Points2D() {
   const shown = (viewRect ? items.filter((it) => inView(it.position, viewRect, 48 * k)) : items).filter((it) =>
     inRegionFrame(region, view, it.position),
   );
-  const groups = clusterItems(shown, coarse ? 24 * k : 0);
+  const groups = clusterItems(shown, 24 * k);
   const clustered = groups.some((members) => members.length > 1);
   const rear = clustered ? new Set<string>() : rearMarkKeys(shown, k);
   const proximity = wantProximity && viewRect ? proximityLabels(shown, hovered, selected, viewRect, k) : [];
@@ -572,14 +574,16 @@ export function Points2D() {
             const next = zoom < 2.5 ? 2.5 : Math.min(6, zoom * 2.5);
             flyTo({ pan: at, zoom: next });
           };
+          const quiet = muted.has(key);
           return (
             <g key={key} transform={`translate(${at.x} ${at.y})`}>
               <g
                 data-atlas-hit=""
                 data-cluster=""
-                role="button"
-                tabIndex={0}
-                aria-label={`${members.length} ${t(locale, "clusterPoints")}. ${t(locale, "clusterZoom")}`}
+                data-hit-key={key}
+                role={quiet ? undefined : "button"}
+                tabIndex={quiet ? undefined : 0}
+                aria-label={quiet ? undefined : `${members.length} ${t(locale, "clusterPoints")}. ${t(locale, "clusterZoom")}`}
                 style={{ cursor: "pointer", outline: "none" }}
                 onPointerDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
@@ -608,6 +612,7 @@ export function Points2D() {
         const it = members[0]!;
         const key = `${it.point.id}-${it.side}`;
         const primary = it.side !== "R";
+        const quiet = muted.has(key);
         const isSel = selected === it.point.id;
         const isHov = hovered === it.point.id;
         const basePx = rear.has(key) ? 4 : 6;
@@ -626,11 +631,12 @@ export function Points2D() {
             <g
               data-atlas-hit=""
               data-point-hit=""
-              role={primary ? "button" : undefined}
-              tabIndex={primary ? 0 : -1}
+              data-hit-key={primary ? key : undefined}
+              role={primary && !quiet ? "button" : undefined}
+              tabIndex={primary && !quiet ? 0 : undefined}
               aria-hidden={primary ? undefined : true}
-              aria-label={primary ? pointAria(it.point, locale, meridianName) : undefined}
-              aria-pressed={primary ? isSel : undefined}
+              aria-label={primary && !quiet ? pointAria(it.point, locale, meridianName) : undefined}
+              aria-pressed={primary && !quiet ? isSel : undefined}
               style={{ cursor: "pointer", outline: "none" }}
               onPointerDown={(e) => e.stopPropagation()}
               onPointerEnter={() => {
@@ -703,15 +709,18 @@ export function Points2D() {
         const sole = hidden.has(`${point.id}-L`) || hidden.has(`${point.id}-C`) || !shown.some((it) => it.point.id === point.id && it.side !== "R");
         const meridian = meridianById.get(point.meridianId);
         const meridianName = meridian ? (locale === "en" ? meridian.names.en : meridian.names.es) : null;
+        const quiet = muted.has(`callout-${c.key}`);
+        const hit = calloutHitSize(c.box, k, coarse);
         return (
           <g
             key={c.key}
             data-atlas-hit=""
             data-testid={`callout-${point.code}`}
-            role={sole ? "button" : undefined}
-            tabIndex={sole ? 0 : undefined}
+            data-hit-key={sole ? `callout-${c.key}` : undefined}
+            role={sole && !quiet ? "button" : undefined}
+            tabIndex={sole && !quiet ? 0 : undefined}
             aria-hidden={sole ? undefined : true}
-            aria-label={sole ? pointAria(point, locale, meridianName) : undefined}
+            aria-label={sole && !quiet ? pointAria(point, locale, meridianName) : undefined}
             style={{ cursor: "pointer", outline: "none" }}
             onPointerDown={(e) => e.stopPropagation()}
             onPointerEnter={() => {
@@ -746,10 +755,10 @@ export function Points2D() {
             />
             <circle cx={c.to.x} cy={c.to.y} r={1.3 * k} fill={hot ? CINNABAR : INK} pointerEvents="none" />
             <rect
-              x={Math.min(c.box.l, c.to.x) - 2 * k}
-              y={c.box.t - 2 * k}
-              width={c.box.r - c.box.l + 4 * k}
-              height={c.box.b - c.box.t + 4 * k}
+              x={(c.box.l + c.box.r) / 2 - hit.w / 2}
+              y={(c.box.t + c.box.b) / 2 - hit.h / 2}
+              width={hit.w}
+              height={hit.h}
               fill="transparent"
             />
             <text

@@ -153,24 +153,29 @@ function OrganDial() {
             const sectorName = `${m.code} ${pad2(m.clockHour)}\u2013${pad2((m.clockHour + 2) % 24)} ${
               locale === "en" ? m.names.en : m.names.es
             }`;
+            const [hx, hy] = polar((R_IN + R_OUT) / 2, sectorAngle(m.clockHour + 1));
             return (
-              <path
+              <g
                 key={m.id}
                 id={`clock-sector-${m.id}`}
-                className="qi-sector"
                 role="radio"
                 aria-checked={sector.on}
                 aria-label={sectorName}
                 tabIndex={sector.on ? 0 : -1}
-                data-sector={m.id}
-                data-on={sector.on ? "true" : "false"}
-                d={sectorPath(m.clockHour)}
-                fill={sector.fill}
-                fillOpacity={sector.fillOpacity}
-                stroke="none"
-                pointerEvents="visibleFill"
                 onClick={() => setHour(m.clockHour)}
-              />
+              >
+                <circle cx={hx} cy={hy} r={22} fill="transparent" pointerEvents="none" />
+                <path
+                  className="qi-sector"
+                  data-sector={m.id}
+                  data-on={sector.on ? "true" : "false"}
+                  d={sectorPath(m.clockHour)}
+                  fill={sector.fill}
+                  fillOpacity={sector.fillOpacity}
+                  stroke="none"
+                  pointerEvents="visibleFill"
+                />
+              </g>
             );
           })}
           <circle className="qi-ring" cx={CX} cy={CY} r={R_RING} />

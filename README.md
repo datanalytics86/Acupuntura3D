@@ -28,11 +28,12 @@ npm run e2e
 npm run shots
 npm run budget
 npm run probe
+npm run qa
 npm run fonts
 npm run trace
 ```
 
-`npm run build` deja el estático en `dist/`. `npm run e2e` abre Playwright (chromium y movimiento reducido) contra el preview en el puerto 4173. `npm run shots` guarda 48 JPG en `docs/T1_2909/shots/after/`. `npm run budget` exige dist menor de 8 MB, JS gzip como máximo 130 KB y CSS gzip como máximo 14 KB. `npm run probe` mide los 18 gates de la plancha. `npm run fonts` regenera el subconjunto de Noto Serif SC. `npm run trace` regenera el contorno vectorial.
+`npm run build` deja el estático en `dist/`. `npm run e2e` abre Playwright (chromium y movimiento reducido) contra el preview en el puerto 4173. `npm run shots` guarda 48 JPG en `docs/T1_2909/shots/after/`. `npm run budget` exige dist menor de 8 MB, JS gzip como máximo 130 KB y CSS gzip como máximo 14 KB. `npm run probe` mide los 18 gates de la plancha. `npm run qa` corre salud, axe y censo contra `http://localhost:4173/`. Para guardar el JSON: `npm run qa:census -- http://127.0.0.1:4173/ docs/QAQC_3009/after/census.json` (igual con `qa:health` y `qa:axe`). `npm run fonts` regenera el subconjunto de Noto Serif SC. `npm run trace` regenera el contorno vectorial.
 
 ## Producción
 

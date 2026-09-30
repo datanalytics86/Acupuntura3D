@@ -52,6 +52,20 @@ npx vercel deploy --prod --yes
 
 Dashboard de Vercel → Deployments → el último **READY** anterior → **Instant Rollback**.
 
+## QA en cada PR
+
+`.github/workflows/qa.yml` corre en cada pull request hacia `main`: `npm ci`, Playwright chromium, `vite preview` en el puerto 4173 y, en serie, `qa:health`, `qa:axe` y `qa:census`. Cada uno escribe su JSON en `docs/QAQC_3009/ci/`. El job tiene `timeout-minutes: 30`. No baja umbrales.
+
+En local, con el preview ya servido:
+
+```bash
+npm run qa:health -- http://127.0.0.1:4173/ docs/QAQC_3009/after/health.json
+npm run qa:axe -- http://127.0.0.1:4173/ docs/QAQC_3009/after/axe.json
+npm run qa:census -- http://127.0.0.1:4173/ docs/QAQC_3009/after/census.json
+```
+
+Salud no se solapa con el censo ni con axe: cada script abre su propio Chromium y el de salud es sensible al tiempo.
+
 ## QA post-deploy
 
 Sobre el deploy del atlas 2D, después del merge a `main`:
