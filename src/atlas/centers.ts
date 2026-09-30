@@ -104,3 +104,85 @@ export function matchCenter(query: string): EnergyCenter | undefined {
   if (!q) return undefined;
   return CENTERS.find((c) => c.aliases.some((a) => a.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase() === q));
 }
+
+/** Point-mark radius the plate probe subtracts. The anchor stays put; only the seal moves. */
+const POINT_MARK_PX = 6;
+const CLEAR_PX = 6;
+const SHIFT_PX = 22;
+
+/** 14px seal at rest (ring r 7); 22px seal once the plate is inside a detail zoom. */
+export function dantianRingRadiusPx(zoom: number): number {
+  return zoom > 1.6 ? 11 : 7;
+}
+
+/** Half the stroked ring. A 1px stroke adds half a pixel to the measured width. */
+export function dantianProbeRadiusPx(zoom: number): number {
+  return dantianRingRadiusPx(zoom) + 0.5;
+}
+
+/** Probe gap: distance between centers − seal radius − point radius. */
+export function dantianProbeGapPx(seal: Point2D, point: Point2D, k: number, sealRadiusPx: number): number {
+  const safeK = k > 1e-6 ? k : 1;
+  return Math.hypot(seal.x - point.x, seal.y - point.y) / safeK - sealRadiusPx - POINT_MARK_PX;
+}
+
+function minSealGap(draw: Point2D, points: Point2D[], k: number, sealRadiusPx: number): number {
+  let gap = Infinity;
+  for (const point of points) gap = Math.min(gap, dantianProbeGapPx(draw, point, k, sealRadiusPx));
+  return gap;
+}
+
+/**
+ * Drawing position of a dantian seal. If the ring would sit under 6px from a point,
+ * step 22 screen px toward the free side (sideways when the blocker is on the midline).
+ */
+export function placeDantianSeal(
+  anchor: Point2D,
+  points: Point2D[],
+  k: number,
+  sealRadiusPx: number,
+): { draw: Point2D; shifted: boolean } {
+  const safeK = k > 1e-6 ? k : 1;
+  const atAnchor = minSealGap(anchor, points, safeK, sealRadiusPx);
+  if (atAnchor >= CLEAR_PX) return { draw: anchor, shifted: false };
+
+  const dirs: Point2D[] = [
+    { x: 1, y: 0 },
+    { x: -1, y: 0 },
+    { x: 0, y: -1 },
+    { x: 0, y: 1 },
+  ];
+  let nearest: Point2D | null = null;
+  let nearestD = Infinity;
+  for (const point of points) {
+    const d = Math.hypot(anchor.x - point.x, anchor.y - point.y);
+    if (d < nearestD) {
+      nearestD = d;
+      nearest = point;
+    }
+  }
+  if (nearest && nearestD > 1e-6) {
+    dirs.push({
+      x: (anchor.x - nearest.x) / nearestD,
+      y: (anchor.y - nearest.y) / nearestD,
+    });
+  }
+
+  const needPx = sealRadiusPx + POINT_MARK_PX + CLEAR_PX;
+  let shiftPx = Math.max(SHIFT_PX, needPx + 0.5);
+  let best: Point2D = anchor;
+  let bestGap = atAnchor;
+  for (let step = 0; step < 4 && bestGap < CLEAR_PX; step += 1) {
+    for (const dir of dirs) {
+      const draw = { x: anchor.x + dir.x * shiftPx * safeK, y: anchor.y + dir.y * shiftPx * safeK };
+      const gap = minSealGap(draw, points, safeK, sealRadiusPx);
+      if (gap > bestGap) {
+        bestGap = gap;
+        best = draw;
+      }
+    }
+    if (bestGap >= CLEAR_PX) break;
+    shiftPx += 8;
+  }
+  return { draw: best, shifted: best.x !== anchor.x || best.y !== anchor.y };
+}
