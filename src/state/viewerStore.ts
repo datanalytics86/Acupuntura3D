@@ -50,7 +50,7 @@ interface ViewerActions {
   setHelpOpen: (v: boolean) => void;
   setSheetSnap: (s: SheetSnap) => void;
   setLabelsMode: (m: LabelsMode) => void;
-  flyTo: (target: Camera, opts?: { duration?: number }) => void;
+  flyTo: (target: Camera, opts?: { duration?: number; keepAim?: boolean }) => void;
   zoomBy: (factor: number, anchor?: Point2D) => void;
   stopFlight: () => void;
   resetAtlasCamera: () => void;
@@ -87,6 +87,7 @@ function insideFrame(pos: Point2D, frame: { pan: Point2D; zoom: number }): boole
 }
 
 let flight = 0;
+let aim: Camera | null = null;
 
 function stopFlight(): void {
   if (typeof cancelAnimationFrame === "function") cancelAnimationFrame(flight);
@@ -254,6 +255,8 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
     const zoom = clampZoom(target.zoom);
     const box = get().plateBox;
     const to: Camera = { pan: clampPan(target.pan, zoom, box), zoom };
+    if (opts?.keepAim) aim = to;
+    else aim = null;
     const duration = opts?.duration ?? 420;
     stopFlight();
     if (duration <= 0 || prefersReducedMotion() || typeof requestAnimationFrame !== "function") {
@@ -267,14 +270,17 @@ export const useViewerStore = create<ViewerState & ViewerActions>((set, get) => 
       const cam = lerpCamera(from, to, t);
       set({ atlasPan: clampPan(cam.pan, cam.zoom, get().plateBox), atlasZoom: cam.zoom });
       if (t < 1) flight = requestAnimationFrame(step);
+      else if (aim === to) aim = null;
     };
     flight = requestAnimationFrame(step);
   },
   zoomBy: (factor, anchor) => {
     const s = get();
-    get().flyTo(zoomAbout({ pan: s.atlasPan, zoom: s.atlasZoom }, factor, anchor ?? s.atlasPan), {
-      duration: 160,
-    });
+    const base = aim ?? { pan: s.atlasPan, zoom: s.atlasZoom };
+    const spun = zoomAbout(base, factor, anchor ?? base.pan);
+    const zoom = clampZoom(spun.zoom);
+    aim = { pan: clampPan(spun.pan, zoom, s.plateBox), zoom };
+    get().flyTo(aim, { duration: 160, keepAim: true });
   },
   stopFlight,
 }));

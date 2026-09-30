@@ -16,6 +16,8 @@
     "test:watch": "vitest",
     "budget": "node scripts/budget.mjs",
     "probe": "node scripts/probe-plate.mjs",
+    "fonts": "node scripts/fonts-hanzi.mjs",
+    "trace": "node scripts/trace-silhouette.mts",
     "e2e": "playwright test",
     "shots": "node scripts/shots.mjs docs/T1_2909/shots/after"
   },

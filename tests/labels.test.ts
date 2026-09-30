@@ -23,4 +23,17 @@ describe("posterior neck callouts", () => {
     expect(laid.get("C")!.box.l).toBeGreaterThan(laid.get("L")!.box.r - 1);
     expect(laid.get("R")!.box.l).toBeGreaterThan(laid.get("C")!.box.r - 1);
   });
+
+  it("pulls a left-edge label back inside the window", () => {
+    const bounds = { l: 0, t: 0, r: 220, b: 400 };
+    const laid = layoutCallouts(
+      [{ key: "LI4", x: 8, y: 200, anchor: "end", text: "LI4 合谷" }],
+      { k: 2, bounds },
+    );
+    const box = laid.get("LI4")!.box;
+    expect(box.l).toBeGreaterThanOrEqual(bounds.l);
+    expect(box.r).toBeLessThanOrEqual(bounds.r);
+    expect(box.t).toBeGreaterThanOrEqual(bounds.t);
+    expect(box.b).toBeLessThanOrEqual(bounds.b);
+  });
 });

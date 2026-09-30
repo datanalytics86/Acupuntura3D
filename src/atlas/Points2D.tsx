@@ -26,11 +26,11 @@ type Rect = { l: number; t: number; r: number; b: number };
 
 export type CalloutSeed = { key: string; x: number; y: number; anchor: Anchor; text: string };
 
-function labelBox(x: number, y: number, label: string, anchor: Anchor): Box {
-  const w = textWidth(label, LABEL);
+function labelBox(x: number, y: number, label: string, anchor: Anchor, size: number): Box {
+  const w = textWidth(label, size);
   const l = anchor === "start" ? x : anchor === "end" ? x - w : x - w / 2;
-  const t = y - LABEL * 0.82;
-  return { l, t, r: l + w, b: y + LABEL * 0.22 };
+  const t = y - size * 0.82;
+  return { l, t, r: l + w, b: y + size * 0.22 };
 }
 
 function overlaps(a: Box, b: Box): boolean {
@@ -42,30 +42,70 @@ function coversHead(box: Box): boolean {
   return box.r > HEAD.l && box.l < HEAD.r && box.b > HEAD.t && box.t < HEAD.b;
 }
 
+function fitsWindow(box: Box, bounds: Rect): boolean {
+  return box.l >= bounds.l && box.r <= bounds.r && box.t >= bounds.t && box.b <= bounds.b;
+}
+
+/** Slide a label that would be clipped by the plate window back inside it. */
+function clampToWindow(
+  x: number,
+  y: number,
+  label: string,
+  anchor: Anchor,
+  size: number,
+  bounds: Rect,
+): { x: number; y: number; box: Box } {
+  let nx = x;
+  let ny = y;
+  let box = labelBox(nx, ny, label, anchor, size);
+  if (box.l < bounds.l) nx += bounds.l - box.l;
+  if (box.r > bounds.r) nx -= box.r - bounds.r;
+  box = labelBox(nx, ny, label, anchor, size);
+  if (box.t < bounds.t) ny += bounds.t - box.t;
+  if (box.b > bounds.b) ny -= box.b - bounds.b;
+  box = labelBox(nx, ny, label, anchor, size);
+  return { x: nx, y: ny, box };
+}
+
 export function layoutCallouts(
   seeds: CalloutSeed[],
+  opts?: { k?: number; bounds?: Rect },
 ): Map<string, { x: number; y: number; anchor: Anchor; box: Box }> {
+  const k = opts?.k ?? 1;
+  const size = LABEL * k;
+  const step = 8 * k;
+  const bounds = opts?.bounds;
   const occupied: Box[] = [];
   const placed = new Map<string, { x: number; y: number; anchor: Anchor; box: Box }>();
   const ordered = [...seeds].sort((a, b) => Math.abs(b.x - CX) - Math.abs(a.x - CX));
   for (const seed of ordered) {
     const outward = seed.x < CX - 8 ? -1 : seed.x > CX + 8 ? 1 : 0;
+    const dirs = outward === 0 ? [0] : [outward, -outward];
     const candidates: { x: number; y: number }[] = [];
-    for (let i = 0; i <= 12; i++) {
-      candidates.push({ x: seed.x + outward * i * 8, y: seed.y });
-      candidates.push({ x: seed.x + outward * i * 8, y: seed.y - i * 8 });
-      candidates.push({ x: seed.x, y: seed.y - i * 10 });
-      candidates.push({ x: seed.x + outward * i * 8, y: seed.y + i * 8 });
+    for (const dir of dirs) {
+      for (let i = 0; i <= 16; i++) {
+        candidates.push({ x: seed.x + dir * i * step, y: seed.y });
+        candidates.push({ x: seed.x + dir * i * step, y: seed.y - i * step });
+        candidates.push({ x: seed.x + dir * i * step, y: seed.y + i * step });
+      }
     }
     let chosen = { x: seed.x, y: seed.y };
-    let box = labelBox(seed.x, seed.y, seed.text, seed.anchor);
+    let box = labelBox(seed.x, seed.y, seed.text, seed.anchor, size);
+    let found = false;
     for (const cand of candidates) {
-      const next = labelBox(cand.x, cand.y, seed.text, seed.anchor);
+      const next = labelBox(cand.x, cand.y, seed.text, seed.anchor, size);
       if (coversHead(next)) continue;
+      if (bounds && !fitsWindow(next, bounds)) continue;
       if (occupied.some((o) => overlaps(next, o))) continue;
       chosen = cand;
       box = next;
+      found = true;
       break;
+    }
+    if (!found && bounds) {
+      const clamped = clampToWindow(seed.x, seed.y, seed.text, seed.anchor, size, bounds);
+      chosen = { x: clamped.x, y: clamped.y };
+      box = clamped.box;
     }
     occupied.push(box);
     placed.set(seed.key, { ...chosen, anchor: seed.anchor, box });
@@ -188,7 +228,13 @@ function rearMarkKeys(items: PlatePoint[], k: number): Set<string> {
 
 type ProxLabel = { code: string; zh: string; x: number; y: number; anchor: Anchor; hot: boolean };
 
-function proximityLabels(shown: PlatePoint[], hotId: string | null, selectedId: string | null): ProxLabel[] {
+function proximityLabels(
+  shown: PlatePoint[],
+  hotId: string | null,
+  selectedId: string | null,
+  viewRect: Rect,
+  k: number,
+): ProxLabel[] {
   const seeds: CalloutSeed[] = [];
   const meta = new Map<string, { code: string; zh: string; id: string }>();
   for (const it of shown) {
@@ -203,7 +249,11 @@ function proximityLabels(shown: PlatePoint[], hotId: string | null, selectedId: 
     });
     meta.set(it.point.code, { code: it.point.code, zh: it.point.names.zh, id: it.point.id });
   }
-  const placed = layoutCallouts(seeds);
+  const pad = 2 * k;
+  const placed = layoutCallouts(seeds, {
+    k,
+    bounds: { l: viewRect.l + pad, t: viewRect.t + pad, r: viewRect.r - pad, b: viewRect.b - pad },
+  });
   const out: ProxLabel[] = [];
   for (const [key, place] of placed) {
     const row = meta.get(key);
@@ -437,7 +487,7 @@ export function Points2D() {
   const cluster = marginFailed && coarse;
   const groups = clusterItems(shown, cluster ? 14 * k : 0);
   const rear = cluster ? new Set<string>() : rearMarkKeys(shown, k);
-  const proximity = wantProximity ? proximityLabels(shown, hovered, selected) : [];
+  const proximity = wantProximity && viewRect ? proximityLabels(shown, hovered, selected, viewRect, k) : [];
   const calloutById = new Map<string, Callout>((margin ?? []).map((c) => [c.key, c]));
   const hidden = new Set<string>();
   for (const group of groups) {

@@ -400,9 +400,19 @@
     }
 
     .plate-subtitle,
-    .plate-colophon,
-    .plate-minimap-host {
+    .plate-colophon {
       display: none;
+    }
+
+    .plate-minimap-host {
+      display: block;
+      flex: none;
+      order: 0;
+    }
+
+    .plate-minimap svg {
+      width: 20px;
+      height: 40px;
     }
 
     .plate-slot-clock,
