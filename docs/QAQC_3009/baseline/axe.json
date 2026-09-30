@@ -1,0 +1,98 @@
+{
+  "base": "http://127.0.0.1:4173/",
+  "total": 10,
+  "serious": 10,
+  "pass": false,
+  "violations": [
+    {
+      "vp": "desktop",
+      "ctx": "legal",
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 4,
+      "target": ".qi-speeds > button:nth-child(1)",
+      "help": "All touch targets must be 24px large, or leave sufficient space"
+    },
+    {
+      "vp": "desktop",
+      "ctx": "home",
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 4,
+      "target": ".qi-speeds > button:nth-child(1)",
+      "help": "All touch targets must be 24px large, or leave sufficient space"
+    },
+    {
+      "vp": "desktop",
+      "ctx": "index",
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 4,
+      "target": ".qi-speeds > button:nth-child(1)",
+      "help": "All touch targets must be 24px large, or leave sufficient space"
+    },
+    {
+      "vp": "desktop",
+      "ctx": "point",
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 4,
+      "target": ".qi-speeds > button:nth-child(1)",
+      "help": "All touch targets must be 24px large, or leave sufficient space"
+    },
+    {
+      "vp": "desktop",
+      "ctx": "center",
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 4,
+      "target": ".qi-speeds > button:nth-child(1)",
+      "help": "All touch targets must be 24px large, or leave sufficient space"
+    },
+    {
+      "vp": "desktop",
+      "ctx": "palette",
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 4,
+      "target": ".qi-speeds > button:nth-child(1)",
+      "help": "All touch targets must be 24px large, or leave sufficient space"
+    },
+    {
+      "vp": "desktop",
+      "ctx": "help",
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 4,
+      "target": ".qi-speeds > button:nth-child(1)",
+      "help": "All touch targets must be 24px large, or leave sufficient space"
+    },
+    {
+      "vp": "desktop",
+      "ctx": "posterior",
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 4,
+      "target": ".qi-speeds > button:nth-child(1)",
+      "help": "All touch targets must be 24px large, or leave sufficient space"
+    },
+    {
+      "vp": "desktop",
+      "ctx": "hand",
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 4,
+      "target": ".qi-speeds > button:nth-child(1)",
+      "help": "All touch targets must be 24px large, or leave sufficient space"
+    },
+    {
+      "vp": "desktop",
+      "ctx": "english",
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 4,
+      "target": ".qi-speeds > button:nth-child(1)",
+      "help": "All touch targets must be 24px large, or leave sufficient space"
+    }
+  ]
+}

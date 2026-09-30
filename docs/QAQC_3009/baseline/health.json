@@ -1,0 +1,77 @@
+{
+  "base": "http://127.0.0.1:4173/",
+  "metrics": {
+    "lcpMs": 264,
+    "clsLoad": 0,
+    "clsSession": 0,
+    "longTasks": 2,
+    "longestTaskMs": 72,
+    "longTaskSteps": [
+      "72ms @ load",
+      "58ms @ find ST36"
+    ],
+    "domNodes": 700,
+    "consoleErrors": [
+      "pageerror: AbortError: Transition was skipped. New ViewTransition started"
+    ],
+    "consoleWarnings": [],
+    "requestFailed": [],
+    "http4xx5xx": [],
+    "thirdPartyHosts": [],
+    "heapGrowth": 0.111,
+    "domGrowth": 0.002,
+    "focusLeakLegal": 25,
+    "focusLeakPalette": 0,
+    "focusLeakHelp": 0,
+    "reflow320": {
+      "overflowX": false,
+      "controlsOffscreen": 0,
+      "which": []
+    },
+    "zoom200": {
+      "overflowX": false,
+      "controlsOffscreen": 0,
+      "which": []
+    },
+    "langAfterEn": "en",
+    "spanishLeaksInEn": [],
+    "tapPoints": 9,
+    "tapWrong": [
+      "ST36→GB34",
+      "SP6→KI3",
+      "LR3→KI3",
+      "CV12→nada"
+    ],
+    "storageDenied": {
+      "pageErrors": [],
+      "gateStillOpen": false,
+      "plate": true
+    }
+  },
+  "gates": {
+    "consoleErrors": false,
+    "requestFailed": true,
+    "http4xx5xx": true,
+    "thirdPartyHosts": true,
+    "clsLoad": true,
+    "lcpMs": true,
+    "longestTaskMs": true,
+    "heapGrowth": true,
+    "domGrowth": true,
+    "focusLeakLegal": false,
+    "focusLeakPalette": true,
+    "focusLeakHelp": true,
+    "reflow320": true,
+    "zoom200": true,
+    "langAfterEn": true,
+    "spanishLeaksInEn": true,
+    "tapAccuracy": false,
+    "storageDenied": true
+  },
+  "failed": [
+    "consoleErrors",
+    "focusLeakLegal",
+    "tapAccuracy"
+  ],
+  "pass": false
+}
