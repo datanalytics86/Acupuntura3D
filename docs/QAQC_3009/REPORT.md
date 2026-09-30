@@ -14,7 +14,7 @@ La rama `qa/qaqc-3009` deja el atlas usable sin mover la estampa del 30.09. Los 
 | G6 estático | tsc 0, audit 0, knip justificado | igual, vitest 105 |
 | G7 suite | 89 tests | typecheck, 105 tests, build, budget, e2e ×3, sonda 18/18 |
 | G8 capturas | — | 48 JPG; cada diff tiene ticket |
-| G9 producción | — | se mide después del merge |
+| G9 producción | `index-DycVfQG7.js` | `index-CTIhc3pc.js`, health 18/18, censo de inicio y ficha 146 sin hallazgos |
 
 Budget: JS gzip 106332, CSS gzip 11887, dist 4573658. Por debajo de 130 KB, 14 KB y 8 MB.
 
